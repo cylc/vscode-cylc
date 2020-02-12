@@ -2,12 +2,9 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "cylc",
 	"patterns": [
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		}
+		{"include": "#keywords"},
+		{"include": "#strings"},
+		{"include": "#comments"}
 	],
 	"repository": {
 		"keywords": {
@@ -24,6 +21,14 @@
 				{
 					"name": "constant.character.escape.cylc",
 					"match": "\\\\."
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.cylc",
+					"match": "#.*"
 				}
 			]
 		}
