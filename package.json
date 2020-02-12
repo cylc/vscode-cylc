@@ -1,0 +1,25 @@
+{
+    "name": "cylc",
+    "displayName": "cylc",
+    "description": "Language support for Cylc workflow configuration files",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.42.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "cylc",
+            "aliases": ["cylc", "cylc"],
+            "extensions": ["rc"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "cylc",
+            "scopeName": "souce.ini",
+            "path": "./syntaxes/cylc.tmLanguage.json"
+        }]
+    }
+}
