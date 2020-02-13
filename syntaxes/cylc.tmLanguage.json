@@ -2,11 +2,87 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "cylc",
 	"patterns": [
+		{"include": "#header"},
+		{"include": "#graphSections"},
+		{"include": "#multiLineSettings"},
+		{"include": "#singleLineSettings"},
+		{"include": "#includeFiles"},
 		{"include": "#keywords"},
 		{"include": "#strings"},
 		{"include": "#comments"}
 	],
 	"repository": {
+		"header": {
+			"patterns": [{
+				"name": "text",
+				"match": "\\[+(.+?)\\]+",
+				"captures": {
+					"1": {"name": "keyword.control.cylc"}
+				}
+			}]
+		},
+		"graphSections": {
+			"comment": "Handle graph sections @TODO Make it parse graph separately",
+			"patterns": [
+				{
+					"name": "text",
+					"begin": "([^=\\n]+)(=).\\s?(\"\"\")",
+					"end": "(\"\"\")",
+					"beginCaptures": {
+						"1": {"name": "keyword"},
+						"2": {"name": "text"},
+						"3": {"name": "string"}
+					},
+					"endCaptures": {
+						"1": {"name": "string"}
+					}
+				},
+				{
+					"name": "keyword.control",
+					"match": "(graph)(\\s+)?(=)",
+					"captures": {
+						"1": {"name": "keyword."}
+					}
+				}
+			]
+		},
+		"multiLineSettings": {
+			"patterns": [
+				{
+					"name": "text",
+					"begin": "([^=\\n]+)(=).\\s?(\"\"\")",
+					"end": "(\"\"\")",
+					"beginCaptures": {
+						"1": {"name": "keyword"},
+						"2": {"name": "text"},
+						"3": {"name": "string"}
+					},
+					"endCaptures": {
+						"1": {"name": "string"}
+					}
+				}
+			]
+		},
+		"singleLineSettings": {
+			"patterns": [
+				{
+					"name": "text",
+					"match": "^([^=\\n]+)(=)([^#\\n]*)",
+					"captures": {
+						"1": {"name": "keyword.control.cylc"},
+						"3": {"name": "string"}
+					}
+				}
+			]
+		},
+		"includeFiles": {
+			"name": "keyword",
+			"match": "(%include)( )(.*)",
+			"captures": {
+				"1": {"name": "keyword"},
+				"3": {"name": "string"}
+			}
+		},
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.cylc",
