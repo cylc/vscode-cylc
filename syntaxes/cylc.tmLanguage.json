@@ -26,7 +26,7 @@
 			"patterns": [
 				{
 					"name": "text",
-					"begin": "([^=\\n]+)(=).\\s?(\"\"\")",
+					"begin": "(R1\\s*)(=).\\s?(\"\"\")",
 					"end": "(\"\"\")",
 					"beginCaptures": {
 						"1": {"name": "keyword"},
@@ -35,7 +35,10 @@
 					},
 					"endCaptures": {
 						"1": {"name": "string"}
-					}
+					},
+					"patterns": [
+						{"include": "#graphSyntax"}
+					]
 				},
 				{
 					"name": "keyword.control",
@@ -54,7 +57,6 @@
 					"end": "(\"\"\")",
 					"beginCaptures": {
 						"1": {"name": "keyword"},
-						"2": {"name": "text"},
 						"3": {"name": "string"}
 					},
 					"endCaptures": {
@@ -106,6 +108,90 @@
 					"name": "comment.cylc",
 					"match": "#.*"
 				}
+			]
+		},
+		"graphSyntax": {
+			"patterns": [
+				{
+					"name": "comment",
+					"match": "#.*"
+				},
+				{
+					"name": "keyword",
+					"match": "[=>|\\|\\&|@]"
+				},
+				{
+					"name": "keyword",
+					"match": "(\\!)\\S"
+				},
+				{
+					"name": "comment",
+					"match": "\\\\"
+				},
+				{
+					"match": "<(.+?)>",
+					"captures": {"1": {"name": "constant.numeric"}}
+				},
+				{
+					"comment": "qualifier should be highlighted",
+					"name": "text",
+					"match": "(\\S)\\:(\\S*)",
+					"captures": {"2": {"name": "constant.numeric"}}
+				},
+				{
+					"comment": "Integer intervals",
+					"name": "text",
+					"match": "\\[([-+]{0,1}P\\d+)\\]",
+					"captures": {"1": {"name": "constant.numeric"}}
+				},
+				{
+					"comment": "Isodatetime intervals - weeks",
+					"name": "text",
+					"match": "\\[(\\^?[-+]?P\\d{1,2}W)\\]",
+					"captures": {"1": {"name": "constant.numeric"}}
+				},
+				{
+					"comment": "Isodatetime intervals - Simple Format",
+					"name": "text",
+					"match": "\\[([+-]?)(P)(\\d+Y)?(\\d+M)?(\\d+D)?(T?)(\\d+H)?(\\d+M)?(\\d+S)?",
+					"captures": {
+						"1": {"name": "constant.numeric"},
+						"2": {"name": "constant.numeric"},
+						"3": {"name": "constant.numeric"},
+						"4": {"name": "constant.numeric"},
+						"5": {"name": "constant.numeric"},
+						"6": {"name": "constant.numeric"},
+						"7": {"name": "constant.numeric"},
+						"8": {"name": "constant.numeric"},
+						"9": {"name": "constant.numeric"},
+						"10": {"name": "constant.numeric"}
+					}
+				},
+				{
+					"comment": "Integer points",
+					"name": "text",
+					"match": "\\[([+-]?\\d*)",
+					"captures": {
+						"1": {"name": "constant.numeric"}
+					}
+				},
+				{
+				"comment": "Isodatetime intervals - complex Format - can this have seconds",
+				"name": "text",
+				"match": "\\[(\\d{4})-?([0-1]\\d)-?([0-3]\\d)?(T)?([0-2]\\d)?:?([0-5]\\d)?\\]",
+				"captures": {
+					"1": {"name": "constant.numeric"},
+					"2": {"name": "constant.numeric"},
+					"3": {"name": "constant.numeric"},
+					"4": {"name": "constant.numeric"},
+					"5": {"name": "constant.numeric"},
+					"6": {"name": "constant.numeric"},
+					"7": {"name": "constant.numeric"},
+					"8": {"name": "constant.numeric"},
+					"9": {"name": "constant.numeric"},
+					"10": {"name": "constant.numeric"}
+				}
+			}
 			]
 		}
 	},
