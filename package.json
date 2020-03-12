@@ -14,7 +14,7 @@
             "id": "cylc",
             "aliases": ["cylc", "cylc"],
             "extensions": ["rc"],
-            "configuration": "./language-configuration.json"
+            "configuration": "./cylc.language-configuration.json"
         }],
         "grammars": [{
             "language": "cylc",
