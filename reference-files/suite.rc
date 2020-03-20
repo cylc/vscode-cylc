@@ -142,3 +142,22 @@ R1 = """
 
 # graph strings should not highlight here, this should display as a setting:
 foo => bar => baz => quz
+
+
+# The following should all highlight the same:
+graph=foo=>bar
+
+graph = foo => bar
+
+graph = "foo => bar"
+
+graph = """
+    foo => bar
+"""
+
+# But not these:
+graph = 
+    foo => bar
+graph = "
+    foo => bar
+"
