@@ -18,7 +18,7 @@
         }],
         "grammars": [{
             "language": "cylc",
-            "scopeName": "souce.ini",
+            "scopeName": "source.cylc",
             "path": "./syntaxes/cylc.tmLanguage.json"
         }]
     }
