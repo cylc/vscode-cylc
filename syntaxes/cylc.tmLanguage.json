@@ -1,4 +1,5 @@
 {
+	"scopeName": "source.cylc",
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "cylc",
 	"patterns": [
@@ -14,38 +15,78 @@
 	"repository": {
 		"header": {
 			"patterns": [{
-				"name": "text",
-				"match": "\\[+(.+?)\\]+",
+				"name": "meta.section.cylc",
+				"match": "(\\[+)(.+?)(\\]+)",
 				"captures": {
-					"1": {"name": "keyword.control.cylc"}
-				}
+					"1": {"name": "punctuation.definition.begin.cylc"},
+					"2": {"name": "entity.name.tag.cylc"},
+					"3": {"name": "punctuation.definition.end.cylc"}
+				},
+				"comment": "@TODO convert to begin/end instead of match?"
 			}]
 		},
 		"graphSections": {
 			"comment": "Handle graph sections @TODO Make it parse graph separately",
 			"patterns": [
 				{
-					"name": "text",
-					"begin": "(R1\\s*)(=).\\s?(\"\"\")",
+					"contentName": "meta.graph-string.cylc",
+					"begin": "(R1)\\s*(=)\\s*(\"\"\")",
 					"end": "(\"\"\")",
 					"beginCaptures": {
-						"1": {"name": "keyword"},
-						"2": {"name": "text"},
-						"3": {"name": "string"}
+						"1": {"name": "keyword.graph.cylc"},
+						"2": {"name": "keyword.operator.assignment.cylc"},
+						"3": {"name": "string.quoted.triple.begin.cylc"}
 					},
 					"endCaptures": {
-						"1": {"name": "string"}
+						"1": {"name": "string.quoted.triple.end.cylc"}
 					},
 					"patterns": [
 						{"include": "#graphSyntax"}
 					]
 				},
 				{
-					"name": "keyword.control",
-					"match": "(graph)(\\s+)?(=)",
-					"captures": {
-						"1": {"name": "keyword."}
-					}
+					"contentName": "meta.graph-string.unquoted.cylc",
+					"begin": "(graph)\\s*(=)[^\\S\\r\\n]*(?!\\s*\")",
+					"end": "[\\r\\n]",
+					"beginCaptures": {
+						"1": {"name": "keyword.graph.cylc"},
+						"2": {"name": "keyword.operator.assignment.cylc"}
+					},
+					"patterns": [
+						{"include": "#graphSyntax"}
+					]
+				},
+				{
+					"contentName": "meta.graph-string.quoted.double.cylc",
+					"begin": "(graph)\\s*(=)\\s*(\")(?!\")",
+					"end": "(\")",
+					"beginCaptures": {
+						"1": {"name": "keyword.graph.cylc"},
+						"2": {"name": "keyword.operator.assignment.cylc"},
+						"3": {"name": "string.quoted.double.begin.cylc"}
+					},
+					"endCaptures": {
+						"1": {"name": "string.quoted.double.end.cylc"}
+					},
+					"patterns": [
+						{"include": "#graphSyntax"}
+					]
+				},
+				{
+					"contentName": "meta.graph-string.quoted.triple.cylc",
+					"begin": "(graph)\\s*(=)\\s*(\"\"\")",
+					"end": "(\"\"\")",
+					"beginCaptures": {
+						"1": {"name": "keyword.graph.cylc"},
+						"2": {"name": "keyword.operator.assignment.cylc"},
+						"3": {"name": "string.quoted.triple.begin.cylc"}
+					},
+					"endCaptures": {
+						"1": {"name": "string.quoted.triple.end.cylc"}
+					},
+					"patterns": [
+						{"include": "#graphSyntax"}
+					]
 				}
 			]
 		},
@@ -56,11 +97,12 @@
 					"begin": "([^=\\n]+)(=).\\s?(\"\"\")",
 					"end": "(\"\"\")",
 					"beginCaptures": {
-						"1": {"name": "keyword"},
-						"3": {"name": "string"}
+						"1": {"name": "variable.other.key.cylc"},
+						"2": {"name": "keyword.operator.assignment.cylc"},
+						"3": {"name": "string.value.multi.begin.cylc"}
 					},
 					"endCaptures": {
-						"1": {"name": "string"}
+						"1": {"name": "string.value.multi.end.cylc"}
 					}
 				}
 			]
@@ -71,18 +113,19 @@
 					"name": "text",
 					"match": "^([^=\\n]+)(=)([^#\\n]*)",
 					"captures": {
-						"1": {"name": "keyword.control.cylc"},
-						"3": {"name": "string"}
+						"1": {"name": "variable.other.key.cylc"},
+						"2": {"name": "keyword.operator.assignment.cylc"},
+						"3": {"name": "string.value.cylc"}
 					}
 				}
 			]
 		},
 		"includeFiles": {
 			"name": "keyword",
-			"match": "(%include)( )(.*)",
+			"match": "(%include)\\s?(.*)",
 			"captures": {
-				"1": {"name": "keyword"},
-				"3": {"name": "string"}
+				"1": {"name": "keyword.control.include.cylc"},
+				"2": {"name": "string.cylc"}
 			}
 		},
 		"keywords": {
@@ -100,37 +143,49 @@
 					"name": "constant.character.escape.cylc",
 					"match": "\\\\."
 				}
-			]
+			],
+			"comment": "@TODO: begin quote without end quote on same line illegal?"
 		},
 		"comments": {
 			"patterns": [
 				{
-					"name": "comment.cylc",
+					"name": "comment.line.cylc",
 					"match": "#.*"
 				}
 			]
 		},
 		"graphSyntax": {
+			"name": "keyword",
 			"patterns": [
 				{
-					"name": "comment",
+					"name": "comment.line.cylc",
 					"match": "#.*"
 				},
 				{
-					"name": "keyword",
-					"match": "[=>|\\|\\&|@]"
+					"name": "keyword.control.trigger.cylc",
+					"match": "=>"
 				},
 				{
-					"name": "keyword",
-					"match": "(\\!)\\S"
+					"name": "keyword.other.logical.cylc",
+					"match": "[\\|&]"
 				},
 				{
-					"name": "comment",
+					"name": "keyword.other.suicide.cylc",
+					"match": "!(?=\\S)"
+				},
+				{
+					"name": "variable.other.xtrigger.cylc",
+					"match": "@\\S+"
+				},
+				{
+					"name": "constant.character.escape.continuation.cylc",
 					"match": "\\\\"
 				},
 				{
 					"match": "<(.+?)>",
-					"captures": {"1": {"name": "constant.numeric"}}
+					"captures": {
+						"1": {"name": "constant.numeric"}
+					}
 				},
 				{
 					"comment": "qualifier should be highlighted",
@@ -194,6 +249,5 @@
 			}
 			]
 		}
-	},
-	"scopeName": "source.cylc"
+	}
 }
