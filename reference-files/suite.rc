@@ -28,6 +28,14 @@ n = """
     baz
 """
 
+# "bar" should not display as a string when triple quotes not used:
+foo =
+bar
+
+foo = "
+bar
+"
+
 # SYNTAX: 1.4
 # highlighting should be consistent with the following examples
 %include bar

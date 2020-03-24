@@ -5,8 +5,7 @@
 	"patterns": [
 		{"include": "#header"},
 		{"include": "#graphSections"},
-		{"include": "#multiLineSettings"},
-		{"include": "#singleLineSettings"},
+		{"include": "#settings"},
 		{"include": "#includeFiles"},
 		{"include": "#keywords"},
 		{"include": "#strings"},
@@ -90,32 +89,41 @@
 				}
 			]
 		},
-		"multiLineSettings": {
+		"settings": {
 			"patterns": [
 				{
-					"name": "text",
-					"begin": "([^=\\n]+)(=).\\s?(\"\"\")",
-					"end": "(\"\"\")",
+					"name": "meta.setting.quoted.triple.cylc",
+					"begin": "\\b([^=\\n]+?)[\\t ]*(=)[\\t ]*(?=\"{3})",
+					"end": "(?<=\"{3})",
 					"beginCaptures": {
 						"1": {"name": "variable.other.key.cylc"},
-						"2": {"name": "keyword.operator.assignment.cylc"},
-						"3": {"name": "string.value.multi.begin.cylc"}
+						"2": {"name": "keyword.operator.assignment.cylc"}
 					},
-					"endCaptures": {
-						"1": {"name": "string.value.multi.end.cylc"}
-					}
-				}
+					"contentName": "meta.value.cylc",
+					"patterns": [
+						{"include": "#strings"}
 			]
 		},
-		"singleLineSettings": {
-			"patterns": [
 				{
-					"name": "text",
-					"match": "^([^=\\n]+)(=)([^#\\n]*)",
+					"name": "meta.setting.quoted.double.cylc",
+					"begin": "\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*(?=\")",
+					"end": "(?<=\")",
+					"beginCaptures": {
+						"1": {"name": "variable.other.key.cylc"},
+						"2": {"name": "keyword.operator.assignment.cylc"}
+					},
+					"contentName" : "meta.value.cylc",
+			"patterns": [
+						{"include": "#strings"}
+					]
+				},
+				{
+					"name": "meta.setting.unquoted.cylc",
+					"match": "\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*([^#\\n\\r]*)",
 					"captures": {
 						"1": {"name": "variable.other.key.cylc"},
 						"2": {"name": "keyword.operator.assignment.cylc"},
-						"3": {"name": "string.value.cylc"}
+						"3": {"name": "string.unquoted.value.cylc"}
 					}
 				}
 			]
@@ -129,22 +137,43 @@
 			}
 		},
 		"keywords": {
-			"patterns": [{
 				"name": "keyword.control.cylc",
 				"match": "\\b(if|while|for|return)\\b"
-			}]
 		},
 		"strings": {
-			"name": "string.quoted.double.cylc",
-			"begin": "\"",
-			"end": "\"",
 			"patterns": [
 				{
+					"name": "string.quoted.triple.cylc",
+					"begin": "(\"{3})",
+					"end": "(\"{3})",
+					"beginCaptures": {
+						"1": {"name": "punctuation.definition.string.begin.cylc"}
+					},
+					"endCaptures": {
+						"1": {"name": "punctuation.definition.string.end.cylc"}
+					},
+					"patterns": [{
 					"name": "constant.character.escape.cylc",
 					"match": "\\\\."
-				}
-			],
+					}]
+				},
+				{
+					"name": "string.quoted.double.cylc",
+					"begin": "(\")",
+					"end": "(\")",
+					"beginCaptures": {
+						"1": {"name": "punctuation.definition.string.begin.cylc"}
+					},
+					"endCaptures": {
+						"1": {"name": "punctuation.definition.string.end.cylc"}
+					},
+					"patterns": [{
+						"name": "constant.character.escape.cylc",
+						"match": "\\\\."
+					}],
 			"comment": "@TODO: begin quote without end quote on same line illegal?"
+				}
+			]
 		},
 		"comments": {
 			"patterns": [
