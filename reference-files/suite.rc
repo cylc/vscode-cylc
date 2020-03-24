@@ -162,6 +162,8 @@ graph=foo=>bar
 
 graph = foo => bar
 
+    graph = foo => bar
+
 graph = "foo => bar"
 
 graph = """

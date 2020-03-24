@@ -23,7 +23,7 @@
 						"patterns": [{
 							"include": "#parameterizations"
 						}]
-				},
+					},
 					"3": {"name": "punctuation.definition.tag.end.cylc"}
 				},
 				"comment": "@TODO convert to begin/end instead of match?"
@@ -49,12 +49,16 @@
 					]
 				},
 				{
-					"contentName": "meta.graph-string.unquoted.cylc",
-					"begin": "(graph)\\s*(=)[^\\S\\r\\n]*(?!\\s*\")",
-					"end": "[\\r\\n]",
+					"contentName": "meta.graph-string.quoted.triple.cylc",
+					"begin": "\\b(graph)[\\t ]*(=)[\\t ]*(\"{3})",
+					"end": "(\"{3})",
 					"beginCaptures": {
 						"1": {"name": "keyword.graph.cylc"},
-						"2": {"name": "keyword.operator.assignment.cylc"}
+						"2": {"name": "keyword.operator.assignment.cylc"},
+						"3": {"name": "string.quoted.triple.begin.cylc"}
+					},
+					"endCaptures": {
+						"1": {"name": "string.quoted.triple.end.cylc"}
 					},
 					"patterns": [
 						{"include": "#graphSyntax"}
@@ -62,7 +66,7 @@
 				},
 				{
 					"contentName": "meta.graph-string.quoted.double.cylc",
-					"begin": "(graph)\\s*(=)\\s*(\")(?!\")",
+					"begin": "\\b(graph)[\\t ]*(=)[\\t ]*(\")",
 					"end": "(\")",
 					"beginCaptures": {
 						"1": {"name": "keyword.graph.cylc"},
@@ -77,16 +81,12 @@
 					]
 				},
 				{
-					"contentName": "meta.graph-string.quoted.triple.cylc",
-					"begin": "(graph)\\s*(=)\\s*(\"\"\")",
-					"end": "(\"\"\")",
+					"contentName": "meta.graph-string.unquoted.cylc",
+					"begin": "\\b(graph)[\\t ]*(=)[\\t ]*(?!\\s*\")",
+					"end": "[\\r\\n]",
 					"beginCaptures": {
 						"1": {"name": "keyword.graph.cylc"},
-						"2": {"name": "keyword.operator.assignment.cylc"},
-						"3": {"name": "string.quoted.triple.begin.cylc"}
-					},
-					"endCaptures": {
-						"1": {"name": "string.quoted.triple.end.cylc"}
+						"2": {"name": "keyword.operator.assignment.cylc"}
 					},
 					"patterns": [
 						{"include": "#graphSyntax"}
@@ -107,8 +107,8 @@
 					"contentName": "meta.value.cylc",
 					"patterns": [
 						{"include": "#strings"}
-			]
-		},
+					]
+				},
 				{
 					"name": "meta.setting.quoted.double.cylc",
 					"begin": "\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*(?=\")",
@@ -118,7 +118,7 @@
 						"2": {"name": "keyword.operator.assignment.cylc"}
 					},
 					"contentName" : "meta.value.cylc",
-			"patterns": [
+					"patterns": [
 						{"include": "#strings"}
 					]
 				},
@@ -142,8 +142,8 @@
 			}
 		},
 		"keywords": {
-				"name": "keyword.control.cylc",
-				"match": "\\b(if|while|for|return)\\b"
+			"name": "keyword.control.cylc",
+			"match": "\\b(if|while|for|return)\\b"
 		},
 		"strings": {
 			"patterns": [
@@ -158,8 +158,8 @@
 						"1": {"name": "punctuation.definition.string.end.cylc"}
 					},
 					"patterns": [{
-					"name": "constant.character.escape.cylc",
-					"match": "\\\\."
+						"name": "constant.character.escape.cylc",
+						"match": "\\\\."
 					}]
 				},
 				{
@@ -176,7 +176,7 @@
 						"name": "constant.character.escape.cylc",
 						"match": "\\\\."
 					}],
-			"comment": "@TODO: begin quote without end quote on same line illegal?"
+					"comment": "@TODO: begin quote without end quote on same line illegal?"
 				}
 			]
 		},
@@ -212,7 +212,7 @@
 						"1": {"name": "variable.parameter.cylc"},
 						"2": {"name": "keyword.operator.assignment.cylc"},
 						"3": {"name": "variable.other.cylc"}
-				}
+					}
 				},
 				{
 					"match": "(\\w+)[\\t ]*([\\+-])[\\t ]*(\\d*)",
@@ -250,12 +250,18 @@
 					"match": "[\\|&]"
 				},
 				{
-					"name": "keyword.other.suicide.cylc",
-					"match": "!(?=\\S)"
+					"match": "(!)(\\S+)",
+					"captures": {
+						"1": {"name": "keyword.other.suicide.cylc"},
+						"2": {"name": "meta.variable.suicide.cylc"}
+					}
 				},
 				{
 					"name": "variable.other.xtrigger.cylc",
-					"match": "@\\S+"
+					"match": "(@)\\S+",
+					"captures": {
+						"1": {"name": "punctuation.definition.variable.cylc"}
+					}
 				},
 				{
 					"name": "constant.character.escape.continuation.cylc",
@@ -308,22 +314,22 @@
 					}
 				},
 				{
-				"comment": "Isodatetime intervals - complex Format - can this have seconds",
-				"name": "text",
-				"match": "\\[(\\d{4})-?([0-1]\\d)-?([0-3]\\d)?(T)?([0-2]\\d)?:?([0-5]\\d)?\\]",
-				"captures": {
-					"1": {"name": "constant.numeric"},
-					"2": {"name": "constant.numeric"},
-					"3": {"name": "constant.numeric"},
-					"4": {"name": "constant.numeric"},
-					"5": {"name": "constant.numeric"},
-					"6": {"name": "constant.numeric"},
-					"7": {"name": "constant.numeric"},
-					"8": {"name": "constant.numeric"},
-					"9": {"name": "constant.numeric"},
-					"10": {"name": "constant.numeric"}
+					"comment": "Isodatetime intervals - complex Format - can this have seconds",
+					"name": "text",
+					"match": "\\[(\\d{4})-?([0-1]\\d)-?([0-3]\\d)?(T)?([0-2]\\d)?:?([0-5]\\d)?\\]",
+					"captures": {
+						"1": {"name": "constant.numeric"},
+						"2": {"name": "constant.numeric"},
+						"3": {"name": "constant.numeric"},
+						"4": {"name": "constant.numeric"},
+						"5": {"name": "constant.numeric"},
+						"6": {"name": "constant.numeric"},
+						"7": {"name": "constant.numeric"},
+						"8": {"name": "constant.numeric"},
+						"9": {"name": "constant.numeric"},
+						"10": {"name": "constant.numeric"}
+					}
 				}
-			}
 			]
 		}
 	}
