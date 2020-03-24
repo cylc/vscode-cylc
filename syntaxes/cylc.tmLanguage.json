@@ -134,7 +134,7 @@
 			]
 		},
 		"includeFiles": {
-			"name": "keyword",
+			"name": "meta.include.cylc",
 			"match": "(%include)\\s?(.*)",
 			"captures": {
 				"1": {"name": "keyword.control.include.cylc"},
@@ -199,6 +199,19 @@
 			},
 			"patterns": [
 				{
+					"name": "meta.polling.cylc",
+					"match": "(\\S+)(::)(\\w+)((:)(\\w+))?",
+					"captures": {
+						"1": {"name": "entity.name.scope-resolution.suite.cylc"},
+						"2": {"name": "punctuation.definition.variable.cylc"},
+						"3": {"name": "meta.variable.cylc"},
+
+						"4": {"name": "meta.annotation.qualifier.cylc"},
+						"5": {"name": "punctuation.definition.annotation.cylc"},
+						"6": {"name": "variable.annotation.cylc"}
+					}
+				},
+				{
 					"match": "(\\w+)[\\t ]*(=)[\\t ]*(\\d*)",
 					"captures": {
 						"1": {"name": "variable.parameter.cylc"},
@@ -215,11 +228,10 @@
 					}
 				},
 				{
-					"match": "(\\w+)[\\t ]*([\\+-])[\\t ]*(\\d*)",
+					"match": "([\\+-])[\\t ]*(\\d*)",
 					"captures": {
-						"1": {"name": "variable.parameter.cylc"},
-						"2": {"name": "keyword.operator.arithmetic.cylc"},
-						"3": {"name": "constant.numeric.cylc"}
+						"1": {"name": "keyword.operator.arithmetic.cylc"},
+						"2": {"name": "constant.numeric.cylc"}
 					}
 				},
 				{
@@ -233,7 +245,6 @@
 			]
 		},
 		"graphSyntax": {
-			"name": "keyword",
 			"patterns": [
 				{
 					"include": "#comments"

@@ -81,6 +81,9 @@ R1 = """
     <other.suite::foo> => foo
     foo & <other.suite::task_bar> => baz
 
+    <other-suite::foo:fail> => bar
+    <other.suite::foo>:start => bar
+
     # SYNTAX: 2.5
     # @x should be highlighted
     @wall_clock => foo
