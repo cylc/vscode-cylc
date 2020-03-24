@@ -167,7 +167,7 @@ graph = foo => bar
 graph = "foo => bar"
 
 graph = """
-    foo => bar
+    foo<meow> => bar
 """
 
 # But not these:

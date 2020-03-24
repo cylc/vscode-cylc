@@ -20,9 +20,9 @@
 					"1": {"name": "punctuation.definition.tag.begin.cylc"},
 					"2": {
 						"name": "entity.name.tag.cylc",
-						"patterns": [{
-							"include": "#parameterizations"
-						}]
+						"patterns": [
+							{"include": "#parameterizations"}
+						]
 					},
 					"3": {"name": "punctuation.definition.tag.end.cylc"}
 				},
@@ -33,7 +33,7 @@
 			"comment": "Handle graph sections @TODO Make it parse graph separately",
 			"patterns": [
 				{
-					"contentName": "meta.graph-string.cylc",
+					"contentName": "meta.graph-syntax.cylc",
 					"begin": "(R1)\\s*(=)\\s*(\"\"\")",
 					"end": "(\"\"\")",
 					"beginCaptures": {
@@ -49,7 +49,7 @@
 					]
 				},
 				{
-					"contentName": "meta.graph-string.quoted.triple.cylc",
+					"contentName": "meta.graph-syntax.quoted.triple.cylc",
 					"begin": "\\b(graph)[\\t ]*(=)[\\t ]*(\"{3})",
 					"end": "(\"{3})",
 					"beginCaptures": {
@@ -65,7 +65,7 @@
 					]
 				},
 				{
-					"contentName": "meta.graph-string.quoted.double.cylc",
+					"contentName": "meta.graph-syntax.quoted.double.cylc",
 					"begin": "\\b(graph)[\\t ]*(=)[\\t ]*(\")",
 					"end": "(\")",
 					"beginCaptures": {
@@ -81,7 +81,7 @@
 					]
 				},
 				{
-					"contentName": "meta.graph-string.unquoted.cylc",
+					"contentName": "meta.graph-syntax.unquoted.cylc",
 					"begin": "\\b(graph)[\\t ]*(=)[\\t ]*(?!\\s*\")",
 					"end": "[\\r\\n]",
 					"beginCaptures": {
