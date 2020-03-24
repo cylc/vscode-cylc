@@ -103,6 +103,11 @@ R1 = """
     a<x=1> => a<x=2>
     a<x = 1> => a<x = 2>
 
+    # multiple parameters:
+    foo<x=bar, y = 2> => foo<baz,4>
+
+    # @TODO what about parametrised sections? e.g. [[foo<x>]]
+
     # SYNTAX: 2.9
     # qualifier should be highlighted, whole and nothing but
     foo:succeed => bar
