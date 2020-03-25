@@ -129,14 +129,17 @@ R1 = """
     foo[P1DT1M] => bar
     foo[PT1M] => bar
     foo[-P1Y1M1DT1H1M1S] => bar
+    foo[P1W] => bar
     foo[^] => bar
     # integer points:
     foo[123] => bar
     foo[-123] => bar
     # iso8601 points:
     foo[20000000T0000] => bar
-    foo[2000-01-01T00:00] => bar
+    foo[2000-01-01T00:00:00] => bar
+    foo[2000-01-01T00:00Z] => bar
     foo[2000-01-01T00] => bar
+    foo[2000-01-01T00+05] => bar
     foo[2000-01-01] => bar
     foo[2000-00] => bar
     foo[2000] => bar
@@ -154,6 +157,8 @@ R1 = """
     foo[PT1M1H] => bar  # incorrect component ordering
     foo[01T00] => bar  # truncated date
     foo[T00] => bar  # truncated date
+    # this should not highlight the same:
+    foo[P] | foo[PT] => bar
 """
 
 # graph strings should not highlight here, this should display as a setting:

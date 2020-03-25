@@ -244,6 +244,82 @@
 				}
 			]
 		},
+		"isodatetime": {
+			"patterns": [
+				{
+					"name": "meta.isodatetime.cylc",
+					"match": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?)?\\b",
+					"captures": {
+						"1": {"name": "constant.numeric.year.cylc"},
+
+						"2": {"name": "punctuation.separator.date.cylc"},
+						"3": {"name": "constant.numeric.month.cylc"},
+						
+						"4": {"name": "punctuation.separator.date.cylc"},
+						"5": {"name": "constant.numeric.day.cylc"},
+
+						"6": {"name": "keyword.other.unit.designator.time.cylc"},
+
+						"7": {"name": "constant.numeric.hour.cylc"},
+
+						"8": {"name": "punctuation.separator.time.cylc"},
+						"9": {"name": "constant.numeric.min.cylc"},
+						
+						"10": {"name": "punctuation.separator.time.cylc"},
+						"11": {"name": "constant.numeric.sec.cylc"}
+					}
+				}
+			]
+		},
+		"intervals": {
+			"patterns": [
+				{
+					"name": "meta.interval.integer.cylc",
+					"comment": "e.g. P1 but not P1D",
+					"match": "\\b((P)\\d+)\\b",
+					"captures": {
+						"1": {"name": "constant.numeric.cylc"},
+						"2": {"name": "keyword.other.unit.designator.period.cylc"}
+					}
+				},
+				{
+					"name": "invalid.illegal.interval.cylc",
+					"comment": "e.g. P1H without T separator",
+					"match": "\\bP\\d+[HS]"
+				},
+				{
+					"name": "meta.interval.iso.cylc",
+					"comment": "e.g. P1W",
+					"match": "\\b((P)\\d+(W))\\b",
+					"captures": {
+						"1": {"name": "constant.numeric.cylc"},
+						"2": {"name": "keyword.other.unit.designator.period.cylc"},
+						"3": {"name": "keyword.other.unit.designator.week.cylc"}
+					}
+				},
+				{
+					"name": "meta.interval.iso.cylc",
+					"comment": "e.g. P1Y1M1DT1H1M1S, P1D, PT1M. Sorry it's so horrible. (P(?=(?:\\d|T\\d))) captures P only if followed by a digit or T. (?:\\d+(Y))? matches e.g. 1Y zero or more times, etc. (?:(T)(etc))? matches e.g. T1H1M zero or more times.",
+
+					"match": "\\b((P(?=(?:\\d|T\\d)))(?:\\d+(Y))?(?:\\d+(M))?(?:\\d+(D))?(?:(T)(?:\\d+(H))?(?:\\d+(M))?(?:\\d+(S))?)?)\\b",
+					"captures": {
+						"1": {"name": "constant.numeric.cylc"},
+
+						"2": {"name": "keyword.other.unit.designator.period.cylc"},
+
+						"3": {"name": "keyword.other.unit.designator.year.cylc"},
+						"4": {"name": "keyword.other.unit.designator.month.cylc"},
+						"5": {"name": "keyword.other.unit.designator.day.cylc"},
+
+						"6": {"name": "keyword.other.unit.designator.time.cylc"},
+
+						"7": {"name": "keyword.other.unit.designator.hour.cylc"},
+						"8": {"name": "keyword.other.unit.designator.min.cylc"},
+						"9": {"name": "keyword.other.unit.designator.sec.cylc"}
+					}
+				}
+			]
+		},
 		"graphSyntax": {
 			"patterns": [
 				{
@@ -302,21 +378,57 @@
 					}
 				},
 				{
+					"name": "meta.annotation.inter-cycle.cylc",
+					"comment": "e.g. foo[-P1]",
+					"begin": "(?<=\\S)(\\[)",
+					"end": "(\\])",
+					"beginCaptures": {
+						"1": {"name": "punctuation.section.brackets.begin.cylc"}
+					},
+					"endCaptures": {
+						"1": {"name": "punctuation.section.brackets.end.cylc"}
+					},
+					"patterns": [
+						{
+							"include": "#isodatetime"
+						},
+						{
+							"include": "#intervals"
+						},
+						{
+							"comment": "If 1st char is ^ (allowing for spaces)",
+							"match": "\\G[\\t ]*(\\^)",
+							"captures": {
+								"1": {"name": "constant.language.initial-point.cylc"}
+							}
+						},
+						{
+							"name": "keyword.operator.arithmetic.cylc",
+							"match": "[\\+\\-]"
+						},
+						{
+							"name": "constant.numeric.integer-point.cylc",
+							"comment": "Integer as long as it's not adjacent to a letter",
+							"match": "\\b\\d+\\b"
+						}
+					]
+				},
+				{
 					"comment": "Integer intervals",
 					"name": "text",
-					"match": "\\[([-+]{0,1}P\\d+)\\]",
+					"match": "meow\\[([-+]{0,1}P\\d+)\\]",
 					"captures": {"1": {"name": "constant.numeric"}}
 				},
 				{
 					"comment": "Isodatetime intervals - weeks",
 					"name": "text",
-					"match": "\\[(\\^?[-+]?P\\d{1,2}W)\\]",
+					"match": "meow\\[(\\^?[-+]?P\\d{1,2}W)\\]",
 					"captures": {"1": {"name": "constant.numeric"}}
 				},
 				{
 					"comment": "Isodatetime intervals - Simple Format",
 					"name": "text",
-					"match": "\\[([+-]?)(P)(\\d+Y)?(\\d+M)?(\\d+D)?(T?)(\\d+H)?(\\d+M)?(\\d+S)?",
+					"match": "meow\\[([+-]?)(P)(\\d+Y)?(\\d+M)?(\\d+D)?(T?)(\\d+H)?(\\d+M)?(\\d+S)?",
 					"captures": {
 						"1": {"name": "constant.numeric"},
 						"2": {"name": "constant.numeric"},
@@ -333,7 +445,7 @@
 				{
 					"comment": "Integer points",
 					"name": "text",
-					"match": "\\[([+-]?\\d*)",
+					"match": "meow\\[([+-]?\\d*)",
 					"captures": {
 						"1": {"name": "constant.numeric"}
 					}
@@ -341,7 +453,7 @@
 				{
 					"comment": "Isodatetime intervals - complex Format - can this have seconds",
 					"name": "text",
-					"match": "\\[(\\d{4})-?([0-1]\\d)-?([0-3]\\d)?(T)?([0-2]\\d)?:?([0-5]\\d)?\\]",
+					"match": "meow\\[(\\d{4})-?([0-1]\\d)-?([0-3]\\d)?(T)?([0-2]\\d)?:?([0-5]\\d)?\\]",
 					"captures": {
 						"1": {"name": "constant.numeric"},
 						"2": {"name": "constant.numeric"},
