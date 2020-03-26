@@ -230,8 +230,8 @@ class IsoTimeLong {
     constructor() {
         const timeZone = new IsoTimeZone();
         this.pattern = {
-            name: 'meta.isotime.cylc',
-            match: `${this.regex = `(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?${timeZone.regex}?`}\\b`,
+            name: 'meta.isotime.long.cylc',
+            match: `\\b${this.regex = `(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?${timeZone.regex}?`}\\b`,
             captures: {
                 1: {name: 'keyword.other.unit.designator.time.cylc'},
                 2: {name: 'constant.numeric.hour.cylc'},
@@ -239,11 +239,26 @@ class IsoTimeLong {
                 4: {name: 'constant.numeric.min.cylc'},
                 5: {name: 'punctuation.separator.time.cylc'},
                 6: {name: 'constant.numeric.sec.cylc'},
-                
-                ...incrementKeys(timeZone.pattern.captures, 6)
+                ...incrementKeys(timeZone.pattern.captures, 6),
             }
         }
     };
+}
+class IsoTimeShort {
+    constructor() {
+        const timeZone = new IsoTimeZone();
+        this.pattern = {
+            name: 'meta.isotime.short.cylc',
+            match: `\\b${this.regex = `(T)(\\d{2})(\\d{2})?(\\d{2})?${timeZone.regex}?`}\\b`,
+            captures: {
+                1: {name: 'keyword.other.unit.designator.time.cylc'},
+                2: {name: 'constant.numeric.hour.cylc'},
+                3: {name: 'constant.numeric.min.cylc'},
+                4: {name: 'constant.numeric.sec.cylc'},
+                ...incrementKeys(timeZone.pattern.captures, 4),
+            }
+        };
+    }
 }
 
 class IsoDateTimeLong {
@@ -258,13 +273,26 @@ class IsoDateTimeLong {
                 3: {name: 'constant.numeric.month.cylc'},
                 4: {name: 'punctuation.separator.date.cylc'},
                 5: {name: 'constant.numeric.day.cylc'},
-
-                ...incrementKeys(time.pattern.captures, 5)
+                ...incrementKeys(time.pattern.captures, 5),
             }
         };
     }
 }
-
+class IsoDateTimeShort {
+    constructor() {
+        const time = new IsoTimeShort();
+        this.pattern = {
+            name: 'meta.isodatetime.short.cylc',
+            match: `\\b${this.regex = `(\\d{4})(\\d{2})?(\\d{2})?(?:${time.regex})?`}\\b`,
+            captures: {
+                1: {name: 'constant.numeric.year.cylc'},
+                2: {name: 'constant.numeric.month.cylc'},
+                3: {name: 'constant.numeric.day.cylc'},
+                ...incrementKeys(time.pattern.captures, 3),
+            }
+        }
+    }
+}
 
 
 
@@ -427,37 +455,10 @@ exports.tmLanguage = {
             }
             ]
         },
-        isotime: {
-            patterns: [
-            {
-                name: 'meta.isotime.cylc',
-                match: '(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?',
-                captures: {
-                '1': {
-                    name: 'keyword.other.unit.designator.time.cylc'
-                },
-                '2': {
-                    name: 'constant.numeric.hour.cylc'
-                },
-                '3': {
-                    name: 'punctuation.separator.time.cylc'
-                },
-                '4': {
-                    name: 'constant.numeric.min.cylc'
-                },
-                '5': {
-                    name: 'punctuation.separator.time.cylc'
-                },
-                '6': {
-                    name: 'constant.numeric.sec.cylc'
-                }
-                }
-            }
-            ]
-        },
-        isodate: {
+        isodatetimes: {
             patterns: [
                 new IsoDateTimeLong().pattern,
+                new IsoDateTimeShort().pattern,
             ]
         },
         intervals: {
@@ -622,7 +623,7 @@ exports.tmLanguage = {
                 },
                 patterns: [
                 {
-                    include: '#isodate'
+                    include: '#isodatetimes'
                 },
                 {
                     include: '#intervals'
