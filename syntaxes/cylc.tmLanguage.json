@@ -210,16 +210,20 @@
             ]
         },
         "includeFiles": {
-            "name": "meta.include.cylc",
-            "match": "(%include)\\s?(.*)",
-            "captures": {
-                "1": {
-                    "name": "keyword.control.include.cylc"
-                },
-                "2": {
-                    "name": "string.cylc"
+            "patterns": [
+                {
+                    "name": "meta.include.cylc",
+                    "match": "(%include)\\s?(.*)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.include.cylc"
+                        },
+                        "2": {
+                            "name": "string.cylc"
+                        }
+                    }
                 }
-            }
+            ]
         },
         "keywords": {
             "name": "keyword.control.cylc",
@@ -267,8 +271,7 @@
                             "name": "constant.character.escape.cylc",
                             "match": "\\\\."
                         }
-                    ],
-                    "comment": "@TODO: begin quote without end quote on same line illegal?"
+                    ]
                 }
             ]
         },
@@ -400,10 +403,9 @@
         "isodate": {
             "patterns": [
                 {
-                    "name": "meta.isodate.cylc",
-                    "begin": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?",
-                    "end": "(?!=T)",
-                    "beginCaptures": {
+                    "name": "meta.isodatetime.long.cylc",
+                    "match": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?((Z)|(?:([\\+\\-])\\d{2}))?)?\\b",
+                    "captures": {
                         "1": {
                             "name": "constant.numeric.year.cylc"
                         },
@@ -418,13 +420,35 @@
                         },
                         "5": {
                             "name": "constant.numeric.day.cylc"
+                        },
+                        "6": {
+                            "name": "keyword.other.unit.designator.time.cylc"
+                        },
+                        "7": {
+                            "name": "constant.numeric.hour.cylc"
+                        },
+                        "8": {
+                            "name": "punctuation.separator.time.cylc"
+                        },
+                        "9": {
+                            "name": "constant.numeric.min.cylc"
+                        },
+                        "10": {
+                            "name": "punctuation.separator.time.cylc"
+                        },
+                        "11": {
+                            "name": "constant.numeric.sec.cylc"
+                        },
+                        "12": {
+                            "name": "constant.numeric.isotimezone.cylc"
+                        },
+                        "13": {
+                            "name": "keyword.other.unit.utc.cylc"
+                        },
+                        "14": {
+                            "name": "keyword.operator.arithmetic.cylc"
                         }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#isotime"
-                        }
-                    ]
+                    }
                 }
             ]
         },

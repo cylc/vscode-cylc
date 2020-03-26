@@ -1,10 +1,20 @@
-const R = {};
+function incrementKeys(obj, incr) {
+    // For an Object obj with indexed keys (i.e. the keys are '1', '2', '3' etc), add a number to the keys and return new Object
+    const out = {};
+    for (let key in obj) {
+        let i = parseInt(key);
+        out[i + incr] = obj[key];
+    }
+    return out;
+}
+
+
 
 class GraphSectionQuotedTriple {
     constructor() {
         this.pattern = {
             contentName: `meta.graph-syntax.quoted.triple.cylc`,
-            begin: `${R.graphKeywordAssign = '\\b(graph)[\\t ]*(=)[\\t ]*'}("{3})`,
+            begin: `${this.graph_equals = '\\b(graph)[\\t ]*(=)[\\t ]*'}("{3})`,
             end: `("{3})`,
             beginCaptures: {
                 '1': {name: 'keyword.graph.cylc'},
@@ -23,21 +33,37 @@ class GraphSectionQuotedTriple {
 class GraphSectionQuotedDouble extends GraphSectionQuotedTriple {
     constructor() {
         super();
-        this.pattern.contentName = `meta.graph-syntax.quoted.double.cylc`;
-        this.pattern.begin = `${R.graphKeywordAssign}(")`;
-        this.pattern.end = `(["\\n\\r])`;
-        this.pattern.beginCaptures['3'].name = `string.quoted.double.begin.cylc`;
-        this.pattern.endCaptures['1'].name = `string.quoted.double.end.cylc`;
+        const inherit = this.pattern;
+        this.pattern = {
+            contentName: `meta.graph-syntax.quoted.double.cylc`,
+            begin: `${this.graph_equals}(")`,
+            end: `(["\\n\\r])`,
+            beginCaptures: {
+                '1': inherit.beginCaptures[1],
+                '2': inherit.beginCaptures[2],
+                '3': {name: `string.quoted.double.begin.cylc`}
+            },
+            endCaptures: {
+                '1': {name: `string.quoted.double.end.cylc`}
+            },
+            patterns: inherit.patterns
+        };
     }
 }
 class GraphSectionUnquoted extends GraphSectionQuotedTriple {
     constructor() {
         super();
-        this.pattern.contentName = `meta.graph-syntax.unquoted.cylc`;
-        this.pattern.begin = `${R.graphKeywordAssign}(?!")`;
-        this.pattern.end = `[\\n\\r]`;
-        delete this.pattern.beginCaptures['3'];
-        delete this.pattern.endCaptures;
+        const inherit = this.pattern;
+        this.pattern = {
+            contentName: `meta.graph-syntax.unquoted.cylc`,
+            begin: `${this.graph_equals}(?!")`,
+            end: `[\\n\\r]`,
+            beginCaptures: {
+                '1': inherit.beginCaptures[1],
+                '2': inherit.beginCaptures[2]
+            },
+            patterns: inherit.patterns
+        }
     }
 }
 
@@ -46,7 +72,7 @@ class SettingQuotedTriple {
     constructor() {
         this.pattern = {
             name: 'meta.setting.quoted.triple.cylc',
-            begin: `${R.keyAssign = '\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*'}(?="{3})`,
+            begin: `${this.key_equals = '\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*'}(?="{3})`,
             end: '(?<="{3})',
             beginCaptures: {
                 '1': {name: 'variable.other.key.cylc'},
@@ -62,20 +88,30 @@ class SettingQuotedTriple {
 class SettingQuotedDouble extends SettingQuotedTriple {
     constructor() {
         super();
-        this.pattern.name = 'meta.setting.quoted.double.cylc';
-        this.pattern.begin = `${R.keyAssign}(?=")`;
-        this.pattern.end = '(?<=")';
+        const inherit = this.pattern;
+        this.pattern = {
+            name: 'meta.setting.quoted.double.cylc',
+            begin: `${this.key_equals}(?=")`,
+            end: '(?<=")',
+            beginCaptures: inherit.beginCaptures,
+            contentName: inherit.contentName,
+            patterns: inherit.patterns
+        };
     }
 }
 class SettingUnquoted extends SettingQuotedTriple {
     constructor() {
         super();
+        const inherit = this.pattern;
         this.pattern = {
             name: 'meta.setting.unquoted.cylc',
-            match: `${R.keyAssign}([^#\\n\\r]*)`,
-            captures: this.pattern.beginCaptures
+            match: `${this.key_equals}([^#\\n\\r]*)`,
+            captures: {
+                '1': inherit.beginCaptures[1],
+                '2': inherit.beginCaptures[2],
+                '3': {name: 'string.unquoted.value.cylc'}
+            }
         };
-        this.pattern.captures['3'] = {name: 'string.unquoted.value.cylc'};
     }
 }
 
@@ -93,6 +129,97 @@ class IncludeFile {
     }
 }
 
+
+class StringQuotedTriple {
+    constructor() {
+        this.pattern = {
+            name: `string.quoted.triple.cylc`,
+            begin: `("{3})`,
+            end: `("{3})`,
+            beginCaptures: {
+                '1': {name: 'punctuation.definition.string.begin.cylc'}
+            },
+            endCaptures: {
+                '1': {name: 'punctuation.definition.string.end.cylc'}
+            },
+            patterns: [
+                {
+                    name: 'constant.character.escape.cylc',
+                    match: '\\\\.'
+                }
+            ]
+        };
+    }
+}
+class StringQuotedDouble extends StringQuotedTriple {
+    constructor() {
+        super();
+        const inherit = this.pattern;
+        this.pattern = {
+            name: `string.quoted.double.cylc`,
+            begin: `(")`,
+            end: `([\"\\n\\r])`,
+            beginCaptures: inherit.beginCaptures,
+            endCaptures: inherit.endCaptures,
+            patterns: inherit.patterns
+        };
+    }
+}
+
+
+class IsoTimeZone {
+    constructor() {
+        this.pattern = {
+            name: 'meta.isotimezone.cylc',
+            match: `${this.regex = '((Z)|(?:([\\+\\-])\\d{2}))'}\\b`,
+            captures: {
+                1: {name: 'constant.numeric.isotimezone.cylc'},
+                2: {name: 'keyword.other.unit.utc.cylc'},
+                3: {name: 'keyword.operator.arithmetic.cylc'},
+            }
+        }
+    }
+}
+
+
+class IsoTimeLong {
+    constructor() {
+        const timeZone = new IsoTimeZone();
+        this.pattern = {
+            name: 'meta.isotime.cylc',
+            match: `${this.regex = `(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?${timeZone.regex}?`}\\b`,
+            captures: {
+                1: {name: 'keyword.other.unit.designator.time.cylc'},
+                2: {name: 'constant.numeric.hour.cylc'},
+                3: {name: 'punctuation.separator.time.cylc'},
+                4: {name: 'constant.numeric.min.cylc'},
+                5: {name: 'punctuation.separator.time.cylc'},
+                6: {name: 'constant.numeric.sec.cylc'},
+                
+                ...incrementKeys(timeZone.pattern.captures, 6)
+            }
+        }
+    };
+}
+
+class IsoDateTimeLong {
+    constructor() {
+        const time = new IsoTimeLong();
+        this.pattern = {
+            name: 'meta.isodatetime.long.cylc',
+            match: `\\b${this.regex = `(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:${time.regex})?`}\\b`,
+            captures: {
+                1: {name: 'constant.numeric.year.cylc'},
+                2: {name: 'punctuation.separator.date.cylc'},
+                3: {name: 'constant.numeric.month.cylc'},
+                4: {name: 'punctuation.separator.date.cylc'},
+                5: {name: 'constant.numeric.day.cylc'},
+
+                ...incrementKeys(time.pattern.captures, 5)
+            }
+        };
+    }
+}
 
 exports.tmLanguage = {
     scopeName: 'source.cylc',
@@ -158,56 +285,19 @@ exports.tmLanguage = {
                 new SettingUnquoted().pattern
             ]
         },
-        includeFiles: new IncludeFile().pattern,
+        includeFiles: {
+            patterns: [
+                new IncludeFile().pattern
+            ]
+        },
         keywords: {
             name: 'keyword.control.cylc',
             match: '\\b(if|for|while|return)\\b'
         },
         strings: {
             patterns: [
-            {
-                name: 'string.quoted.triple.cylc',
-                begin: '("{3})',
-                end: '("{3})',
-                beginCaptures: {
-                '1': {
-                    name: 'punctuation.definition.string.begin.cylc'
-                }
-                },
-                endCaptures: {
-                '1': {
-                    name: 'punctuation.definition.string.end.cylc'
-                }
-                },
-                patterns: [
-                {
-                    name: 'constant.character.escape.cylc',
-                    match: '\\\\.'
-                }
-                ]
-            },
-            {
-                name: 'string.quoted.double.cylc',
-                begin: '(")',
-                end: '(["\\n\\r])',
-                beginCaptures: {
-                '1': {
-                    name: 'punctuation.definition.string.begin.cylc'
-                }
-                },
-                endCaptures: {
-                '1': {
-                    name: 'punctuation.definition.string.end.cylc'
-                }
-                },
-                patterns: [
-                {
-                    name: 'constant.character.escape.cylc',
-                    match: '\\\\.'
-                }
-                ],
-                comment: '@TODO: begin quote without end quote on same line illegal?'
-            }
+                new StringQuotedTriple().pattern,
+                new StringQuotedDouble().pattern
             ]
         },
         comments: {
@@ -337,33 +427,7 @@ exports.tmLanguage = {
         },
         isodate: {
             patterns: [
-            {
-                name: 'meta.isodate.cylc',
-                begin: '\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?',
-                end: '(?!=T)',
-                beginCaptures: {
-                '1': {
-                    name: 'constant.numeric.year.cylc'
-                },
-                '2': {
-                    name: 'punctuation.separator.date.cylc'
-                },
-                '3': {
-                    name: 'constant.numeric.month.cylc'
-                },
-                '4': {
-                    name: 'punctuation.separator.date.cylc'
-                },
-                '5': {
-                    name: 'constant.numeric.day.cylc'
-                }
-                },
-                patterns: [
-                {
-                    include: '#isotime'
-                }
-                ]
-            }
+                new IsoDateTimeLong().pattern,
             ]
         },
         intervals: {
