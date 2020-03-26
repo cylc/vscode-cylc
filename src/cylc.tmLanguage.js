@@ -10,19 +10,40 @@ function incrementKeys(obj, incr) {
 
 
 
+class Header {
+    constructor() {
+        this.pattern = {
+            name: 'meta.section.cylc',
+            match: '(\\[+)([^\\[\\]\\n\\r]+?)(\\]+)',
+            captures: {
+                1: {name: 'punctuation.definition.tag.begin.cylc'},
+                2: {
+                    name: 'entity.name.tag.cylc',
+                    patterns: [
+                        {include: '#parameterizations'}
+                    ]
+                },
+                3: {name: 'punctuation.definition.tag.end.cylc'}
+            },
+            comment: '@TODO handle `+`, `-`, `/` chars; convert to begin/end instead of match?'
+        };
+    }
+}
+
+
 class GraphSectionQuotedTriple {
     constructor() {
         this.pattern = {
             contentName: `meta.graph-syntax.quoted.triple.cylc`,
-            begin: `${this.graph_equals = '\\b(graph)[\\t ]*(=)[\\t ]*'}("{3})`,
+            begin: `${this.regex_graph_equals = '\\b(graph)[\\t ]*(=)[\\t ]*'}("{3})`,
             end: `("{3})`,
             beginCaptures: {
-                '1': {name: 'keyword.graph.cylc'},
-                '2': {name: 'keyword.operator.assignment.cylc'},
-                '3': {name: `string.quoted.triple.begin.cylc`}
+                1: {name: 'keyword.graph.cylc'},
+                2: {name: 'keyword.operator.assignment.cylc'},
+                3: {name: `string.quoted.triple.begin.cylc`}
             },
             endCaptures: {
-                '1': {name: `string.quoted.triple.end.cylc`}
+                1: {name: `string.quoted.triple.end.cylc`}
             },
             patterns: [
                 {include: '#graphSyntax'}
@@ -36,15 +57,15 @@ class GraphSectionQuotedDouble extends GraphSectionQuotedTriple {
         const inherit = this.pattern;
         this.pattern = {
             contentName: `meta.graph-syntax.quoted.double.cylc`,
-            begin: `${this.graph_equals}(")`,
+            begin: `${this.regex_graph_equals}(")`,
             end: `(["\\n\\r])`,
             beginCaptures: {
-                '1': inherit.beginCaptures[1],
-                '2': inherit.beginCaptures[2],
-                '3': {name: `string.quoted.double.begin.cylc`}
+                1: inherit.beginCaptures[1],
+                2: inherit.beginCaptures[2],
+                3: {name: `string.quoted.double.begin.cylc`}
             },
             endCaptures: {
-                '1': {name: `string.quoted.double.end.cylc`}
+                1: {name: `string.quoted.double.end.cylc`}
             },
             patterns: inherit.patterns
         };
@@ -56,11 +77,11 @@ class GraphSectionUnquoted extends GraphSectionQuotedTriple {
         const inherit = this.pattern;
         this.pattern = {
             contentName: `meta.graph-syntax.unquoted.cylc`,
-            begin: `${this.graph_equals}(?!")`,
+            begin: `${this.regex_graph_equals}(?!")`,
             end: `[\\n\\r]`,
             beginCaptures: {
-                '1': inherit.beginCaptures[1],
-                '2': inherit.beginCaptures[2]
+                1: inherit.beginCaptures[1],
+                2: inherit.beginCaptures[2]
             },
             patterns: inherit.patterns
         }
@@ -72,11 +93,11 @@ class SettingQuotedTriple {
     constructor() {
         this.pattern = {
             name: 'meta.setting.quoted.triple.cylc',
-            begin: `${this.key_equals = '\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*'}(?="{3})`,
+            begin: `${this.regex_key_equals = '\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*'}(?="{3})`,
             end: '(?<="{3})',
             beginCaptures: {
-                '1': {name: 'variable.other.key.cylc'},
-                '2': {name: 'keyword.operator.assignment.cylc'}
+                1: {name: 'variable.other.key.cylc'},
+                2: {name: 'keyword.operator.assignment.cylc'}
             },
             contentName: 'meta.value.cylc',
             patterns: [
@@ -91,7 +112,7 @@ class SettingQuotedDouble extends SettingQuotedTriple {
         const inherit = this.pattern;
         this.pattern = {
             name: 'meta.setting.quoted.double.cylc',
-            begin: `${this.key_equals}(?=")`,
+            begin: `${this.regex_key_equals}(?=")`,
             end: '(?<=")',
             beginCaptures: inherit.beginCaptures,
             contentName: inherit.contentName,
@@ -105,11 +126,11 @@ class SettingUnquoted extends SettingQuotedTriple {
         const inherit = this.pattern;
         this.pattern = {
             name: 'meta.setting.unquoted.cylc',
-            match: `${this.key_equals}([^#\\n\\r]*)`,
+            match: `${this.regex_key_equals}([^#\\n\\r]*)`,
             captures: {
-                '1': inherit.beginCaptures[1],
-                '2': inherit.beginCaptures[2],
-                '3': {name: 'string.unquoted.value.cylc'}
+                1: inherit.beginCaptures[1],
+                2: inherit.beginCaptures[2],
+                3: {name: 'string.unquoted.value.cylc'}
             }
         };
     }
@@ -122,8 +143,31 @@ class IncludeFile {
             name: 'meta.include.cylc',
             match: '(%include)\\s?(.*)',
             captures: {
-                '1': {name: 'keyword.control.include.cylc'},
-                '2': {name: 'string.cylc'}
+                1: {name: 'keyword.control.include.cylc'},
+                2: {name: 'string.cylc'}
+            }
+        };
+    }
+}
+
+
+class Keyword {
+    constructor() {
+        this.pattern = {
+            name: 'keyword.control.cylc',
+            match: '\\b(if|for|while|return)\\b'
+        };
+    }
+}
+
+
+class LineComment {
+    constructor() {
+        this.pattern = {
+            name: 'comment.line.cylc',
+            match: '(#).*',
+            captures: {
+                1: {name: 'punctuation.definition.comment.cylc'}
             }
         };
     }
@@ -137,10 +181,10 @@ class StringQuotedTriple {
             begin: `("{3})`,
             end: `("{3})`,
             beginCaptures: {
-                '1': {name: 'punctuation.definition.string.begin.cylc'}
+                1: {name: 'punctuation.definition.string.begin.cylc'}
             },
             endCaptures: {
-                '1': {name: 'punctuation.definition.string.end.cylc'}
+                1: {name: 'punctuation.definition.string.end.cylc'}
             },
             patterns: [
                 {
@@ -221,12 +265,15 @@ class IsoDateTimeLong {
     }
 }
 
+
+
+
 exports.tmLanguage = {
     scopeName: 'source.cylc',
     $schema: 'https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json',
     name: 'cylc',
     patterns: [
-        {include: '#header'},
+        {include: '#headers'},
         {include: '#graphSections'},
         {include: '#settings'},
         {include: '#includeFiles'},
@@ -235,23 +282,9 @@ exports.tmLanguage = {
         {include: '#comments'}
     ],
     repository: {
-        header: {
+        headers: {
             patterns: [
-                {
-                    name: 'meta.section.cylc',
-                    match: '(\\[+)([^\\[\\]\\n\\r]+?)(\\]+)',
-                    captures: {
-                        '1': {name: 'punctuation.definition.tag.begin.cylc'},
-                        '2': {
-                            name: 'entity.name.tag.cylc',
-                            patterns: [
-                                {include: '#parameterizations'}
-                            ]
-                        },
-                        '3': {name: 'punctuation.definition.tag.end.cylc'}
-                    },
-                    comment: '@TODO handle `+`, `-`, `/` chars; convert to begin/end instead of match?'
-                }
+                new Header().pattern,
             ]
         },
         graphSections: {
@@ -275,39 +308,36 @@ exports.tmLanguage = {
                 },
                 new GraphSectionQuotedTriple().pattern,
                 new GraphSectionQuotedDouble().pattern,
-                new GraphSectionUnquoted().pattern
+                new GraphSectionUnquoted().pattern,
             ]
         },
         settings: {
             patterns: [
                 new SettingQuotedTriple().pattern,
                 new SettingQuotedDouble().pattern,
-                new SettingUnquoted().pattern
+                new SettingUnquoted().pattern,
             ]
         },
         includeFiles: {
             patterns: [
-                new IncludeFile().pattern
+                new IncludeFile().pattern,
             ]
         },
         keywords: {
-            name: 'keyword.control.cylc',
-            match: '\\b(if|for|while|return)\\b'
+            patterns: [
+                new Keyword().pattern,
+            ]
         },
         strings: {
             patterns: [
                 new StringQuotedTriple().pattern,
-                new StringQuotedDouble().pattern
+                new StringQuotedDouble().pattern,
             ]
         },
         comments: {
-            name: 'comment.line.cylc',
-            match: '(#).*',
-            captures: {
-            '1': {
-                name: 'punctuation.definition.comment.cylc'
-            }
-            }
+           patterns: [
+               new LineComment().pattern,
+           ]
         },
         parameterizations: {
             name: 'meta.annotation.parameterization.cylc',

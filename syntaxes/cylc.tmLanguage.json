@@ -4,7 +4,7 @@
     "name": "cylc",
     "patterns": [
         {
-            "include": "#header"
+            "include": "#headers"
         },
         {
             "include": "#graphSections"
@@ -26,7 +26,7 @@
         }
     ],
     "repository": {
-        "header": {
+        "headers": {
             "patterns": [
                 {
                     "name": "meta.section.cylc",
@@ -226,8 +226,12 @@
             ]
         },
         "keywords": {
-            "name": "keyword.control.cylc",
-            "match": "\\b(if|for|while|return)\\b"
+            "patterns": [
+                {
+                    "name": "keyword.control.cylc",
+                    "match": "\\b(if|for|while|return)\\b"
+                }
+            ]
         },
         "strings": {
             "patterns": [
@@ -276,13 +280,17 @@
             ]
         },
         "comments": {
-            "name": "comment.line.cylc",
-            "match": "(#).*",
-            "captures": {
-                "1": {
-                    "name": "punctuation.definition.comment.cylc"
+            "patterns": [
+                {
+                    "name": "comment.line.cylc",
+                    "match": "(#).*",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.comment.cylc"
+                        }
+                    }
                 }
-            }
+            ]
         },
         "parameterizations": {
             "name": "meta.annotation.parameterization.cylc",
