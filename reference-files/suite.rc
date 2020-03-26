@@ -36,6 +36,8 @@ foo = "
 bar
 "
 
+"" # reset erroneous quotes above
+
 # SYNTAX: 1.4
 # highlighting should be consistent with the following examples
 %include bar
