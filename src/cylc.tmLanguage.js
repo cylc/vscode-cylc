@@ -7,6 +7,9 @@ function incrementKeys(obj, incr) {
     }
     return out;
 }
+function getLength(obj) {
+    return Object.keys(obj).length;
+}
 
 
 
@@ -174,6 +177,68 @@ class LineComment {
 }
 
 
+class Parameterization {
+    constructor() {
+        this.pattern = {
+            name: 'meta.annotation.parameterization.cylc',
+            begin: '(<)',
+            end: '(>)',
+            beginCaptures: {
+                1: {name: 'punctuation.definition.annotation.begin.cylc'}
+            },
+            endCaptures: {
+                1: {name: 'punctuation.definition.annotation.end.cylc'}
+            },
+            patterns: [
+                {
+                    name: 'meta.polling.cylc',
+                    match: '(\\S+)(::)(\\w+)((:)(\\w+))?',
+                    captures: {
+                        1: {name: 'entity.name.namespace.suite.cylc'},
+                        2: {name: 'punctuation.accessor.cylc'},
+                        3: {name: 'meta.variable.cylc'},
+                        4: {name: 'meta.annotation.qualifier.cylc'},
+                        5: {name: 'punctuation.definition.annotation.cylc'},
+                        6: {name: 'variable.annotation.cylc'},
+                    }
+                },
+                {
+                    match: '(\\w+)[\\t ]*(=)[\\t ]*(\\d*)',
+                    captures: {
+                        1: {name: 'variable.parameter.cylc'},
+                        2: {name: 'keyword.operator.assignment.cylc'},
+                        3: {name: 'constant.numeric.cylc'},
+                    }
+                },
+                {
+                    match: '(\\w+)[\\t ]*(=)[\\t ]*(\\w*)',
+                    captures: {
+                        1: {name: 'variable.parameter.cylc'},
+                        2: {name: 'keyword.operator.assignment.cylc'},
+                        3: {name: 'variable.other.cylc'},
+                    }
+                },
+                {
+                    match: '([\\+\\-])[\\t ]*(\\d*)',
+                    captures: {
+                        '1': {name: 'keyword.operator.arithmetic.cylc'},
+                        '2': {name: 'constant.numeric.cylc'}
+                    }
+                },
+                {
+                    name: 'variable.parameter.cylc',
+                    match: '\\w+'
+                },
+                {
+                    name: 'punctuation.separator.parameter.cylc',
+                    match: ','
+                }
+            ]
+        };
+    }
+}
+
+
 class StringQuotedTriple {
     constructor() {
         this.pattern = {
@@ -280,19 +345,46 @@ class IsoTimeShort {
 }
 
 
-class IsoDateTimeLong {
+class IsoDateLong {
     constructor() {
-        const time = new IsoTimeLong();
         this.pattern = {
-            name: 'constant.numeric.isodatetime.long.cylc',
-            match: `\\b${this.regex = `(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:${time.regex})?`}\\b`,
+            name: 'constant.numeric.isodate.long.cylc',
+            match: `\\b${this.regex = `(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?`}\\b`,
             captures: {
                 1: {name: 'constant.numeric.year.cylc'},
                 2: {name: 'punctuation.separator.date.cylc'},
                 3: {name: 'constant.numeric.month.cylc'},
                 4: {name: 'punctuation.separator.date.cylc'},
                 5: {name: 'constant.numeric.day.cylc'},
-                ...incrementKeys(time.pattern.captures, 5),
+            }
+        };
+    }
+}
+class IsoDateShort {
+    constructor() {
+        this.pattern = {
+            name: 'constant.numeric.isodate.short.cylc',
+            match: `\\b${this.regex = `(\\d{4})(\\d{2})?(\\d{2})?`}\\b`,
+            captures: {
+                1: {name: 'constant.numeric.year.cylc'},
+                2: {name: 'constant.numeric.month.cylc'},
+                3: {name: 'constant.numeric.day.cylc'},
+            }
+        };
+    }
+}
+
+
+class IsoDateTimeLong {
+    constructor() {
+        const time = new IsoTimeLong();
+        const date = new IsoDateLong();
+        this.pattern = {
+            name: 'constant.numeric.isodatetime.long.cylc',
+            match: `\\b${this.regex = `${date.regex}(?:${time.regex})?`}\\b`,
+            captures: {
+                ...date.pattern.captures,
+                ...incrementKeys(time.pattern.captures, getLength(date.pattern.captures)),
             }
         };
     }
@@ -300,16 +392,130 @@ class IsoDateTimeLong {
 class IsoDateTimeShort {
     constructor() {
         const time = new IsoTimeShort();
+        const date = new IsoDateShort();
         this.pattern = {
             name: 'constant.numeric.isodatetime.short.cylc',
-            match: `\\b${this.regex = `(\\d{4})(\\d{2})?(\\d{2})?(?:${time.regex})?`}\\b`,
+            match: `\\b${this.regex = `${date.regex}(?:${time.regex})?`}\\b`,
             captures: {
-                1: {name: 'constant.numeric.year.cylc'},
-                2: {name: 'constant.numeric.month.cylc'},
-                3: {name: 'constant.numeric.day.cylc'},
-                ...incrementKeys(time.pattern.captures, 3),
+                ...date.pattern.captures,
+                ...incrementKeys(time.pattern.captures, getLength(date.pattern.captures)),
             }
         };
+    }
+}
+
+
+class IllegalIsoDateTime {
+    constructor() {
+        const isodate = {
+            long: new IsoDateLong(),
+            short: new IsoDateShort()
+        };
+        const isotime = {
+            long: new IsoTimeLong(),
+            short: new IsoTimeShort()
+        };
+        this.patterns = [
+            {
+                name: 'invalid.illegal.isodatetime.cylc',
+                comment: 'Malformed isodatetime e.g. 2000T00',
+                match: `\\b\\d{3,7}T\\d{2,}Z?\\b`
+            },
+            {
+                name: 'invalid.illegal.isodatetime.cylc',
+                comment: 'Mixed long/short syntaxes e.g. 2000-12-01T0600',
+                match: `\\b${isodate.long.regex}T\\d{3,}\\b`
+            },
+            {
+                name: 'invalid.illegal.isodatetime.cylc',
+                comment: 'Mixed long/short syntaxes e.g. 2000-12-01T00+0530',
+                match: `\\b${isodate.long.regex}T\\d{3,}\\b`
+            },
+            {
+                name: 'invalid.illegal.isodatetime.cylc',
+                comment: 'Mixed long/short syntaxes e.g. 20001201T06:00, 20001201T06+05:30',
+                match: `\\b${isodate.short.regex}T\\d{2,}(?:[\\+\\-]\\d+)?\:\\d*\\b`
+            }
+        ];
+    }
+}
+
+
+class IntervalInteger {
+    constructor() {
+        this.pattern = {
+            name: 'meta.interval.integer.cylc',
+            comment: 'e.g. P1 but not P1D',
+            match: '\\b((P)\\d+)\\b',
+            captures: {
+                1: {name: 'constant.numeric.cylc'},
+                2: {name: 'keyword.other.unit.designator.period.cylc'}
+            }
+        };
+    }
+}
+class IntervalIsoWeek {
+    constructor() {
+        this.pattern = {
+            name: 'meta.interval.iso.cylc',
+            comment: 'e.g. P1W',
+            match: '\\b((P)\\d+(W))\\b',
+            captures: {
+                1: {name: 'constant.numeric.cylc'},
+                2: {name: 'keyword.other.unit.designator.period.cylc'},
+                3: {name: 'keyword.other.unit.designator.week.cylc'}
+            }
+        };
+    }
+}
+class IntervalIsoTime {
+    constructor() {
+        this.pattern = {
+            name: 'meta.interval.isotime.cylc',
+            comment: `(?:(T)(etc))? matches e.g. T1H1M zero or more times.`,
+            match: `${this.regex = `(T)(?:\\d+(H))?(?:\\d+(M))?(?:\\d+(S))?`}`,
+            captures: {
+                1: {name: 'keyword.other.unit.designator.time.cylc'},
+                2: {name: 'keyword.other.unit.designator.hour.cylc'},
+                3: {name: 'keyword.other.unit.designator.min.cylc'},
+                4: {name: 'keyword.other.unit.designator.sec.cylc'},
+            }
+        };
+    }
+}
+class IntervalIso {
+    constructor() {
+        const time = new IntervalIsoTime();
+        this.pattern = {
+            name: 'meta.interval.iso.cylc',
+            comment: `e.g. P1Y1M1DT1H1M1S, P1D, PT1M. (P(?=(?:\\d|T\\d))) captures P only if followed by a digit or T. (?:\\d+(Y))? matches e.g. 1Y zero or more times, etc.`,
+            match: `\\b${this.regex = `((P(?=(?:\\d|T\\d)))(?:\\d+(Y))?(?:\\d+(M))?(?:\\d+(D))?(?:${time.regex})?)`}\\b`,
+            captures: {
+                1: {name: 'constant.numeric.cylc'},
+                2: {name: 'keyword.other.unit.designator.period.cylc'},
+                3: {name: 'keyword.other.unit.designator.year.cylc'},
+                4: {name: 'keyword.other.unit.designator.month.cylc'},
+                5: {name: 'keyword.other.unit.designator.day.cylc'},
+                ...incrementKeys(time.pattern.captures, 5),
+            }
+        };
+    }
+}
+
+
+class IllegalInterval {
+    constructor() {
+        const isodatetime = {
+            long: new IsoDateTimeLong,
+            short: new IsoDateTimeShort
+        };
+        this.patterns = [
+            {
+                name: 'invalid.illegal.interval.cylc',
+                comment: 'e.g. P1H without T separator',
+                match: '\\bP\\d+[HS]'
+            },
+        ];
     }
 }
 
@@ -387,169 +593,23 @@ exports.tmLanguage = {
            ]
         },
         parameterizations: {
-            name: 'meta.annotation.parameterization.cylc',
-            begin: '(<)',
-            end: '(>)',
-            beginCaptures: {
-            '1': {
-                name: 'punctuation.definition.annotation.begin.cylc'
-            }
-            },
-            endCaptures: {
-            '1': {
-                name: 'punctuation.definition.annotation.end.cylc'
-            }
-            },
             patterns: [
-            {
-                name: 'meta.polling.cylc',
-                match: '(\\S+)(::)(\\w+)((:)(\\w+))?',
-                captures: {
-                '1': {
-                    name: 'entity.name.namespace.suite.cylc'
-                },
-                '2': {
-                    name: 'punctuation.accessor.cylc'
-                },
-                '3': {
-                    name: 'meta.variable.cylc'
-                },
-                '4': {
-                    name: 'meta.annotation.qualifier.cylc'
-                },
-                '5': {
-                    name: 'punctuation.definition.annotation.cylc'
-                },
-                '6': {
-                    name: 'variable.annotation.cylc'
-                }
-                }
-            },
-            {
-                match: '(\\w+)[\\t ]*(=)[\\t ]*(\\d*)',
-                captures: {
-                '1': {
-                    name: 'variable.parameter.cylc'
-                },
-                '2': {
-                    name: 'keyword.operator.assignment.cylc'
-                },
-                '3': {
-                    name: 'constant.numeric.cylc'
-                }
-                }
-            },
-            {
-                match: '(\\w+)[\\t ]*(=)[\\t ]*(\\w*)',
-                captures: {
-                '1': {
-                    name: 'variable.parameter.cylc'
-                },
-                '2': {
-                    name: 'keyword.operator.assignment.cylc'
-                },
-                '3': {
-                    name: 'variable.other.cylc'
-                }
-                }
-            },
-            {
-                match: '([\\+\\-])[\\t ]*(\\d*)',
-                captures: {
-                '1': {
-                    name: 'keyword.operator.arithmetic.cylc'
-                },
-                '2': {
-                    name: 'constant.numeric.cylc'
-                }
-                }
-            },
-            {
-                name: 'variable.parameter.cylc',
-                match: '\\w+'
-            },
-            {
-                name: 'punctuation.separator.parameter.cylc',
-                match: ','
-            }
+                new Parameterization().pattern,
             ]
         },
         isodatetimes: {
             patterns: [
+                ...new IllegalIsoDateTime().patterns,
                 new IsoDateTimeLong().pattern,
                 new IsoDateTimeShort().pattern,
             ]
         },
         intervals: {
             patterns: [
-            {
-                name: 'meta.interval.integer.cylc',
-                comment: 'e.g. P1 but not P1D',
-                match: '\\b((P)\\d+)\\b',
-                captures: {
-                '1': {
-                    name: 'constant.numeric.cylc'
-                },
-                '2': {
-                    name: 'keyword.other.unit.designator.period.cylc'
-                }
-                }
-            },
-            {
-                name: 'invalid.illegal.interval.cylc',
-                comment: 'e.g. P1H without T separator',
-                match: '\\bP\\d+[HS]'
-            },
-            {
-                name: 'meta.interval.iso.cylc',
-                comment: 'e.g. P1W',
-                match: '\\b((P)\\d+(W))\\b',
-                captures: {
-                '1': {
-                    name: 'constant.numeric.cylc'
-                },
-                '2': {
-                    name: 'keyword.other.unit.designator.period.cylc'
-                },
-                '3': {
-                    name: 'keyword.other.unit.designator.week.cylc'
-                }
-                }
-            },
-            {
-                name: 'meta.interval.iso.cylc',
-                comment: 'e.g. P1Y1M1DT1H1M1S, P1D, PT1M. Sorry it\'s so horrible. (P(?=(?:\\d|T\\d))) captures P only if followed by a digit or T. (?:\\d+(Y))? matches e.g. 1Y zero or more times, etc. (?:(T)(etc))? matches e.g. T1H1M zero or more times.',
-                match: '\\b((P(?=(?:\\d|T\\d)))(?:\\d+(Y))?(?:\\d+(M))?(?:\\d+(D))?(?:(T)(?:\\d+(H))?(?:\\d+(M))?(?:\\d+(S))?)?)\\b',
-                captures: {
-                '1': {
-                    name: 'constant.numeric.cylc'
-                },
-                '2': {
-                    name: 'keyword.other.unit.designator.period.cylc'
-                },
-                '3': {
-                    name: 'keyword.other.unit.designator.year.cylc'
-                },
-                '4': {
-                    name: 'keyword.other.unit.designator.month.cylc'
-                },
-                '5': {
-                    name: 'keyword.other.unit.designator.day.cylc'
-                },
-                '6': {
-                    name: 'keyword.other.unit.designator.time.cylc'
-                },
-                '7': {
-                    name: 'keyword.other.unit.designator.hour.cylc'
-                },
-                '8': {
-                    name: 'keyword.other.unit.designator.min.cylc'
-                },
-                '9': {
-                    name: 'keyword.other.unit.designator.sec.cylc'
-                }
-                }
-            }
+                ...new IllegalInterval().patterns,
+                new IntervalInteger().pattern,
+                new IntervalIsoWeek().pattern,
+                new IntervalIso().pattern,
             ]
         },
         graphSyntax: {
@@ -642,10 +702,10 @@ exports.tmLanguage = {
                 },
                 patterns: [
                 {
-                    include: '#isodatetimes'
+                    include: '#intervals'
                 },
                 {
-                    include: '#intervals'
+                    include: '#isodatetimes'
                 },
                 {
                     comment: 'If 1st char is ^ (allowing for spaces)',

@@ -156,16 +156,21 @@ R1 = """
     foo[20000101T0000+P1D]
     foo[2+P1]
     # optionally invalid syntax can be marked as erroneous:
-    foo[2000T00] => bar  # corrupted date
-    foo[2000-01-01T00:00+1000] => bar  # mixed long and short syntax (-:)
+    foo[200T00] => bar  # corrupted date
+    foo[2000T00Z] => bar  # corrupted date
+    foo[2000T00-01] => bar  # corrupted date
+    foo[200012T00] => bar  # corrupted date
+    foo[2000-01-01T00:00+0900] => bar  # mixed long and short syntax (-:)
     foo[2000-01-01T0000] => bar  # mixed long and short syntax (-:)
     foo[20000101T0000+10:00] => bar  # mixed long and short syntax (-:)
     foo[20000101T00:00] => bar  # mixed long and short syntax (-:)
     foo[P1D1Y] => bar  # incorrect component ordering
     foo[P1H] => bar  # missing T separator
     foo[PT1M1H] => bar  # incorrect component ordering
+    foo[01-01T00] => bar  # truncated date
     foo[01T00] => bar  # truncated date
     foo[T00] => bar  # truncated date
+    foo[T-00] => bar  # truncated date
     # this should not highlight the same:
     foo[P] | foo[PT] => bar
 """
