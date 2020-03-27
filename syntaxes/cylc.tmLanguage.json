@@ -383,8 +383,8 @@
         "isodatetimes": {
             "patterns": [
                 {
-                    "name": "meta.isodatetime.long.cylc",
-                    "match": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?((Z)|(?:([\\+\\-])\\d{2}))?)?\\b",
+                    "name": "constant.numeric.isodatetime.long.cylc",
+                    "match": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?((Z)|(?:([\\+\\-])(\\d{2})(?:(\\:)(\\d{2}))?))?)?\\b",
                     "captures": {
                         "1": {
                             "name": "constant.numeric.year.cylc"
@@ -420,19 +420,28 @@
                             "name": "constant.numeric.sec.cylc"
                         },
                         "12": {
-                            "name": "constant.numeric.isotimezone.cylc"
+                            "name": "constant.numeric.timezone.cylc"
                         },
                         "13": {
                             "name": "keyword.other.unit.utc.cylc"
                         },
                         "14": {
-                            "name": "keyword.operator.arithmetic.cylc"
+                            "name": "keyword.other.unit.arithmetic.cylc"
+                        },
+                        "15": {
+                            "name": "constant.numeric.hour.cylc"
+                        },
+                        "16": {
+                            "name": "punctuation.separator.time.cylc"
+                        },
+                        "17": {
+                            "name": "constant.numeric.min.cylc"
                         }
                     }
                 },
                 {
-                    "name": "meta.isodatetime.short.cylc",
-                    "match": "\\b(\\d{4})(\\d{2})?(\\d{2})?(?:(T)(\\d{2})(\\d{2})?(\\d{2})?((Z)|(?:([\\+\\-])\\d{2}))?)?\\b",
+                    "name": "constant.numeric.isodatetime.short.cylc",
+                    "match": "\\b(\\d{4})(\\d{2})?(\\d{2})?(?:(T)(\\d{2})(\\d{2})?(\\d{2})?((Z)|(?:([\\+\\-])(\\d{2})(\\d{2})?))?)?\\b",
                     "captures": {
                         "1": {
                             "name": "constant.numeric.year.cylc"
@@ -456,13 +465,19 @@
                             "name": "constant.numeric.sec.cylc"
                         },
                         "8": {
-                            "name": "constant.numeric.isotimezone.cylc"
+                            "name": "constant.numeric.timezone.cylc"
                         },
                         "9": {
                             "name": "keyword.other.unit.utc.cylc"
                         },
                         "10": {
-                            "name": "keyword.operator.arithmetic.cylc"
+                            "name": "keyword.other.unit.arithmetic.cylc"
+                        },
+                        "11": {
+                            "name": "constant.numeric.hour.cylc"
+                        },
+                        "12": {
+                            "name": "constant.numeric.min.cylc"
                         }
                     }
                 }

@@ -211,26 +211,44 @@ class StringQuotedDouble extends StringQuotedTriple {
 }
 
 
-class IsoTimeZone {
+class IsoTimeZoneLong {
     constructor() {
         this.pattern = {
-            name: 'meta.isotimezone.cylc',
-            match: `${this.regex = '((Z)|(?:([\\+\\-])\\d{2}))'}\\b`,
+            name: 'meta.isotimezone.long.cylc',
+            match: `${this.regex = '((Z)|(?:([\\+\\-])(\\d{2})(?:(\\:)(\\d{2}))?))'}\\b`,
             captures: {
-                1: {name: 'constant.numeric.isotimezone.cylc'},
+                1: {name: 'constant.numeric.timezone.cylc'},
                 2: {name: 'keyword.other.unit.utc.cylc'},
-                3: {name: 'keyword.operator.arithmetic.cylc'},
+                3: {name: 'keyword.other.unit.arithmetic.cylc'},
+                4: {name: 'constant.numeric.hour.cylc'},
+                5: {name: 'punctuation.separator.time.cylc'},
+                6: {name: 'constant.numeric.min.cylc'},
             }
-        }
+        };
+    }
+}
+class IsoTimeZoneShort {
+    constructor() {
+        this.pattern = {
+            name: 'meta.isotimezone.short.cylc',
+            match: `${this.regex = '((Z)|(?:([\\+\\-])(\\d{2})(\\d{2})?))'}\\b`,
+            captures: {
+                1: {name: 'constant.numeric.timezone.cylc'},
+                2: {name: 'keyword.other.unit.utc.cylc'},
+                3: {name: 'keyword.other.unit.arithmetic.cylc'},
+                4: {name: 'constant.numeric.hour.cylc'},
+                5: {name: 'constant.numeric.min.cylc'},
+            }
+        };
     }
 }
 
 
 class IsoTimeLong {
     constructor() {
-        const timeZone = new IsoTimeZone();
+        const timeZone = new IsoTimeZoneLong();
         this.pattern = {
-            name: 'meta.isotime.long.cylc',
+            name: 'constant.numeric.isotime.long.cylc',
             match: `\\b${this.regex = `(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?${timeZone.regex}?`}\\b`,
             captures: {
                 1: {name: 'keyword.other.unit.designator.time.cylc'},
@@ -241,14 +259,14 @@ class IsoTimeLong {
                 6: {name: 'constant.numeric.sec.cylc'},
                 ...incrementKeys(timeZone.pattern.captures, 6),
             }
-        }
-    };
+        };
+    }
 }
 class IsoTimeShort {
     constructor() {
-        const timeZone = new IsoTimeZone();
+        const timeZone = new IsoTimeZoneShort();
         this.pattern = {
-            name: 'meta.isotime.short.cylc',
+            name: 'constant.numeric.isotime.short.cylc',
             match: `\\b${this.regex = `(T)(\\d{2})(\\d{2})?(\\d{2})?${timeZone.regex}?`}\\b`,
             captures: {
                 1: {name: 'keyword.other.unit.designator.time.cylc'},
@@ -261,11 +279,12 @@ class IsoTimeShort {
     }
 }
 
+
 class IsoDateTimeLong {
     constructor() {
         const time = new IsoTimeLong();
         this.pattern = {
-            name: 'meta.isodatetime.long.cylc',
+            name: 'constant.numeric.isodatetime.long.cylc',
             match: `\\b${this.regex = `(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:${time.regex})?`}\\b`,
             captures: {
                 1: {name: 'constant.numeric.year.cylc'},
@@ -282,7 +301,7 @@ class IsoDateTimeShort {
     constructor() {
         const time = new IsoTimeShort();
         this.pattern = {
-            name: 'meta.isodatetime.short.cylc',
+            name: 'constant.numeric.isodatetime.short.cylc',
             match: `\\b${this.regex = `(\\d{4})(\\d{2})?(\\d{2})?(?:${time.regex})?`}\\b`,
             captures: {
                 1: {name: 'constant.numeric.year.cylc'},
@@ -290,7 +309,7 @@ class IsoDateTimeShort {
                 3: {name: 'constant.numeric.day.cylc'},
                 ...incrementKeys(time.pattern.captures, 3),
             }
-        }
+        };
     }
 }
 

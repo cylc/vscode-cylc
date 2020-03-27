@@ -136,15 +136,20 @@ R1 = """
     # integer points:
     foo[123] => bar
     foo[-123] => bar
-    # iso8601 points:
-    foo[20000000T0000] => bar
+    # iso8601 points (long):
+    foo[2000-01-01T00:00:00-11:30] => bar
     foo[2000-01-01T00:00:00] => bar
     foo[2000-01-01T00:00Z] => bar
-    foo[2000-01-01T00] => bar
     foo[2000-01-01T00+05] => bar
+    foo[2000-01-01T00] => bar
     foo[2000-01-01] => bar
     foo[2000-00] => bar
     foo[2000] => bar
+    # iso8601 points (short):
+    foo[20051201T0215+0530] => bar
+    foo[20051201T123000Z] => bar
+    foo[20000000T00-11] => bar
+    foo[20000000T0000] => bar
     # arithmetic:
     foo[^+P1D]
     foo[^+P1]
@@ -152,9 +157,11 @@ R1 = """
     foo[2+P1]
     # optionally invalid syntax can be marked as erroneous:
     foo[2000T00] => bar  # corrupted date
+    foo[2000-01-01T00:00+1000] => bar  # mixed long and short syntax (-:)
     foo[2000-01-01T0000] => bar  # mixed long and short syntax (-:)
+    foo[20000101T0000+10:00] => bar  # mixed long and short syntax (-:)
     foo[20000101T00:00] => bar  # mixed long and short syntax (-:)
-    foo[P1D1Y] => bar  # missing T separator
+    foo[P1D1Y] => bar  # incorrect component ordering
     foo[P1H] => bar  # missing T separator
     foo[PT1M1H] => bar  # incorrect component ordering
     foo[01T00] => bar  # truncated date
