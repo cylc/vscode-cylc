@@ -122,6 +122,7 @@ R1 = """
     pub & foo:fail => bar
     FOO:succeed-all => bar
     foo:custom_a => bar
+    foo[-P1]:custom-2 => bar
 
     # SYNTAX: 2.10
     # inter-cycle dep should be highlighted

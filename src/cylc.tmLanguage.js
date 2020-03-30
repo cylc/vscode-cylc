@@ -179,6 +179,8 @@ class LineComment {
 
 class Parameterization {
     constructor() {
+        const task = new Task();
+        const qualifier = new TaskQualifier();
         this.pattern = {
             name: 'meta.annotation.parameterization.cylc',
             begin: '(<)',
@@ -192,14 +194,12 @@ class Parameterization {
             patterns: [
                 {
                     name: 'meta.polling.cylc',
-                    match: '(\\S+)(::)(\\w+)((:)(\\w+))?',
+                    match: `(\\S+)(::)(${task.regex})${qualifier.regex}?`,
                     captures: {
                         1: {name: 'entity.name.namespace.suite.cylc'},
                         2: {name: 'punctuation.accessor.cylc'},
-                        3: {name: 'meta.variable.cylc'},
-                        4: {name: 'meta.annotation.qualifier.cylc'},
-                        5: {name: 'punctuation.definition.annotation.cylc'},
-                        6: {name: 'variable.annotation.cylc'},
+                        3: {name: task.pattern.name},
+                        ...incrementKeys(qualifier.pattern.captures, 3),
                     }
                 },
                 {
@@ -539,11 +539,39 @@ class ArithmeticOperator {
 }
 
 
+class Task {
+    constructor() {
+        this.pattern = {
+            name: 'meta.variable.task.cylc',
+            match: `${this.regex = `\\b\\w[\\w\\+\\-@%]*`}`
+        };
+    }
+}
+class TaskQualifier {
+    constructor() {
+        this.pattern = {
+            comment: 'e.g. foo:fail => bar',
+            match: `(?<=\\S)${this.regex = `((:)(\\S+))`}`,
+            captures: {
+                1: {name: 'meta.annotation.qualifier.cylc'},
+                2: {name: 'punctuation.definition.annotation.cylc'},
+                3: {name: 'variable.annotation.cylc'}
+            }
+        };
+    }
+}
+
+
+
+
+
 class GraphSyntax {
     constructor() {
+        const task = new Task();
         this.patterns = [
             {include: '#comments'},
             {include: '#parameterizations'},
+            new Task().pattern,
             {
                 name: 'keyword.control.trigger.cylc',
                 match: '=>'
@@ -567,10 +595,11 @@ class GraphSyntax {
                 ]
             },
             {
-                match: '(?:^|(?<=[\\s&>]))(!)(\\S+)',
+                name: 'meta.variable.suicide.cylc',
+                match: `(?:^|(?<=[\\s&>]))(!)(${task.regex})`,
                 captures: {
                     1: {name: 'keyword.other.suicide.cylc'},
-                    2: {name: 'meta.variable.suicide.cylc'}
+                    2: {name: task.pattern.name},
                 }
             },
             {
@@ -584,15 +613,7 @@ class GraphSyntax {
                 name: 'constant.character.escape.continuation.cylc',
                 match: '\\\\'
             },
-            {
-                name: 'meta.annotation.qualifier.cylc',
-                comment: 'e.g. foo:fail => bar',
-                match: '(?<=\\S)(:)(\\S+)',
-                captures: {
-                    1: {name: 'punctuation.definition.annotation.cylc'},
-                    2: {name: 'variable.annotation.cylc'}
-                }
-            },
+            new TaskQualifier().pattern,
             {
                 name: 'meta.annotation.inter-cycle.cylc',
                 comment: 'e.g. foo[-P1]',

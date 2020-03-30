@@ -311,7 +311,7 @@
                     "patterns": [
                         {
                             "name": "meta.polling.cylc",
-                            "match": "(\\S+)(::)(\\w+)((:)(\\w+))?",
+                            "match": "(\\S+)(::)(\\b\\w[\\w\\+\\-@%]*)((:)(\\S+))?",
                             "captures": {
                                 "1": {
                                     "name": "entity.name.namespace.suite.cylc"
@@ -320,7 +320,7 @@
                                     "name": "punctuation.accessor.cylc"
                                 },
                                 "3": {
-                                    "name": "meta.variable.cylc"
+                                    "name": "meta.variable.task.cylc"
                                 },
                                 "4": {
                                     "name": "meta.annotation.qualifier.cylc"
@@ -588,6 +588,10 @@
                     "include": "#parameterizations"
                 },
                 {
+                    "name": "meta.variable.task.cylc",
+                    "match": "\\b\\w[\\w\\+\\-@%]*"
+                },
+                {
                     "name": "keyword.control.trigger.cylc",
                     "match": "=>"
                 },
@@ -616,13 +620,14 @@
                     ]
                 },
                 {
-                    "match": "(?:^|(?<=[\\s&>]))(!)(\\S+)",
+                    "name": "meta.variable.suicide.cylc",
+                    "match": "(?:^|(?<=[\\s&>]))(!)(\\b\\w[\\w\\+\\-@%]*)",
                     "captures": {
                         "1": {
                             "name": "keyword.other.suicide.cylc"
                         },
                         "2": {
-                            "name": "meta.variable.suicide.cylc"
+                            "name": "meta.variable.task.cylc"
                         }
                     }
                 },
@@ -640,14 +645,16 @@
                     "match": "\\\\"
                 },
                 {
-                    "name": "meta.annotation.qualifier.cylc",
                     "comment": "e.g. foo:fail => bar",
-                    "match": "(?<=\\S)(:)(\\S+)",
+                    "match": "(?<=\\S)((:)(\\S+))",
                     "captures": {
                         "1": {
-                            "name": "punctuation.definition.annotation.cylc"
+                            "name": "meta.annotation.qualifier.cylc"
                         },
                         "2": {
+                            "name": "punctuation.definition.annotation.cylc"
+                        },
+                        "3": {
                             "name": "variable.annotation.cylc"
                         }
                     }
