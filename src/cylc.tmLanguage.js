@@ -631,7 +631,7 @@ exports.tmLanguage = {
             {
                 name: 'meta.parens.cylc',
                 begin: '(\\()',
-                end: '(\\))',
+                    end: '([\\)\\n\\r])',
                 beginCaptures: {
                 '1': {
                     name: 'punctuation.section.parens.begin.cylc'
@@ -649,14 +649,10 @@ exports.tmLanguage = {
                 ]
             },
             {
-                match: '(!)(\\S+)',
+                    match: '(?:^|(?<=[\\s&>]))(!)(\\S+)',
                 captures: {
-                '1': {
-                    name: 'keyword.other.suicide.cylc'
-                },
-                '2': {
-                    name: 'meta.variable.suicide.cylc'
-                }
+                        1: {name: 'keyword.other.suicide.cylc'},
+                        2: {name: 'meta.variable.suicide.cylc'}
                 }
             },
             {

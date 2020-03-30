@@ -71,11 +71,14 @@ R1 = """
     # SYNTAX: 2.3
     # &|() should be highlighted
     # !foo should be highlighted
-    # ! foo should NOT be highlighted
     foo | bar & baz => pub & qux
-    (foo | bar) & baz => (pub & qux)
-    foo => !foo & bar
-    ! foo => bar
+    (foo | bar) & baz => pub & qux
+    (foo & bar) =>
+!qux
+    foo => !foo &!bar =>!pub
+    # ! foo or foo!bar should NOT be highlighted:
+    ! foo
+    foo!bar
 
     # SYNTAX: 2.4
     # text inside <> should be highlighted
