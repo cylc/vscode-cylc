@@ -403,7 +403,7 @@
                 },
                 {
                     "name": "invalid.illegal.isodatetime.cylc",
-                    "comment": "Mixed long/short syntaxes e.g. 20001201T06:00",
+                    "comment": "Mixed long/short syntaxes e.g. 20001201T06:00, 20001201T06+05:30",
                     "match": "\\b(\\d{4})(\\d{2})?(\\d{2})?T\\d{2,}(?:[\\+\\-]\\d+)?:\\d*\\b"
                 },
                 {
@@ -679,7 +679,7 @@
                             "match": "\\G[\\t ]*(\\^)",
                             "captures": {
                                 "1": {
-                                    "name": "constant.language.initial-point.cylc"
+                                    "name": "constant.language.cycle-point.cylc"
                                 }
                             }
                         },
@@ -689,114 +689,10 @@
                         },
                         {
                             "name": "constant.numeric.integer-point.cylc",
-                            "comment": "Integer as long as it's not adjacent to a letter",
+                            "comment": "Integer as long as it isn't adjacent to a letter",
                             "match": "\\b\\d+\\b"
                         }
                     ]
-                },
-                {
-                    "comment": "Integer intervals",
-                    "name": "text",
-                    "match": "meow\\[([-+]{0,1}P\\d+)\\]",
-                    "captures": {
-                        "1": {
-                            "name": "constant.numeric"
-                        }
-                    }
-                },
-                {
-                    "comment": "Isodatetime intervals - weeks",
-                    "name": "text",
-                    "match": "meow\\[(\\^?[-+]?P\\d{1,2}W)\\]",
-                    "captures": {
-                        "1": {
-                            "name": "constant.numeric"
-                        }
-                    }
-                },
-                {
-                    "comment": "Isodatetime intervals - Simple Format",
-                    "name": "text",
-                    "match": "meow\\[([+-]?)(P)(\\d+Y)?(\\d+M)?(\\d+D)?(T?)(\\d+H)?(\\d+M)?(\\d+S)?",
-                    "captures": {
-                        "1": {
-                            "name": "constant.numeric"
-                        },
-                        "2": {
-                            "name": "constant.numeric"
-                        },
-                        "3": {
-                            "name": "constant.numeric"
-                        },
-                        "4": {
-                            "name": "constant.numeric"
-                        },
-                        "5": {
-                            "name": "constant.numeric"
-                        },
-                        "6": {
-                            "name": "constant.numeric"
-                        },
-                        "7": {
-                            "name": "constant.numeric"
-                        },
-                        "8": {
-                            "name": "constant.numeric"
-                        },
-                        "9": {
-                            "name": "constant.numeric"
-                        },
-                        "10": {
-                            "name": "constant.numeric"
-                        }
-                    }
-                },
-                {
-                    "comment": "Integer points",
-                    "name": "text",
-                    "match": "meow\\[([+-]?\\d*)",
-                    "captures": {
-                        "1": {
-                            "name": "constant.numeric"
-                        }
-                    }
-                },
-                {
-                    "comment": "Isodatetime intervals - complex Format - can this have seconds",
-                    "name": "text",
-                    "match": "meow\\[(\\d{4})-?([0-1]\\d)-?([0-3]\\d)?(T)?([0-2]\\d)?:?([0-5]\\d)?\\]",
-                    "captures": {
-                        "1": {
-                            "name": "constant.numeric"
-                        },
-                        "2": {
-                            "name": "constant.numeric"
-                        },
-                        "3": {
-                            "name": "constant.numeric"
-                        },
-                        "4": {
-                            "name": "constant.numeric"
-                        },
-                        "5": {
-                            "name": "constant.numeric"
-                        },
-                        "6": {
-                            "name": "constant.numeric"
-                        },
-                        "7": {
-                            "name": "constant.numeric"
-                        },
-                        "8": {
-                            "name": "constant.numeric"
-                        },
-                        "9": {
-                            "name": "constant.numeric"
-                        },
-                        "10": {
-                            "name": "constant.numeric"
-                        }
-                    }
                 }
             ]
         }

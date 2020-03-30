@@ -520,6 +520,109 @@ class IllegalInterval {
 }
 
 
+class IntegerPoint {
+    constructor() {
+        this.pattern = {
+            name: 'constant.numeric.integer-point.cylc',
+            comment: `Integer as long as it isn't adjacent to a letter`,
+            match: '\\b\\d+\\b'
+        };
+    }
+}
+class ArithmeticOperator {
+    constructor() {
+        this.pattern = {
+            name: 'keyword.operator.arithmetic.cylc',
+            match: '[\\+\\-]'
+        };
+    }
+}
+
+
+class GraphSyntax {
+    constructor() {
+        this.patterns = [
+            {include: '#comments'},
+            {include: '#parameterizations'},
+            {
+                name: 'keyword.control.trigger.cylc',
+                match: '=>'
+            },
+            {
+                name: 'keyword.other.logical.cylc',
+                match: '[\\|&]'
+            },
+            {
+                name: 'meta.parens.cylc',
+                begin: '(\\()',
+                end: '([\\)\\n\\r])',
+                beginCaptures: {
+                    1: {name: 'punctuation.section.parens.begin.cylc'}
+                },
+                endCaptures: {
+                    1: {name: 'punctuation.section.parens.end.cylc'}
+                },
+                patterns: [
+                    {include: '#graphSyntax'}
+                ]
+            },
+            {
+                match: '(?:^|(?<=[\\s&>]))(!)(\\S+)',
+                captures: {
+                    1: {name: 'keyword.other.suicide.cylc'},
+                    2: {name: 'meta.variable.suicide.cylc'}
+                }
+            },
+            {
+                name: 'variable.other.xtrigger.cylc',
+                match: '(@)\\S+',
+                captures: {
+                    1: {name: 'punctuation.definition.variable.cylc'}
+                }
+            },
+            {
+                name: 'constant.character.escape.continuation.cylc',
+                match: '\\\\'
+            },
+            {
+                name: 'meta.annotation.qualifier.cylc',
+                comment: 'e.g. foo:fail => bar',
+                match: '(?<=\\S)(:)(\\S+)',
+                captures: {
+                    1: {name: 'punctuation.definition.annotation.cylc'},
+                    2: {name: 'variable.annotation.cylc'}
+                }
+            },
+            {
+                name: 'meta.annotation.inter-cycle.cylc',
+                comment: 'e.g. foo[-P1]',
+                begin: '(?<=\\S)(\\[)',
+                end: '(\\])',
+                beginCaptures: {
+                    1: {name: 'punctuation.section.brackets.begin.cylc'}
+                },
+                endCaptures: {
+                    1: {name: 'punctuation.section.brackets.end.cylc'}
+                },
+                patterns: [
+                    {include: '#intervals'},
+                    {include: '#isodatetimes'},
+                    {
+                        comment: 'If 1st char is ^ (allowing for spaces)',
+                        match: '\\G[\\t ]*(\\^)',
+                        captures: {
+                            1: {name: 'constant.language.cycle-point.cylc'}
+                        }
+                    },
+                    new ArithmeticOperator().pattern,
+                    new IntegerPoint().pattern,
+                ]
+            },
+        ];
+    }
+}
+
+
 
 exports.tmLanguage = {
     scopeName: 'source.cylc',
@@ -614,219 +717,7 @@ exports.tmLanguage = {
         },
         graphSyntax: {
             patterns: [
-            {
-                include: '#comments'
-            },
-            {
-                include: '#parameterizations'
-            },
-            {
-                name: 'keyword.control.trigger.cylc',
-                match: '=>'
-            },
-            {
-                name: 'keyword.other.logical.cylc',
-                match: '[\\|&]'
-            },
-            {
-                name: 'meta.parens.cylc',
-                begin: '(\\()',
-                    end: '([\\)\\n\\r])',
-                beginCaptures: {
-                '1': {
-                    name: 'punctuation.section.parens.begin.cylc'
-                }
-                },
-                endCaptures: {
-                '1': {
-                    name: 'punctuation.section.parens.end.cylc'
-                }
-                },
-                patterns: [
-                {
-                    include: '#graphSyntax'
-                }
-                ]
-            },
-            {
-                    match: '(?:^|(?<=[\\s&>]))(!)(\\S+)',
-                captures: {
-                        1: {name: 'keyword.other.suicide.cylc'},
-                        2: {name: 'meta.variable.suicide.cylc'}
-                }
-            },
-            {
-                name: 'variable.other.xtrigger.cylc',
-                match: '(@)\\S+',
-                captures: {
-                '1': {
-                    name: 'punctuation.definition.variable.cylc'
-                }
-                }
-            },
-            {
-                name: 'constant.character.escape.continuation.cylc',
-                match: '\\\\'
-            },
-            {
-                name: 'meta.annotation.qualifier.cylc',
-                comment: 'e.g. foo:fail => bar',
-                match: '(?<=\\S)(:)(\\S+)',
-                captures: {
-                '1': {
-                    name: 'punctuation.definition.annotation.cylc'
-                },
-                '2': {
-                    name: 'variable.annotation.cylc'
-                }
-                }
-            },
-            {
-                name: 'meta.annotation.inter-cycle.cylc',
-                comment: 'e.g. foo[-P1]',
-                begin: '(?<=\\S)(\\[)',
-                end: '(\\])',
-                beginCaptures: {
-                '1': {
-                    name: 'punctuation.section.brackets.begin.cylc'
-                }
-                },
-                endCaptures: {
-                '1': {
-                    name: 'punctuation.section.brackets.end.cylc'
-                }
-                },
-                patterns: [
-                {
-                    include: '#intervals'
-                },
-                {
-                    include: '#isodatetimes'
-                },
-                {
-                    comment: 'If 1st char is ^ (allowing for spaces)',
-                    match: '\\G[\\t ]*(\\^)',
-                    captures: {
-                    '1': {
-                        name: 'constant.language.initial-point.cylc'
-                    }
-                    }
-                },
-                {
-                    name: 'keyword.operator.arithmetic.cylc',
-                    match: '[\\+\\-]'
-                },
-                {
-                    name: 'constant.numeric.integer-point.cylc',
-                    comment: 'Integer as long as it\'s not adjacent to a letter',
-                    match: '\\b\\d+\\b'
-                }
-                ]
-            },
-            {
-                comment: 'Integer intervals',
-                name: 'text',
-                match: 'meow\\[([-+]{0,1}P\\d+)\\]',
-                captures: {
-                '1': {
-                    name: 'constant.numeric'
-                }
-                }
-            },
-            {
-                comment: 'Isodatetime intervals - weeks',
-                name: 'text',
-                match: 'meow\\[(\\^?[-+]?P\\d{1,2}W)\\]',
-                captures: {
-                '1': {
-                    name: 'constant.numeric'
-                }
-                }
-            },
-            {
-                comment: 'Isodatetime intervals - Simple Format',
-                name: 'text',
-                match: 'meow\\[([+-]?)(P)(\\d+Y)?(\\d+M)?(\\d+D)?(T?)(\\d+H)?(\\d+M)?(\\d+S)?',
-                captures: {
-                '1': {
-                    name: 'constant.numeric'
-                },
-                '2': {
-                    name: 'constant.numeric'
-                },
-                '3': {
-                    name: 'constant.numeric'
-                },
-                '4': {
-                    name: 'constant.numeric'
-                },
-                '5': {
-                    name: 'constant.numeric'
-                },
-                '6': {
-                    name: 'constant.numeric'
-                },
-                '7': {
-                    name: 'constant.numeric'
-                },
-                '8': {
-                    name: 'constant.numeric'
-                },
-                '9': {
-                    name: 'constant.numeric'
-                },
-                '10': {
-                    name: 'constant.numeric'
-                }
-                }
-            },
-            {
-                comment: 'Integer points',
-                name: 'text',
-                match: 'meow\\[([+-]?\\d*)',
-                captures: {
-                '1': {
-                    name: 'constant.numeric'
-                }
-                }
-            },
-            {
-                comment: 'Isodatetime intervals - complex Format - can this have seconds',
-                name: 'text',
-                match: 'meow\\[(\\d{4})-?([0-1]\\d)-?([0-3]\\d)?(T)?([0-2]\\d)?:?([0-5]\\d)?\\]',
-                captures: {
-                '1': {
-                    name: 'constant.numeric'
-                },
-                '2': {
-                    name: 'constant.numeric'
-                },
-                '3': {
-                    name: 'constant.numeric'
-                },
-                '4': {
-                    name: 'constant.numeric'
-                },
-                '5': {
-                    name: 'constant.numeric'
-                },
-                '6': {
-                    name: 'constant.numeric'
-                },
-                '7': {
-                    name: 'constant.numeric'
-                },
-                '8': {
-                    name: 'constant.numeric'
-                },
-                '9': {
-                    name: 'constant.numeric'
-                },
-                '10': {
-                    name: 'constant.numeric'
-                }
-                }
-            }
+                ...new GraphSyntax().patterns,
             ]
         }
     }

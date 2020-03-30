@@ -176,6 +176,11 @@ R1 = """
     foo[T-00] => bar  # truncated date
     # this should not highlight the same:
     foo[P] | foo[PT] => bar
+
+    # broken over lines test:
+    foo[^ +
+    foo => bar
+    ]
 """
 
 # graph strings should not highlight here, this should display as a setting:
