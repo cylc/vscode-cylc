@@ -155,9 +155,9 @@
         "settings": {
             "patterns": [
                 {
-                    "name": "meta.setting.quoted.triple.cylc",
-                    "begin": "\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*(?=\"{3})",
-                    "end": "(?<=\"{3})",
+                    "name": "meta.setting.cylc",
+                    "begin": "\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*",
+                    "end": "(?=[#\\n\\r])",
                     "beginCaptures": {
                         "1": {
                             "name": "variable.other.key.cylc"
@@ -170,43 +170,18 @@
                     "patterns": [
                         {
                             "include": "#strings"
-                        }
-                    ]
                 },
                 {
-                    "name": "meta.setting.quoted.double.cylc",
-                    "begin": "\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*(?=\")",
-                    "end": "(?<=\")",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "variable.other.key.cylc"
+                            "name": "invalid.illegal.string.cylc",
+                            "comment": "Cannot have string after string, or string on new line, in settings value",
+                            "match": "(^|(?<=\"))[\t ]*[^#\n\r]+"
                         },
-                        "2": {
-                            "name": "keyword.operator.assignment.cylc"
-                        }
-                    },
-                    "contentName": "meta.value.cylc",
-                    "patterns": [
                         {
-                            "include": "#strings"
+                            "name": "string.unquoted.value.cylc",
+                            "match": "[^#\\n\\r\"]+"
                         }
                     ]
-                },
-                {
-                    "name": "meta.setting.unquoted.cylc",
-                    "match": "\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*([^#\\n\\r]*)",
-                    "captures": {
-                        "1": {
-                            "name": "variable.other.key.cylc"
-                        },
-                        "2": {
-                            "name": "keyword.operator.assignment.cylc"
-                        },
-                        "3": {
-                            "name": "string.unquoted.value.cylc"
                         }
-                    }
-                }
             ]
         },
         "includeFiles": {

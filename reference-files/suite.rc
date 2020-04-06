@@ -21,12 +21,21 @@ l=m  # no comment
 
 # SYNTAX: 1.3
 # display should be consistent throughout multi-line string
-n = """foo"""
-n = """
+n = """foo""" # comment
+n = """ # not a comment!
     foo
-    bar
+    bar # not a comment!
     baz
-"""
+"""  # comment
+
+# Illegal strings:
+foo = "lala" oops
+foo = "good" "bad"
+foo = """
+    lala
+"""uh-oh
+# This should be fine however:
+script = echo "meow"
 
 # "bar" should not display as a string when triple quotes not used:
 foo =

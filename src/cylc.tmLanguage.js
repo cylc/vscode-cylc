@@ -92,49 +92,29 @@ class GraphSectionUnquoted extends GraphSectionQuotedTriple {
 }
 
 
-class SettingQuotedTriple {
+class Setting {
     constructor() {
         this.pattern = {
-            name: 'meta.setting.quoted.triple.cylc',
-            begin: `${this.regex_key_equals = '\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*'}(?="{3})`,
-            end: '(?<="{3})',
+            name: 'meta.setting.cylc',
+            begin: `\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*`,
+            end: `(?=[#\\n\\r])`, // Will match after subexps in patterns below have finished (i.e. subexps win; end can be dragged onto another line)
             beginCaptures: {
                 1: {name: 'variable.other.key.cylc'},
-                2: {name: 'keyword.operator.assignment.cylc'}
+                2: {name: 'keyword.operator.assignment.cylc'},
             },
             contentName: 'meta.value.cylc',
             patterns: [
-                {include: '#strings'}
+                {include: '#strings'},
+                {
+                    name: 'invalid.illegal.string.cylc',
+                    comment: 'Cannot have string after string, or string on new line, in settings value',
+                    match: `(^|(?<="))[\t ]*[^#\n\r]+`
+                },
+                {
+                    name: 'string.unquoted.value.cylc',
+                    match: `[^#\\n\\r"]+`
+                }
             ]
-        };
-    }
-}
-class SettingQuotedDouble extends SettingQuotedTriple {
-    constructor() {
-        super();
-        const inherit = this.pattern;
-        this.pattern = {
-            name: 'meta.setting.quoted.double.cylc',
-            begin: `${this.regex_key_equals}(?=")`,
-            end: '(?<=")',
-            beginCaptures: inherit.beginCaptures,
-            contentName: inherit.contentName,
-            patterns: inherit.patterns
-        };
-    }
-}
-class SettingUnquoted extends SettingQuotedTriple {
-    constructor() {
-        super();
-        const inherit = this.pattern;
-        this.pattern = {
-            name: 'meta.setting.unquoted.cylc',
-            match: `${this.regex_key_equals}([^#\\n\\r]*)`,
-            captures: {
-                1: inherit.beginCaptures[1],
-                2: inherit.beginCaptures[2],
-                3: {name: 'string.unquoted.value.cylc'}
-            }
         };
     }
 }
@@ -563,8 +543,6 @@ class TaskQualifier {
 
 
 
-
-
 class GraphSyntax {
     constructor() {
         const task = new Task();
@@ -690,9 +668,7 @@ exports.tmLanguage = {
         },
         settings: {
             patterns: [
-                new SettingQuotedTriple().pattern,
-                new SettingQuotedDouble().pattern,
-                new SettingUnquoted().pattern,
+                new Setting().pattern,
             ]
         },
         includeFiles: {
