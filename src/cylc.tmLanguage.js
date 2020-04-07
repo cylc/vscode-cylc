@@ -17,7 +17,7 @@ class Header {
     constructor() {
         this.pattern = {
             name: 'meta.section.cylc',
-            match: '(\\[+)([^\\[\\]\\n\\r]+?)(\\]+)',
+            match: '(\\[+)([^\\[\\]]+?)(\\]+)',
             captures: {
                 1: {name: 'punctuation.definition.tag.begin.cylc'},
                 2: {
@@ -96,10 +96,19 @@ class Setting {
     constructor() {
         this.pattern = {
             name: 'meta.setting.cylc',
-            begin: `\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*`,
+            begin: `([^=#\\n\\r]+?)[\\t ]*(=)[\\t ]*`,
             end: `(?=[#\\n\\r])`, // Will match after subexps in patterns below have finished (i.e. subexps win; end can be dragged onto another line)
             beginCaptures: {
-                1: {name: 'variable.other.key.cylc'},
+                1: {
+                    patterns: [
+                        {
+                            match: `\\b([\\w\\-\\t ]+)\\b`,
+                            captures: {
+                                1: {name: 'variable.other.key.cylc'},
+                            }
+                        }
+                    ]
+                },
                 2: {name: 'keyword.operator.assignment.cylc'},
             },
             contentName: 'meta.value.cylc',
@@ -108,7 +117,7 @@ class Setting {
                 {
                     name: 'invalid.illegal.string.cylc',
                     comment: 'Cannot have string after string, or string on new line, in settings value',
-                    match: `(^|(?<="))[\t ]*[^#\n\r]+`
+                    match: `(^|(?<="))[\\t ]*[^#\\n\\r]+`
                 },
                 {
                     name: 'string.unquoted.value.cylc',
@@ -124,7 +133,7 @@ class IncludeFile {
     constructor() {
         this.pattern = {
             name: 'meta.include.cylc',
-            match: '(%include)\\s?(.*)',
+            match: '(%include)[\\t ]*(.*)',
             captures: {
                 1: {name: 'keyword.control.include.cylc'},
                 2: {name: 'string.cylc'}
@@ -160,7 +169,6 @@ class LineComment {
 class Parameterization {
     constructor() {
         const task = new Task();
-        const qualifier = new TaskQualifier();
         this.pattern = {
             name: 'meta.annotation.parameterization.cylc',
             begin: '(<)',
@@ -174,32 +182,47 @@ class Parameterization {
             patterns: [
                 {
                     name: 'meta.polling.cylc',
-                    match: `(\\S+)(::)(${task.regex})${qualifier.regex}?`,
-                    captures: {
-                        1: {name: 'entity.name.namespace.suite.cylc'},
-                        2: {name: 'punctuation.accessor.cylc'},
-                        3: {name: task.pattern.name},
-                        ...incrementKeys(qualifier.pattern.captures, 3),
-                    }
+                    patterns: [
+                        {
+                            match: `([^\\s<>]+)(?=::)`,
+                            captures: {
+                                1: {name: 'entity.name.namespace.suite.cylc'},
+                            }
+                        },
+                        {
+                            name: 'punctuation.accessor.cylc',
+                            match: `(?<=\\S)::(?=\\S)`
+                        },
+                        {
+                            match: `(?<=::)(${task.regex})`,
+                            captures: {
+                                1: {name: task.pattern.name},
+                            }
+                        },
+                        new TaskQualifier().pattern,
+                    ]
                 },
                 {
-                    match: '(\\w+)[\\t ]*(=)[\\t ]*(\\d*)',
+                    match: '(\\w+)[\\t ]*(=)[\\t ]*(\\w+)',
                     captures: {
                         1: {name: 'variable.parameter.cylc'},
                         2: {name: 'keyword.operator.assignment.cylc'},
-                        3: {name: 'constant.numeric.cylc'},
+                        3: {
+                            patterns: [
+                                {
+                                    name: 'constant.numeric.cylc',
+                                    match: '\\d+$'
+                                },
+                                {
+                                    name: 'variable.other.cylc',
+                                    match: '\\w+'
+                                }
+                            ]
+                        }
                     }
                 },
                 {
-                    match: '(\\w+)[\\t ]*(=)[\\t ]*(\\w*)',
-                    captures: {
-                        1: {name: 'variable.parameter.cylc'},
-                        2: {name: 'keyword.operator.assignment.cylc'},
-                        3: {name: 'variable.other.cylc'},
-                    }
-                },
-                {
-                    match: '([\\+\\-])[\\t ]*(\\d*)',
+                    match: '([\\+\\-])[\\t ]*(\\d+)(?!\\w)',
                     captures: {
                         '1': {name: 'keyword.operator.arithmetic.cylc'},
                         '2': {name: 'constant.numeric.cylc'}
@@ -406,11 +429,11 @@ class IllegalIsoDateTime {
                 comment: 'Mixed long/short syntaxes e.g. 2000-12-01T0600',
                 match: `\\b${isodate.long.regex}T\\d{3,}\\b`
             },
-            {
-                name: 'invalid.illegal.isodatetime.cylc',
-                comment: 'Mixed long/short syntaxes e.g. 2000-12-01T00+0530',
-                match: `\\b${isodate.long.regex}T\\d{3,}\\b`
-            },
+            // {
+            //     name: 'invalid.illegal.isodatetime.cylc',
+            //     comment: 'Mixed long/short syntaxes e.g. 2000-12-01T00+0530',
+            //     match: `\\b${isodate.long.regex}T\\b`
+            // },
             {
                 name: 'invalid.illegal.isodatetime.cylc',
                 comment: 'Mixed long/short syntaxes e.g. 20001201T06:00, 20001201T06+05:30',
@@ -531,7 +554,7 @@ class TaskQualifier {
     constructor() {
         this.pattern = {
             comment: 'e.g. foo:fail => bar',
-            match: `(?<=\\S)${this.regex = `((:)(\\S+))`}`,
+            match: `(?<!^|[\\s:])${this.regex = `((:)([\\w\\-]+))`}`,
             captures: {
                 1: {name: 'meta.annotation.qualifier.cylc'},
                 2: {name: 'punctuation.definition.annotation.cylc'},
@@ -574,7 +597,7 @@ class GraphSyntax {
             },
             {
                 name: 'meta.variable.suicide.cylc',
-                match: `(?:^|(?<=[\\s&>]))(!)(${task.regex})`,
+                match: `(?<=^|[\\s&>])(!)(${task.regex})`,
                 captures: {
                     1: {name: 'keyword.other.suicide.cylc'},
                     2: {name: task.pattern.name},
@@ -582,7 +605,7 @@ class GraphSyntax {
             },
             {
                 name: 'variable.other.xtrigger.cylc',
-                match: '(@)\\S+',
+                match: '(@)[\\w\\-]+',
                 captures: {
                     1: {name: 'punctuation.definition.variable.cylc'}
                 }

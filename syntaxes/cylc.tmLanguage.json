@@ -30,7 +30,7 @@
             "patterns": [
                 {
                     "name": "meta.section.cylc",
-                    "match": "(\\[+)([^\\[\\]\\n\\r]+?)(\\]+)",
+                    "match": "(\\[+)([^\\[\\]]+?)(\\]+)",
                     "captures": {
                         "1": {
                             "name": "punctuation.definition.tag.begin.cylc"
@@ -156,11 +156,20 @@
             "patterns": [
                 {
                     "name": "meta.setting.cylc",
-                    "begin": "\\b([^=\\n\\r]+?)[\\t ]*(=)[\\t ]*",
+                    "begin": "([^=#\\n\\r]+?)[\\t ]*(=)[\\t ]*",
                     "end": "(?=[#\\n\\r])",
                     "beginCaptures": {
                         "1": {
-                            "name": "variable.other.key.cylc"
+                            "patterns": [
+                                {
+                                    "match": "\\b([\\w\\-\\t ]+)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "variable.other.key.cylc"
+                                        }
+                                    }
+                                }
+                            ]
                         },
                         "2": {
                             "name": "keyword.operator.assignment.cylc"
@@ -170,25 +179,25 @@
                     "patterns": [
                         {
                             "include": "#strings"
-                },
-                {
+                        },
+                        {
                             "name": "invalid.illegal.string.cylc",
                             "comment": "Cannot have string after string, or string on new line, in settings value",
-                            "match": "(^|(?<=\"))[\t ]*[^#\n\r]+"
+                            "match": "(^|(?<=\"))[\\t ]*[^#\\n\\r]+"
                         },
                         {
                             "name": "string.unquoted.value.cylc",
                             "match": "[^#\\n\\r\"]+"
                         }
                     ]
-                        }
+                }
             ]
         },
         "includeFiles": {
             "patterns": [
                 {
                     "name": "meta.include.cylc",
-                    "match": "(%include)\\s?(.*)",
+                    "match": "(%include)[\\t ]*(.*)",
                     "captures": {
                         "1": {
                             "name": "keyword.control.include.cylc"
@@ -286,30 +295,46 @@
                     "patterns": [
                         {
                             "name": "meta.polling.cylc",
-                            "match": "(\\S+)(::)(\\b\\w[\\w\\+\\-@%]*)((:)(\\S+))?",
-                            "captures": {
-                                "1": {
-                                    "name": "entity.name.namespace.suite.cylc"
+                            "patterns": [
+                                {
+                                    "match": "([^\\s<>]+)(?=::)",
+                                    "captures": {
+                                        "1": {
+                                            "name": "entity.name.namespace.suite.cylc"
+                                        }
+                                    }
                                 },
-                                "2": {
-                                    "name": "punctuation.accessor.cylc"
+                                {
+                                    "name": "punctuation.accessor.cylc",
+                                    "match": "(?<=\\S)::(?=\\S)"
                                 },
-                                "3": {
-                                    "name": "meta.variable.task.cylc"
+                                {
+                                    "match": "(?<=::)(\\b\\w[\\w\\+\\-@%]*)",
+                                    "captures": {
+                                        "1": {
+                                            "name": "meta.variable.task.cylc"
+                                        }
+                                    }
                                 },
-                                "4": {
-                                    "name": "meta.annotation.qualifier.cylc"
-                                },
-                                "5": {
-                                    "name": "punctuation.definition.annotation.cylc"
-                                },
-                                "6": {
-                                    "name": "variable.annotation.cylc"
+                                {
+                                    "comment": "e.g. foo:fail => bar",
+                                    "match": "(?<!^|[\\s:])((:)([\\w\\-]+))",
+                                    "captures": {
+                                        "1": {
+                                            "name": "meta.annotation.qualifier.cylc"
+                                        },
+                                        "2": {
+                                            "name": "punctuation.definition.annotation.cylc"
+                                        },
+                                        "3": {
+                                            "name": "variable.annotation.cylc"
+                                        }
+                                    }
                                 }
-                            }
+                            ]
                         },
                         {
-                            "match": "(\\w+)[\\t ]*(=)[\\t ]*(\\d*)",
+                            "match": "(\\w+)[\\t ]*(=)[\\t ]*(\\w+)",
                             "captures": {
                                 "1": {
                                     "name": "variable.parameter.cylc"
@@ -318,26 +343,21 @@
                                     "name": "keyword.operator.assignment.cylc"
                                 },
                                 "3": {
-                                    "name": "constant.numeric.cylc"
+                                    "patterns": [
+                                        {
+                                            "name": "constant.numeric.cylc",
+                                            "match": "\\d+$"
+                                        },
+                                        {
+                                            "name": "variable.other.cylc",
+                                            "match": "\\w+"
+                                        }
+                                    ]
                                 }
                             }
                         },
                         {
-                            "match": "(\\w+)[\\t ]*(=)[\\t ]*(\\w*)",
-                            "captures": {
-                                "1": {
-                                    "name": "variable.parameter.cylc"
-                                },
-                                "2": {
-                                    "name": "keyword.operator.assignment.cylc"
-                                },
-                                "3": {
-                                    "name": "variable.other.cylc"
-                                }
-                            }
-                        },
-                        {
-                            "match": "([\\+\\-])[\\t ]*(\\d*)",
+                            "match": "([\\+\\-])[\\t ]*(\\d+)(?!\\w)",
                             "captures": {
                                 "1": {
                                     "name": "keyword.operator.arithmetic.cylc"
@@ -369,11 +389,6 @@
                 {
                     "name": "invalid.illegal.isodatetime.cylc",
                     "comment": "Mixed long/short syntaxes e.g. 2000-12-01T0600",
-                    "match": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?T\\d{3,}\\b"
-                },
-                {
-                    "name": "invalid.illegal.isodatetime.cylc",
-                    "comment": "Mixed long/short syntaxes e.g. 2000-12-01T00+0530",
                     "match": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?T\\d{3,}\\b"
                 },
                 {
@@ -596,7 +611,7 @@
                 },
                 {
                     "name": "meta.variable.suicide.cylc",
-                    "match": "(?:^|(?<=[\\s&>]))(!)(\\b\\w[\\w\\+\\-@%]*)",
+                    "match": "(?<=^|[\\s&>])(!)(\\b\\w[\\w\\+\\-@%]*)",
                     "captures": {
                         "1": {
                             "name": "keyword.other.suicide.cylc"
@@ -608,7 +623,7 @@
                 },
                 {
                     "name": "variable.other.xtrigger.cylc",
-                    "match": "(@)\\S+",
+                    "match": "(@)[\\w\\-]+",
                     "captures": {
                         "1": {
                             "name": "punctuation.definition.variable.cylc"
@@ -621,7 +636,7 @@
                 },
                 {
                     "comment": "e.g. foo:fail => bar",
-                    "match": "(?<=\\S)((:)(\\S+))",
+                    "match": "(?<!^|[\\s:])((:)([\\w\\-]+))",
                     "captures": {
                         "1": {
                             "name": "meta.annotation.qualifier.cylc"

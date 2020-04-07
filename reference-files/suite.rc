@@ -34,7 +34,7 @@ foo = "good" "bad"
 foo = """
     lala
 """uh-oh
-# This should be fine however:
+# However this should have unquoted string scope:
 script = echo "meow"
 
 # "bar" should not display as a string when triple quotes not used:
@@ -44,8 +44,6 @@ bar
 foo = "
 bar
 "
-
-"" # reset erroneous quotes above
 
 # SYNTAX: 1.4
 # highlighting should be consistent with the following examples
@@ -92,11 +90,13 @@ R1 = """
     # SYNTAX: 2.4
     # text inside <> should be highlighted
     # optionally suite / task could be highlighted
-    <other.suite::foo> => foo
-    foo & <other.suite::task_bar> => baz
+    poller<other.suite::foo> => foo
+    foo & poller<other.suite::task_bar> => baz
 
-    <other-suite::foo:fail> => bar
-    <other.suite::foo>:start => bar
+    poller<other-suite::foo:fail> => bar
+    poller<other.suite::foo>:start => bar
+
+    <oops suite::foo> => bar
 
     # SYNTAX: 2.5
     # @x should be highlighted
@@ -122,8 +122,8 @@ R1 = """
 
     # multiple parameters:
     foo<x=bar, y = 2> => foo<baz,4>
-
-    # @TODO what about parametrised sections? e.g. [[foo<x>]]
+    
+    a<x = 1s, y-1s> # '1s' not number
 
     # SYNTAX: 2.9
     # qualifier should be highlighted, whole and nothing but
@@ -132,6 +132,7 @@ R1 = """
     FOO:succeed-all => bar
     foo:custom_a => bar
     foo[-P1]:custom-2 => bar
+:fail
 
     # SYNTAX: 2.10
     # inter-cycle dep should be highlighted
@@ -216,3 +217,7 @@ graph =
 graph = "
     foo => bar
 "
+
+# Parameterized sections:
+[foo<x=bar,y-1>]
+    a = b
