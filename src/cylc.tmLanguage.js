@@ -1,4 +1,4 @@
-function incrementKeys(obj, incr) {
+function reEnumerateKeys(obj, incr) {
     // For an Object obj with indexed keys (i.e. the keys are '1', '2', '3' etc), add a number to the keys and return new Object
     const out = {};
     for (let key in obj) {
@@ -35,60 +35,49 @@ class Header {
 }
 
 
-class GraphSectionQuotedTriple {
+class GraphSection7 {
     constructor() {
         this.pattern = {
-            contentName: `meta.graph-syntax.quoted.triple.cylc`,
-            begin: `${this.regex_graph_equals = '\\b(graph)[\\t ]*(=)[\\t ]*'}("{3})`,
-            end: `("{3})`,
+            comment: 'Cylc 7 graph syntax',
+            begin: `\\b(graph)[\\t ]*(=)[\\t ]*`,
+            end: `(?=[#\\n\\r])`, // Will match after subexps in patterns below have finished (i.e. subexps win; end can be dragged onto another line)
             beginCaptures: {
                 1: {name: 'keyword.graph.cylc'},
                 2: {name: 'keyword.operator.assignment.cylc'},
-                3: {name: `string.quoted.triple.begin.cylc`}
-            },
-            endCaptures: {
-                1: {name: `string.quoted.triple.end.cylc`}
             },
             patterns: [
-                {include: '#graphSyntax'}
+                {include: '#graphStrings'},
+                new IllegalSecondString().pattern,
             ]
         };
     }
 }
-class GraphSectionQuotedDouble extends GraphSectionQuotedTriple {
+class GraphSection8 extends GraphSection7 {
     constructor() {
         super();
         const inherit = this.pattern;
         this.pattern = {
-            contentName: `meta.graph-syntax.quoted.double.cylc`,
-            begin: `${this.regex_graph_equals}(")`,
-            end: `(["\\n\\r])`,
+            contentName: 'meta.graph-section.cylc',
+            comment: 'Cylc 8 graph syntax',
+            begin: `\\[{2}[\\t ]*graph[\\t ]*\\]{2}`,
+            end: `(?=^[\t ]*\\[)`,
             beginCaptures: {
-                1: inherit.beginCaptures[1],
-                2: inherit.beginCaptures[2],
-                3: {name: `string.quoted.double.begin.cylc`}
+                0: {
+                    patterns: [
+                        {include: '#headers'}
+                    ]
+                }
             },
-            endCaptures: {
-                1: {name: `string.quoted.double.end.cylc`}
-            },
-            patterns: inherit.patterns
+            patterns: [
+                {include: '#comments'},
+                {
+                    begin: `([\\w\\+\\^\\$][\\w\\+\\-\\^\\$\\/\\t ,:]*)(=)[\\t ]*`, // @TODO: need to implement recurrence syntax properly
+                    end: inherit.end,
+                    beginCaptures: inherit.beginCaptures,
+                    patterns: inherit.patterns
+                }
+            ]
         };
-    }
-}
-class GraphSectionUnquoted extends GraphSectionQuotedTriple {
-    constructor() {
-        super();
-        const inherit = this.pattern;
-        this.pattern = {
-            contentName: `meta.graph-syntax.unquoted.cylc`,
-            begin: `${this.regex_graph_equals}(?!")`,
-            end: `[\\n\\r]`,
-            beginCaptures: {
-                1: inherit.beginCaptures[1],
-                2: inherit.beginCaptures[2]
-            },
-            patterns: inherit.patterns
-        }
     }
 }
 
@@ -97,17 +86,15 @@ class Setting {
     constructor() {
         this.pattern = {
             name: 'meta.setting.cylc',
-            begin: `([^=#\\n\\r]+?)[\\t ]*(=)[\\t ]*`,
+            begin: `(\\S[^=#\\n\\r]+?)[\\t ]*(=)[\\t ]*`,
             end: `(?=[#\\n\\r])`, // Will match after subexps in patterns below have finished (i.e. subexps win; end can be dragged onto another line)
             beginCaptures: {
                 1: {
                     patterns: [
                         {include: '#jinja2'},
                         {
-                            match: `\\b([\\w\\-\\t ]+)\\b`,
-                            captures: {
-                                1: {name: 'variable.other.key.cylc'},
-                            }
+                            name: 'variable.other.key.cylc',
+                            match: `\\b[\\w\\-\\t ]+\\b`,
                         }
                     ]
                 },
@@ -116,11 +103,7 @@ class Setting {
             contentName: 'meta.value.cylc',
             patterns: [
                 {include: '#strings'},
-                {
-                    name: 'invalid.illegal.string.cylc',
-                    comment: 'Cannot have string after string, or string on new line, in settings value',
-                    match: `(^|(?<="))[\\t ]*[^#\\n\\r]+`
-                },
+                new IllegalSecondString().pattern,
                 {include: '#jinja2'},
                 {
                     match: `([^#\\n\\r]+)`,
@@ -149,6 +132,7 @@ class IncludeFile {
                 2: {
                     name: 'string.cylc',
                     patterns: [
+                        {include: '#comments'},
                         {include: '#jinja2'}
                     ]
                 }
@@ -186,13 +170,13 @@ class Parameterization {
         const task = new Task();
         this.pattern = {
             name: 'meta.annotation.parameterization.cylc',
-            begin: '(<)',
-            end: '(>)',
+            begin: '<',
+            end: '>',
             beginCaptures: {
-                1: {name: 'punctuation.definition.annotation.begin.cylc'}
+                0: {name: 'punctuation.definition.annotation.begin.cylc'}
             },
             endCaptures: {
-                1: {name: 'punctuation.definition.annotation.end.cylc'}
+                0: {name: 'punctuation.definition.annotation.end.cylc'}
             },
             patterns: [
                 {include: '#jinja2'},
@@ -287,10 +271,61 @@ class StringQuotedDouble extends StringQuotedTriple {
         this.pattern = {
             name: `string.quoted.double.cylc`,
             begin: `(")`,
-            end: `([\"\\n\\r])`,
+            end: `(["\\n\\r])`,
             beginCaptures: inherit.beginCaptures,
             endCaptures: inherit.endCaptures,
             patterns: inherit.patterns
+        };
+    }
+}
+
+class IllegalSecondString {
+    constructor() {
+        this.pattern = {
+            name: 'invalid.illegal.string.cylc',
+            comment: 'In this situation, we cannot have string after string, or string on new line',
+            match: `(^|(?<="))[\\t ]*[^#\\n\\r]+`
+        };
+    }
+}
+
+
+class GraphStringQuoted {
+    constructor(type) {
+        let str;
+        if (type === 'triple') str = new StringQuotedTriple();
+        else if (type === 'double') str = new StringQuotedDouble();
+        else throw "type must be 'double' or 'triple'";
+        this.pattern = {
+            name: `meta.graph-syntax.quoted.${type}.cylc`,
+            begin: `\\G${str.pattern.begin}`,
+            end: str.pattern.end,
+            beginCaptures: {
+                0: {name: str.pattern.name},
+                ...str.pattern.beginCaptures,
+            },
+            endCaptures: {
+                0: {name: str.pattern.name},
+                ...str.pattern.endCaptures,
+            },
+            patterns: [
+                {include: '#graphSyntax'}
+            ]
+        };
+    }
+}
+class GraphStringUnquoted {
+    constructor() {
+        this.pattern = {
+            name: 'meta.graph-syntax.unquoted.cylc',
+            match: `\\G[^#\\n\\r"]+`,
+            captures: {
+                0: {
+                    patterns: [
+                        {include: '#graphSyntax'}
+                    ]
+                }
+            }
         };
     }
 }
@@ -334,7 +369,7 @@ class IsoTimeLong {
         const timeZone = new IsoTimeZoneLong();
         this.pattern = {
             name: 'constant.numeric.isotime.long.cylc',
-            match: `\\b${this.regex = `(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?${timeZone.regex}?`}\\b`,
+            match: `\\b${this.regex = `(T)(\\d{2})(?:(:)(\\d{2}))?(?:(:)(\\d{2}))?${timeZone.regex}?`}\\b`,
             captures: {
                 1: {name: 'keyword.other.unit.designator.time.cylc'},
                 2: {name: 'constant.numeric.hour.cylc'},
@@ -342,7 +377,7 @@ class IsoTimeLong {
                 4: {name: 'constant.numeric.min.cylc'},
                 5: {name: 'punctuation.separator.time.cylc'},
                 6: {name: 'constant.numeric.sec.cylc'},
-                ...incrementKeys(timeZone.pattern.captures, 6),
+                ...reEnumerateKeys(timeZone.pattern.captures, 6),
             }
         };
     }
@@ -358,7 +393,7 @@ class IsoTimeShort {
                 2: {name: 'constant.numeric.hour.cylc'},
                 3: {name: 'constant.numeric.min.cylc'},
                 4: {name: 'constant.numeric.sec.cylc'},
-                ...incrementKeys(timeZone.pattern.captures, 4),
+                ...reEnumerateKeys(timeZone.pattern.captures, 4),
             }
         };
     }
@@ -404,7 +439,7 @@ class IsoDateTimeLong {
             match: `\\b${this.regex = `${date.regex}(?:${time.regex})?`}\\b`,
             captures: {
                 ...date.pattern.captures,
-                ...incrementKeys(time.pattern.captures, getLength(date.pattern.captures)),
+                ...reEnumerateKeys(time.pattern.captures, getLength(date.pattern.captures)),
             }
         };
     }
@@ -418,7 +453,7 @@ class IsoDateTimeShort {
             match: `\\b${this.regex = `${date.regex}(?:${time.regex})?`}\\b`,
             captures: {
                 ...date.pattern.captures,
-                ...incrementKeys(time.pattern.captures, getLength(date.pattern.captures)),
+                ...reEnumerateKeys(time.pattern.captures, getLength(date.pattern.captures)),
             }
         };
     }
@@ -454,7 +489,7 @@ class IllegalIsoDateTime {
             {
                 name: 'invalid.illegal.isodatetime.cylc',
                 comment: 'Mixed long/short syntaxes e.g. 20001201T06:00, 20001201T06+05:30',
-                match: `\\b${isodate.short.regex}T\\d{2,}(?:[\\+\\-]\\d+)?\:\\d*\\b`
+                match: `\\b${isodate.short.regex}T\\d{2,}(?:[\\+\\-]\\d+)?\\:\\d*\\b`
             }
         ];
     }
@@ -516,7 +551,7 @@ class IntervalIso {
                 3: {name: 'keyword.other.unit.designator.year.cylc'},
                 4: {name: 'keyword.other.unit.designator.month.cylc'},
                 5: {name: 'keyword.other.unit.designator.day.cylc'},
-                ...incrementKeys(time.pattern.captures, 5),
+                ...reEnumerateKeys(time.pattern.captures, 5),
             }
         };
     }
@@ -588,8 +623,8 @@ class GraphSyntax {
         const task = new Task();
         this.patterns = [
             {include: '#comments'},
-            {include: '#parameterizations'},
             {include: '#jinja2'},
+            {include: '#parameterizations'},
             new Task().pattern,
             {
                 name: 'keyword.control.trigger.cylc',
@@ -601,13 +636,13 @@ class GraphSyntax {
             },
             {
                 name: 'meta.parens.cylc',
-                begin: '(\\()',
-                end: '([\\)\\n\\r])',
+                begin: '\\(',
+                end: '[\\)\\n\\r]',
                 beginCaptures: {
-                    1: {name: 'punctuation.section.parens.begin.cylc'}
+                    0: {name: 'punctuation.section.parens.begin.cylc'}
                 },
                 endCaptures: {
-                    1: {name: 'punctuation.section.parens.end.cylc'}
+                    0: {name: 'punctuation.section.parens.end.cylc'}
                 },
                 patterns: [
                     {include: '#graphSyntax'}
@@ -636,13 +671,13 @@ class GraphSyntax {
             {
                 name: 'meta.annotation.inter-cycle.cylc',
                 comment: 'e.g. foo[-P1]',
-                begin: '(?<=\\S)(\\[)',
-                end: '(\\])',
+                begin: '(?<=\\S)\\[',
+                end: '\\]',
                 beginCaptures: {
-                    1: {name: 'punctuation.section.brackets.begin.cylc'}
+                    0: {name: 'punctuation.section.brackets.begin.cylc'}
                 },
                 endCaptures: {
-                    1: {name: 'punctuation.section.brackets.end.cylc'}
+                    0: {name: 'punctuation.section.brackets.end.cylc'}
                 },
                 patterns: [
                     {include: '#intervals'},
@@ -721,14 +756,14 @@ exports.tmLanguage = {
     $schema: 'https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json',
     name: 'cylc',
     patterns: [
+        {include: '#comments'},
         {include: '#jinja2'},
-        {include: '#headers'},
         {include: '#graphSections'},
+        {include: '#headers'},
         {include: '#settings'},
         {include: '#includeFiles'},
         {include: '#keywords'},
         {include: '#strings'},
-        {include: '#comments'},
     ],
     repository: {
         headers: {
@@ -737,27 +772,21 @@ exports.tmLanguage = {
             ]
         },
         graphSections: {
-            comment: 'Handle graph sections @TODO Make it parse graph separately',
             patterns: [
-                {
-                    contentName: 'meta.graph-syntax.cylc',
-                    begin: '(R1)\\s*(=)\\s*(""")',
-                    end: '(""")',
-                    beginCaptures: {
-                        '1': {name: 'keyword.graph.cylc'},
-                        '2': {name: 'keyword.operator.assignment.cylc'},
-                        '3': {name: 'string.quoted.triple.begin.cylc'}
-                    },
-                    endCaptures: {
-                        '1': {name: 'string.quoted.triple.end.cylc'}
-                    },
-                    patterns: [
-                        {include: '#graphSyntax'}
-                    ]
-                },
-                new GraphSectionQuotedTriple().pattern,
-                new GraphSectionQuotedDouble().pattern,
-                new GraphSectionUnquoted().pattern,
+                new GraphSection7().pattern,
+                new GraphSection8().pattern,
+            ]
+        },
+        graphStrings: {
+            patterns: [
+                new GraphStringQuoted('triple').pattern,
+                new GraphStringQuoted('double').pattern,
+                new GraphStringUnquoted().pattern,
+            ]
+        },
+        graphSyntax: {
+            patterns: [
+                ...new GraphSyntax().patterns,
             ]
         },
         settings: {
@@ -804,11 +833,6 @@ exports.tmLanguage = {
                 new IntervalInteger().pattern,
                 new IntervalIsoWeek().pattern,
                 new IntervalIso().pattern,
-            ]
-        },
-        graphSyntax: {
-            patterns: [
-                ...new GraphSyntax().patterns,
             ]
         },
         jinja2: {

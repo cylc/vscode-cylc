@@ -4,13 +4,16 @@
     "name": "cylc",
     "patterns": [
         {
+            "include": "#comments"
+        },
+        {
             "include": "#jinja2"
         },
         {
-            "include": "#headers"
+            "include": "#graphSections"
         },
         {
-            "include": "#graphSections"
+            "include": "#headers"
         },
         {
             "include": "#settings"
@@ -23,9 +26,6 @@
         },
         {
             "include": "#strings"
-        },
-        {
-            "include": "#comments"
         }
     ],
     "repository": {
@@ -58,52 +58,94 @@
             ]
         },
         "graphSections": {
-            "comment": "Handle graph sections @TODO Make it parse graph separately",
             "patterns": [
                 {
-                    "contentName": "meta.graph-syntax.cylc",
-                    "begin": "(R1)\\s*(=)\\s*(\"\"\")",
-                    "end": "(\"\"\")",
+                    "comment": "Cylc 7 graph syntax",
+                    "begin": "\\b(graph)[\\t ]*(=)[\\t ]*",
+                    "end": "(?=[#\\n\\r])",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.graph.cylc"
                         },
                         "2": {
                             "name": "keyword.operator.assignment.cylc"
-                        },
-                        "3": {
-                            "name": "string.quoted.triple.begin.cylc"
-                        }
-                    },
-                    "endCaptures": {
-                        "1": {
-                            "name": "string.quoted.triple.end.cylc"
                         }
                     },
                     "patterns": [
                         {
-                            "include": "#graphSyntax"
+                            "include": "#graphStrings"
+                        },
+                        {
+                            "name": "invalid.illegal.string.cylc",
+                            "comment": "In this situation, we cannot have string after string, or string on new line",
+                            "match": "(^|(?<=\"))[\\t ]*[^#\\n\\r]+"
                         }
                     ]
                 },
                 {
-                    "contentName": "meta.graph-syntax.quoted.triple.cylc",
-                    "begin": "\\b(graph)[\\t ]*(=)[\\t ]*(\"{3})",
+                    "contentName": "meta.graph-section.cylc",
+                    "comment": "Cylc 8 graph syntax",
+                    "begin": "\\[{2}[\\t ]*graph[\\t ]*\\]{2}",
+                    "end": "(?=^[\t ]*\\[)",
+                    "beginCaptures": {
+                        "0": {
+                            "patterns": [
+                                {
+                                    "include": "#headers"
+                                }
+                            ]
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "begin": "([\\w\\+\\^\\$][\\w\\+\\-\\^\\$\\/\\t ,:]*)(=)[\\t ]*",
+                            "end": "(?=[#\\n\\r])",
+                            "beginCaptures": {
+                                "1": {
+                                    "name": "keyword.graph.cylc"
+                                },
+                                "2": {
+                                    "name": "keyword.operator.assignment.cylc"
+                                }
+                            },
+                            "patterns": [
+                                {
+                                    "include": "#graphStrings"
+                                },
+                                {
+                                    "name": "invalid.illegal.string.cylc",
+                                    "comment": "In this situation, we cannot have string after string, or string on new line",
+                                    "match": "(^|(?<=\"))[\\t ]*[^#\\n\\r]+"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "graphStrings": {
+            "patterns": [
+                {
+                    "name": "meta.graph-syntax.quoted.triple.cylc",
+                    "begin": "\\G(\"{3})",
                     "end": "(\"{3})",
                     "beginCaptures": {
+                        "0": {
+                            "name": "string.quoted.triple.cylc"
+                        },
                         "1": {
-                            "name": "keyword.graph.cylc"
-                        },
-                        "2": {
-                            "name": "keyword.operator.assignment.cylc"
-                        },
-                        "3": {
-                            "name": "string.quoted.triple.begin.cylc"
+                            "name": "punctuation.definition.string.begin.cylc"
                         }
                     },
                     "endCaptures": {
+                        "0": {
+                            "name": "string.quoted.triple.cylc"
+                        },
                         "1": {
-                            "name": "string.quoted.triple.end.cylc"
+                            "name": "punctuation.definition.string.end.cylc"
                         }
                     },
                     "patterns": [
@@ -113,23 +155,23 @@
                     ]
                 },
                 {
-                    "contentName": "meta.graph-syntax.quoted.double.cylc",
-                    "begin": "\\b(graph)[\\t ]*(=)[\\t ]*(\")",
+                    "name": "meta.graph-syntax.quoted.double.cylc",
+                    "begin": "\\G(\")",
                     "end": "([\"\\n\\r])",
                     "beginCaptures": {
+                        "0": {
+                            "name": "string.quoted.double.cylc"
+                        },
                         "1": {
-                            "name": "keyword.graph.cylc"
-                        },
-                        "2": {
-                            "name": "keyword.operator.assignment.cylc"
-                        },
-                        "3": {
-                            "name": "string.quoted.double.begin.cylc"
+                            "name": "punctuation.definition.string.begin.cylc"
                         }
                     },
                     "endCaptures": {
+                        "0": {
+                            "name": "string.quoted.double.cylc"
+                        },
                         "1": {
-                            "name": "string.quoted.double.end.cylc"
+                            "name": "punctuation.definition.string.end.cylc"
                         }
                     },
                     "patterns": [
@@ -139,20 +181,142 @@
                     ]
                 },
                 {
-                    "contentName": "meta.graph-syntax.unquoted.cylc",
-                    "begin": "\\b(graph)[\\t ]*(=)[\\t ]*(?!\")",
-                    "end": "[\\n\\r]",
+                    "name": "meta.graph-syntax.unquoted.cylc",
+                    "match": "\\G[^#\\n\\r\"]+",
+                    "captures": {
+                        "0": {
+                            "patterns": [
+                                {
+                                    "include": "#graphSyntax"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "graphSyntax": {
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#jinja2"
+                },
+                {
+                    "include": "#parameterizations"
+                },
+                {
+                    "name": "meta.variable.task.cylc",
+                    "match": "\\b\\w[\\w\\+\\-@%]*"
+                },
+                {
+                    "name": "keyword.control.trigger.cylc",
+                    "match": "=>"
+                },
+                {
+                    "name": "keyword.other.logical.cylc",
+                    "match": "[\\|&]"
+                },
+                {
+                    "name": "meta.parens.cylc",
+                    "begin": "\\(",
+                    "end": "[\\)\\n\\r]",
                     "beginCaptures": {
-                        "1": {
-                            "name": "keyword.graph.cylc"
-                        },
-                        "2": {
-                            "name": "keyword.operator.assignment.cylc"
+                        "0": {
+                            "name": "punctuation.section.parens.begin.cylc"
+                        }
+                    },
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.section.parens.end.cylc"
                         }
                     },
                     "patterns": [
                         {
                             "include": "#graphSyntax"
+                        }
+                    ]
+                },
+                {
+                    "name": "meta.variable.suicide.cylc",
+                    "match": "(?<=^|[\\s&>])(!)(\\b\\w[\\w\\+\\-@%]*)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.suicide.cylc"
+                        },
+                        "2": {
+                            "name": "meta.variable.task.cylc"
+                        }
+                    }
+                },
+                {
+                    "name": "variable.other.xtrigger.cylc",
+                    "match": "(@)[\\w\\-]+",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.variable.cylc"
+                        }
+                    }
+                },
+                {
+                    "name": "constant.character.escape.continuation.cylc",
+                    "match": "\\\\"
+                },
+                {
+                    "comment": "e.g. foo:fail => bar",
+                    "match": "(?<!^|[\\s:])((:)([\\w\\-]+))",
+                    "captures": {
+                        "1": {
+                            "name": "meta.annotation.qualifier.cylc"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.annotation.cylc"
+                        },
+                        "3": {
+                            "name": "variable.annotation.cylc"
+                        }
+                    }
+                },
+                {
+                    "name": "meta.annotation.inter-cycle.cylc",
+                    "comment": "e.g. foo[-P1]",
+                    "begin": "(?<=\\S)\\[",
+                    "end": "\\]",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.section.brackets.begin.cylc"
+                        }
+                    },
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.section.brackets.end.cylc"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#intervals"
+                        },
+                        {
+                            "include": "#isodatetimes"
+                        },
+                        {
+                            "comment": "If 1st char is ^ (allowing for spaces)",
+                            "match": "\\G[\\t ]*(\\^)",
+                            "captures": {
+                                "1": {
+                                    "name": "constant.language.cycle-point.cylc"
+                                }
+                            }
+                        },
+                        {
+                            "name": "keyword.operator.arithmetic.cylc",
+                            "match": "[\\+\\-]"
+                        },
+                        {
+                            "name": "constant.numeric.integer-point.cylc",
+                            "comment": "Integer as long as it isn't adjacent to a letter",
+                            "match": "\\b\\d+\\b"
                         }
                     ]
                 }
@@ -162,7 +326,7 @@
             "patterns": [
                 {
                     "name": "meta.setting.cylc",
-                    "begin": "([^=#\\n\\r]+?)[\\t ]*(=)[\\t ]*",
+                    "begin": "(\\S[^=#\\n\\r]+?)[\\t ]*(=)[\\t ]*",
                     "end": "(?=[#\\n\\r])",
                     "beginCaptures": {
                         "1": {
@@ -171,12 +335,8 @@
                                     "include": "#jinja2"
                                 },
                                 {
-                                    "match": "\\b([\\w\\-\\t ]+)\\b",
-                                    "captures": {
-                                        "1": {
-                                            "name": "variable.other.key.cylc"
-                                        }
-                                    }
+                                    "name": "variable.other.key.cylc",
+                                    "match": "\\b[\\w\\-\\t ]+\\b"
                                 }
                             ]
                         },
@@ -191,7 +351,7 @@
                         },
                         {
                             "name": "invalid.illegal.string.cylc",
-                            "comment": "Cannot have string after string, or string on new line, in settings value",
+                            "comment": "In this situation, we cannot have string after string, or string on new line",
                             "match": "(^|(?<=\"))[\\t ]*[^#\\n\\r]+"
                         },
                         {
@@ -226,6 +386,9 @@
                         "2": {
                             "name": "string.cylc",
                             "patterns": [
+                                {
+                                    "include": "#comments"
+                                },
                                 {
                                     "include": "#jinja2"
                                 }
@@ -312,15 +475,15 @@
             "patterns": [
                 {
                     "name": "meta.annotation.parameterization.cylc",
-                    "begin": "(<)",
-                    "end": "(>)",
+                    "begin": "<",
+                    "end": ">",
                     "beginCaptures": {
-                        "1": {
+                        "0": {
                             "name": "punctuation.definition.annotation.begin.cylc"
                         }
                     },
                     "endCaptures": {
-                        "1": {
+                        "0": {
                             "name": "punctuation.definition.annotation.end.cylc"
                         }
                     },
@@ -429,11 +592,11 @@
                 {
                     "name": "invalid.illegal.isodatetime.cylc",
                     "comment": "Mixed long/short syntaxes e.g. 20001201T06:00, 20001201T06+05:30",
-                    "match": "\\b(\\d{4})(\\d{2})?(\\d{2})?T\\d{2,}(?:[\\+\\-]\\d+)?:\\d*\\b"
+                    "match": "\\b(\\d{4})(\\d{2})?(\\d{2})?T\\d{2,}(?:[\\+\\-]\\d+)?\\:\\d*\\b"
                 },
                 {
                     "name": "constant.numeric.isodatetime.long.cylc",
-                    "match": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:(T)(\\d{2})(?:(\\:)(\\d{2}))?(?:(\\:)(\\d{2}))?((Z)|(?:([\\+\\-])(\\d{2})(?:(\\:)(\\d{2}))?))?)?\\b",
+                    "match": "\\b(\\d{4})(?:(\\-)(\\d{2}))?(?:(\\-)(\\d{2}))?(?:(T)(\\d{2})(?:(:)(\\d{2}))?(?:(:)(\\d{2}))?((Z)|(?:([\\+\\-])(\\d{2})(?:(\\:)(\\d{2}))?))?)?\\b",
                     "captures": {
                         "1": {
                             "name": "constant.numeric.year.cylc"
@@ -601,133 +764,6 @@
                             "name": "keyword.other.unit.designator.sec.cylc"
                         }
                     }
-                }
-            ]
-        },
-        "graphSyntax": {
-            "patterns": [
-                {
-                    "include": "#comments"
-                },
-                {
-                    "include": "#parameterizations"
-                },
-                {
-                    "include": "#jinja2"
-                },
-                {
-                    "name": "meta.variable.task.cylc",
-                    "match": "\\b\\w[\\w\\+\\-@%]*"
-                },
-                {
-                    "name": "keyword.control.trigger.cylc",
-                    "match": "=>"
-                },
-                {
-                    "name": "keyword.other.logical.cylc",
-                    "match": "[\\|&]"
-                },
-                {
-                    "name": "meta.parens.cylc",
-                    "begin": "(\\()",
-                    "end": "([\\)\\n\\r])",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "punctuation.section.parens.begin.cylc"
-                        }
-                    },
-                    "endCaptures": {
-                        "1": {
-                            "name": "punctuation.section.parens.end.cylc"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#graphSyntax"
-                        }
-                    ]
-                },
-                {
-                    "name": "meta.variable.suicide.cylc",
-                    "match": "(?<=^|[\\s&>])(!)(\\b\\w[\\w\\+\\-@%]*)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.other.suicide.cylc"
-                        },
-                        "2": {
-                            "name": "meta.variable.task.cylc"
-                        }
-                    }
-                },
-                {
-                    "name": "variable.other.xtrigger.cylc",
-                    "match": "(@)[\\w\\-]+",
-                    "captures": {
-                        "1": {
-                            "name": "punctuation.definition.variable.cylc"
-                        }
-                    }
-                },
-                {
-                    "name": "constant.character.escape.continuation.cylc",
-                    "match": "\\\\"
-                },
-                {
-                    "comment": "e.g. foo:fail => bar",
-                    "match": "(?<!^|[\\s:])((:)([\\w\\-]+))",
-                    "captures": {
-                        "1": {
-                            "name": "meta.annotation.qualifier.cylc"
-                        },
-                        "2": {
-                            "name": "punctuation.definition.annotation.cylc"
-                        },
-                        "3": {
-                            "name": "variable.annotation.cylc"
-                        }
-                    }
-                },
-                {
-                    "name": "meta.annotation.inter-cycle.cylc",
-                    "comment": "e.g. foo[-P1]",
-                    "begin": "(?<=\\S)(\\[)",
-                    "end": "(\\])",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "punctuation.section.brackets.begin.cylc"
-                        }
-                    },
-                    "endCaptures": {
-                        "1": {
-                            "name": "punctuation.section.brackets.end.cylc"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#intervals"
-                        },
-                        {
-                            "include": "#isodatetimes"
-                        },
-                        {
-                            "comment": "If 1st char is ^ (allowing for spaces)",
-                            "match": "\\G[\\t ]*(\\^)",
-                            "captures": {
-                                "1": {
-                                    "name": "constant.language.cycle-point.cylc"
-                                }
-                            }
-                        },
-                        {
-                            "name": "keyword.operator.arithmetic.cylc",
-                            "match": "[\\+\\-]"
-                        },
-                        {
-                            "name": "constant.numeric.integer-point.cylc",
-                            "comment": "Integer as long as it isn't adjacent to a letter",
-                            "match": "\\b\\d+\\b"
-                        }
-                    ]
                 }
             ]
         },
