@@ -53,6 +53,7 @@ bar
 
 
 # SYNTAX: 2.
+[[graph]]
 R1 = """
     # settings should not be highlighted here
     a = b
@@ -194,9 +195,15 @@ R1 = """
     ]
 """
 
+[other heading]
 # graph strings should not highlight here, this should display as a setting:
 foo => bar => baz => quz
 
+[[graph]]
+    R1 = but => here => indeed
+
+[[xtriggers]]
+    R1 = not => here
 
 # The following should all highlight the same:
 graph=foo=>bar
