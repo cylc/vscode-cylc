@@ -7,6 +7,7 @@ function reEnumerateKeys(obj, incr) {
     }
     return out;
 }
+
 function getLength(obj) {
     return Object.keys(obj).length;
 }
@@ -29,84 +30,6 @@ class Header {
                 3: {name: 'punctuation.definition.tag.end.cylc'}
             },
             comment: '@TODO handle `+`, `-`, `/` chars; convert to begin/end instead of match?'
-        };
-    }
-}
-
-
-class GraphSection7 {
-    constructor() {
-        this.pattern = {
-            comment: 'Cylc 7 graph syntax',
-            begin: `\\b(graph)[\\t ]*(=)[\\t ]*`,
-            end: `(?=[#\\n\\r])`, // Will match after subexps in patterns below have finished (i.e. subexps win; end can be dragged onto another line)
-            beginCaptures: {
-                1: {name: 'keyword.graph.cylc'},
-                2: {name: 'keyword.operator.assignment.cylc'},
-            },
-            patterns: [
-                {include: '#graphStrings'},
-                new IllegalSecondString().pattern,
-            ]
-        };
-    }
-}
-class GraphSection8 extends GraphSection7 {
-    constructor() {
-        super();
-        const inherit = this.pattern;
-        this.pattern = {
-            contentName: 'meta.graph-section.cylc',
-            comment: 'Cylc 8 graph syntax',
-            begin: `\\[{2}[\\t ]*graph[\\t ]*\\]{2}`,
-            end: `(?=^[\t ]*\\[)`,
-            beginCaptures: {
-                0: {
-                    patterns: [
-                        {include: '#headers'}
-                    ]
-                }
-            },
-            patterns: [
-                {include: '#comments'},
-                {
-                    begin: `([\\w\\+\\^\\$][\\w\\+\\-\\^\\$\\/\\t ,:]*)(=)[\\t ]*`, // @TODO: need to implement recurrence syntax properly
-                    end: inherit.end,
-                    beginCaptures: inherit.beginCaptures,
-                    patterns: inherit.patterns
-                }
-            ]
-        };
-    }
-}
-
-
-class Setting {
-    constructor() {
-        this.pattern = {
-            name: 'meta.setting.cylc',
-            begin: `(\\S[^=#\\n\\r]+?)[\\t ]*(=)[\\t ]*`,
-            end: `(?=[#\\n\\r])`, // Will match after subexps in patterns below have finished (i.e. subexps win; end can be dragged onto another line)
-            beginCaptures: {
-                1: {
-                    patterns: [
-                        {
-                            name: 'variable.other.key.cylc',
-                            match: `\\b[\\w\\-\\t ]+\\b`,
-                        }
-                    ]
-                },
-                2: {name: 'keyword.operator.assignment.cylc'},
-            },
-            contentName: 'meta.value.cylc',
-            patterns: [
-                {include: '#strings'},
-                new IllegalSecondString().pattern,
-                {
-                    name: 'string.unquoted.value.cylc',
-                    match: `[^#\\n\\r"]+`
-                }
-            ]
         };
     }
 }
@@ -154,75 +77,30 @@ class LineComment {
 }
 
 
-class Parameterization {
+class Setting {
     constructor() {
-        const task = new Task();
         this.pattern = {
-            name: 'meta.annotation.parameterization.cylc',
-            begin: '<',
-            end: '>',
+            name: 'meta.setting.cylc',
+            begin: `(\\S[^=#\\n\\r]+?)[\\t ]*(=)[\\t ]*`,
+            end: `(?=[#\\n\\r])`, // Will match after subexps in patterns below have finished (i.e. subexps win; end can be dragged onto another line)
             beginCaptures: {
-                0: {name: 'punctuation.definition.annotation.begin.cylc'}
-            },
-            endCaptures: {
-                0: {name: 'punctuation.definition.annotation.end.cylc'}
-            },
-            patterns: [
-                {
-                    name: 'meta.polling.cylc',
+                1: {
                     patterns: [
                         {
-                            match: `([^\\s<>]+)(?=::)`,
-                            captures: {
-                                1: {name: 'entity.name.namespace.suite.cylc'},
-                            }
-                        },
-                        {
-                            name: 'punctuation.accessor.cylc',
-                            match: `(?<=\\S)::(?=\\S)`
-                        },
-                        {
-                            match: `(?<=::)(${task.regex})`,
-                            captures: {
-                                1: {name: task.pattern.name},
-                            }
-                        },
-                        new TaskQualifier().pattern,
+                            name: 'variable.other.key.cylc',
+                            match: `\\b[\\w\\-\\t ]+\\b`,
+                        }
                     ]
                 },
+                2: {name: 'keyword.operator.assignment.cylc'},
+            },
+            contentName: 'meta.value.cylc',
+            patterns: [
+                {include: '#strings'},
+                new IllegalSecondString().pattern,
                 {
-                    match: '(\\w+)[\\t ]*(=)[\\t ]*(\\w+)',
-                    captures: {
-                        1: {name: 'variable.parameter.cylc'},
-                        2: {name: 'keyword.operator.assignment.cylc'},
-                        3: {
-                            patterns: [
-                                {
-                                    name: 'constant.numeric.cylc',
-                                    match: '\\d+$'
-                                },
-                                {
-                                    name: 'variable.other.cylc',
-                                    match: '\\w+'
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    match: '([\\+\\-])[\\t ]*(\\d+)(?!\\w)',
-                    captures: {
-                        '1': {name: 'keyword.operator.arithmetic.cylc'},
-                        '2': {name: 'constant.numeric.cylc'}
-                    }
-                },
-                {
-                    name: 'variable.parameter.cylc',
-                    match: '\\w+'
-                },
-                {
-                    name: 'punctuation.separator.parameter.cylc',
-                    match: ','
+                    name: 'string.unquoted.value.cylc',
+                    match: `[^#\\n\\r"]+`
                 }
             ]
         };
@@ -318,6 +196,231 @@ class GraphStringUnquoted {
 }
 
 
+class GraphSection7 {
+    constructor() {
+        this.pattern = {
+            comment: 'Cylc 7 graph syntax',
+            begin: `\\b(graph)[\\t ]*(=)[\\t ]*`,
+            end: `(?=[#\\n\\r])`, // Will match after subexps in patterns below have finished (i.e. subexps win; end can be dragged onto another line)
+            beginCaptures: {
+                1: {name: 'keyword.graph.cylc'},
+                2: {name: 'keyword.operator.assignment.cylc'},
+            },
+            patterns: [
+                {include: '#graphStrings'},
+                new IllegalSecondString().pattern,
+            ]
+        };
+    }
+}
+class GraphSection8 extends GraphSection7 {
+    constructor() {
+        super();
+        const inherit = this.pattern;
+        this.pattern = {
+            contentName: 'meta.graph-section.cylc',
+            comment: 'Cylc 8 graph syntax',
+            begin: `\\[{2}[\\t ]*graph[\\t ]*\\]{2}`,
+            end: `(?=^[\t ]*\\[)`,
+            beginCaptures: {
+                0: {
+                    patterns: [
+                        {include: '#headers'}
+                    ]
+                }
+            },
+            patterns: [
+                {include: '#comments'},
+                {
+                    begin: `([\\w\\+\\^\\$][\\w\\+\\-\\^\\$\\/\\t ,:]*)(=)[\\t ]*`, // @TODO: need to implement recurrence syntax properly
+                    end: inherit.end,
+                    beginCaptures: inherit.beginCaptures,
+                    patterns: inherit.patterns
+                }
+            ]
+        };
+    }
+}
+
+
+class GraphSyntax {
+    constructor() {
+        const task = new Task();
+        this.patterns = [
+            {include: '#comments'},
+            {include: '#parameterizations'},
+            new Task().pattern,
+            {
+                name: 'keyword.control.trigger.cylc',
+                match: '=>'
+            },
+            {
+                name: 'keyword.other.logical.cylc',
+                match: '[\\|&]'
+            },
+            {
+                name: 'meta.parens.cylc',
+                begin: '\\(',
+                end: '[\\)\\n\\r]',
+                beginCaptures: {
+                    0: {name: 'punctuation.section.parens.begin.cylc'}
+                },
+                endCaptures: {
+                    0: {name: 'punctuation.section.parens.end.cylc'}
+                },
+                patterns: [
+                    {include: '#graphSyntax'}
+                ]
+            },
+            {
+                name: 'meta.variable.suicide.cylc',
+                match: `(?<=^|[\\s&>])(!)(${task.regex})`,
+                captures: {
+                    1: {name: 'keyword.other.suicide.cylc'},
+                    2: {name: task.pattern.name},
+                }
+            },
+            {
+                name: 'variable.other.xtrigger.cylc',
+                match: '(@)[\\w\\-]+',
+                captures: {
+                    1: {name: 'punctuation.definition.variable.cylc'}
+                }
+            },
+            {
+                name: 'constant.character.escape.continuation.cylc',
+                match: '\\\\'
+            },
+            new TaskQualifier().pattern,
+            {
+                name: 'meta.annotation.inter-cycle.cylc',
+                comment: 'e.g. foo[-P1]',
+                begin: '(?<=\\S)\\[',
+                end: '\\]',
+                beginCaptures: {
+                    0: {name: 'punctuation.section.brackets.begin.cylc'}
+                },
+                endCaptures: {
+                    0: {name: 'punctuation.section.brackets.end.cylc'}
+                },
+                patterns: [
+                    {include: '#intervals'},
+                    {include: '#isodatetimes'},
+                    {
+                        comment: 'If 1st char is ^ (allowing for spaces)',
+                        match: '\\G[\\t ]*(\\^)',
+                        captures: {
+                            1: {name: 'constant.language.cycle-point.cylc'}
+                        }
+                    },
+                    new ArithmeticOperator().pattern,
+                    new IntegerPoint().pattern,
+                ]
+            },
+        ];
+    }
+}
+
+
+class Task {
+    constructor() {
+        this.pattern = {
+            name: 'meta.variable.task.cylc',
+            match: `${this.regex = `\\b\\w[\\w\\+\\-@%]*`}`
+        };
+    }
+}
+class TaskQualifier {
+    constructor() {
+        this.pattern = {
+            comment: 'e.g. foo:fail => bar',
+            match: `(?<!^|[\\s:])${this.regex = `((:)([\\w\\-]+))`}`,
+            captures: {
+                1: {name: 'meta.annotation.qualifier.cylc'},
+                2: {name: 'punctuation.definition.annotation.cylc'},
+                3: {name: 'variable.annotation.cylc'}
+            }
+        };
+    }
+}
+
+
+class Parameterization {
+    constructor() {
+        const task = new Task();
+        this.pattern = {
+            name: 'meta.annotation.parameterization.cylc',
+            begin: '<',
+            end: '>',
+            beginCaptures: {
+                0: {name: 'punctuation.definition.annotation.begin.cylc'}
+            },
+            endCaptures: {
+                0: {name: 'punctuation.definition.annotation.end.cylc'}
+            },
+            patterns: [
+                {
+                    name: 'meta.polling.cylc',
+                    patterns: [
+                        {
+                            match: `([^\\s<>]+)(?=::)`,
+                            captures: {
+                                1: {name: 'entity.name.namespace.suite.cylc'},
+                            }
+                        },
+                        {
+                            name: 'punctuation.accessor.cylc',
+                            match: `(?<=\\S)::(?=\\S)`
+                        },
+                        {
+                            match: `(?<=::)(${task.regex})`,
+                            captures: {
+                                1: {name: task.pattern.name},
+                            }
+                        },
+                        new TaskQualifier().pattern,
+                    ]
+                },
+                {
+                    match: '(\\w+)[\\t ]*(=)[\\t ]*(\\w+)',
+                    captures: {
+                        1: {name: 'variable.parameter.cylc'},
+                        2: {name: 'keyword.operator.assignment.cylc'},
+                        3: {
+                            patterns: [
+                                {
+                                    name: 'constant.numeric.cylc',
+                                    match: '\\d+$'
+                                },
+                                {
+                                    name: 'variable.other.cylc',
+                                    match: '\\w+'
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    match: '([\\+\\-])[\\t ]*(\\d+)(?!\\w)',
+                    captures: {
+                        '1': {name: 'keyword.operator.arithmetic.cylc'},
+                        '2': {name: 'constant.numeric.cylc'}
+                    }
+                },
+                {
+                    name: 'variable.parameter.cylc',
+                    match: '\\w+'
+                },
+                {
+                    name: 'punctuation.separator.parameter.cylc',
+                    match: ','
+                }
+            ]
+        };
+    }
+}
+
+
 class IsoTimeZoneLong {
     constructor() {
         this.pattern = {
@@ -349,7 +452,6 @@ class IsoTimeZoneShort {
         };
     }
 }
-
 
 class IsoTimeLong {
     constructor() {
@@ -386,7 +488,6 @@ class IsoTimeShort {
     }
 }
 
-
 class IsoDateLong {
     constructor() {
         this.pattern = {
@@ -416,7 +517,6 @@ class IsoDateShort {
     }
 }
 
-
 class IsoDateTimeLong {
     constructor() {
         const time = new IsoTimeLong();
@@ -445,7 +545,6 @@ class IsoDateTimeShort {
         };
     }
 }
-
 
 class IllegalIsoDateTime {
     constructor() {
@@ -544,7 +643,6 @@ class IntervalIso {
     }
 }
 
-
 class IllegalInterval {
     constructor() {
         const isodatetime = {
@@ -571,6 +669,8 @@ class IntegerPoint {
         };
     }
 }
+
+
 class ArithmeticOperator {
     constructor() {
         this.pattern = {
@@ -581,107 +681,10 @@ class ArithmeticOperator {
 }
 
 
-class Task {
-    constructor() {
-        this.pattern = {
-            name: 'meta.variable.task.cylc',
-            match: `${this.regex = `\\b\\w[\\w\\+\\-@%]*`}`
-        };
-    }
-}
-class TaskQualifier {
-    constructor() {
-        this.pattern = {
-            comment: 'e.g. foo:fail => bar',
-            match: `(?<!^|[\\s:])${this.regex = `((:)([\\w\\-]+))`}`,
-            captures: {
-                1: {name: 'meta.annotation.qualifier.cylc'},
-                2: {name: 'punctuation.definition.annotation.cylc'},
-                3: {name: 'variable.annotation.cylc'}
-            }
-        };
-    }
-}
 
 
 
-class GraphSyntax {
-    constructor() {
-        const task = new Task();
-        this.patterns = [
-            {include: '#comments'},
-            {include: '#parameterizations'},
-            new Task().pattern,
-            {
-                name: 'keyword.control.trigger.cylc',
-                match: '=>'
-            },
-            {
-                name: 'keyword.other.logical.cylc',
-                match: '[\\|&]'
-            },
-            {
-                name: 'meta.parens.cylc',
-                begin: '\\(',
-                end: '[\\)\\n\\r]',
-                beginCaptures: {
-                    0: {name: 'punctuation.section.parens.begin.cylc'}
-                },
-                endCaptures: {
-                    0: {name: 'punctuation.section.parens.end.cylc'}
-                },
-                patterns: [
-                    {include: '#graphSyntax'}
-                ]
-            },
-            {
-                name: 'meta.variable.suicide.cylc',
-                match: `(?<=^|[\\s&>])(!)(${task.regex})`,
-                captures: {
-                    1: {name: 'keyword.other.suicide.cylc'},
-                    2: {name: task.pattern.name},
-                }
-            },
-            {
-                name: 'variable.other.xtrigger.cylc',
-                match: '(@)[\\w\\-]+',
-                captures: {
-                    1: {name: 'punctuation.definition.variable.cylc'}
-                }
-            },
-            {
-                name: 'constant.character.escape.continuation.cylc',
-                match: '\\\\'
-            },
-            new TaskQualifier().pattern,
-            {
-                name: 'meta.annotation.inter-cycle.cylc',
-                comment: 'e.g. foo[-P1]',
-                begin: '(?<=\\S)\\[',
-                end: '\\]',
-                beginCaptures: {
-                    0: {name: 'punctuation.section.brackets.begin.cylc'}
-                },
-                endCaptures: {
-                    0: {name: 'punctuation.section.brackets.end.cylc'}
-                },
-                patterns: [
-                    {include: '#intervals'},
-                    {include: '#isodatetimes'},
-                    {
-                        comment: 'If 1st char is ^ (allowing for spaces)',
-                        match: '\\G[\\t ]*(\\^)',
-                        captures: {
-                            1: {name: 'constant.language.cycle-point.cylc'}
-                        }
-                    },
-                    new ArithmeticOperator().pattern,
-                    new IntegerPoint().pattern,
-                ]
-            },
-        ];
-    }
-}
+
 
 
 
