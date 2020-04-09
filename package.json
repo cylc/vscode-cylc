@@ -1,6 +1,6 @@
 {
     "name": "cylc",
-    "displayName": "cylc",
+    "displayName": "Cylc",
     "description": "Language support for Cylc workflow configuration files",
     "version": "0.0.1",
     "engines": {
@@ -12,8 +12,8 @@
     "contributes": {
         "languages": [{
             "id": "cylc",
-            "aliases": ["cylc", "cylc"],
-            "extensions": ["rc"],
+            "aliases": ["Cylc", "cylc"],
+            "extensions": [".rc"],
             "configuration": "./cylc.language-configuration.json"
         }],
         "grammars": [{
