@@ -709,11 +709,11 @@ class Jinja2Statement {
             patterns: [
                 {include: 'source.jinja'},
                 {
-                    match: '\\G{%',
+                    match: '\\G{%[\\+\\-]?',
                     name: 'punctuation.definition.template-expression.begin.jinja'
                 },
                 {
-                    match: '%}',
+                    match: '\\-?%}',
                     name: 'punctuation.definition.template-expression.end.jinja'
                 }
             ]

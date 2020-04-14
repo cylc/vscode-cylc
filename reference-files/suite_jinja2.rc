@@ -99,3 +99,9 @@ graph = """
     foo:custom_{{ qual }} => bar
     {{ task }}:fail => bar
 """
+
+# whitespace control:
+{%+ if something %}yay{% endif %}
+{% for item in seq -%}
+    {{ item }}
+{%- endfor %}
