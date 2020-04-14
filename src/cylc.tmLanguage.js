@@ -424,12 +424,11 @@ class Parameterization {
 class IsoTimeZoneLong {
     constructor() {
         this.pattern = {
-            name: 'meta.isotimezone.long.cylc',
             match: `${this.regex = '((Z)|(?:([\\+\\-])(\\d{2})(?:(\\:)(\\d{2}))?))'}\\b`,
             captures: {
-                1: {name: 'constant.numeric.timezone.cylc'},
-                2: {name: 'keyword.other.unit.utc.cylc'},
-                3: {name: 'keyword.other.unit.arithmetic.cylc'},
+                1: {name: 'constant.numeric.timezone.long.cylc'},
+                2: {name: 'punctuation.definition.timezone.cylc'},
+                3: {name: 'punctuation.definition.timezone.cylc'},
                 4: {name: 'constant.numeric.hour.cylc'},
                 5: {name: 'punctuation.separator.time.cylc'},
                 6: {name: 'constant.numeric.min.cylc'},
@@ -440,12 +439,11 @@ class IsoTimeZoneLong {
 class IsoTimeZoneShort {
     constructor() {
         this.pattern = {
-            name: 'meta.isotimezone.short.cylc',
             match: `${this.regex = '((Z)|(?:([\\+\\-])(\\d{2})(\\d{2})?))'}\\b`,
             captures: {
-                1: {name: 'constant.numeric.timezone.cylc'},
-                2: {name: 'keyword.other.unit.utc.cylc'},
-                3: {name: 'keyword.other.unit.arithmetic.cylc'},
+                1: {name: 'constant.numeric.isotimezone.short.cylc'},
+                2: {name: 'punctuation.definition.timezone.cylc'},
+                3: {name: 'punctuation.definition.timezone.cylc'},
                 4: {name: 'constant.numeric.hour.cylc'},
                 5: {name: 'constant.numeric.min.cylc'},
             }
@@ -460,7 +458,7 @@ class IsoTimeLong {
             name: 'constant.numeric.isotime.long.cylc',
             match: `\\b${this.regex = `(T)(\\d{2})(?:(:)(\\d{2}))?(?:(:)(\\d{2}))?${timeZone.regex}?`}\\b`,
             captures: {
-                1: {name: 'keyword.other.unit.designator.time.cylc'},
+                1: {name: 'punctuation.definition.time.cylc'},
                 2: {name: 'constant.numeric.hour.cylc'},
                 3: {name: 'punctuation.separator.time.cylc'},
                 4: {name: 'constant.numeric.min.cylc'},
@@ -478,7 +476,7 @@ class IsoTimeShort {
             name: 'constant.numeric.isotime.short.cylc',
             match: `\\b${this.regex = `(T)(\\d{2})(\\d{2})?(\\d{2})?${timeZone.regex}?`}\\b`,
             captures: {
-                1: {name: 'keyword.other.unit.designator.time.cylc'},
+                1: {name: 'punctuation.definition.time.cylc'},
                 2: {name: 'constant.numeric.hour.cylc'},
                 3: {name: 'constant.numeric.min.cylc'},
                 4: {name: 'constant.numeric.sec.cylc'},
@@ -585,12 +583,11 @@ class IllegalIsoDateTime {
 class IntervalInteger {
     constructor() {
         this.pattern = {
-            name: 'meta.interval.integer.cylc',
+            name: 'constant.numeric.interval.integer.cylc',
             comment: 'e.g. P1 but not P1D',
-            match: '\\b((P)\\d+)\\b',
+            match: '\\b(P)\\d+\\b',
             captures: {
-                1: {name: 'constant.numeric.cylc'},
-                2: {name: 'keyword.other.unit.designator.period.cylc'}
+                1: {name: 'punctuation.definition.period.cylc'}
             }
         };
     }
@@ -598,13 +595,12 @@ class IntervalInteger {
 class IntervalIsoWeek {
     constructor() {
         this.pattern = {
-            name: 'meta.interval.iso.cylc',
+            name: 'constant.numeric.interval.iso.cylc',
             comment: 'e.g. P1W',
-            match: '\\b((P)\\d+(W))\\b',
+            match: '\\b(P)\\d+(W)\\b',
             captures: {
-                1: {name: 'constant.numeric.cylc'},
-                2: {name: 'keyword.other.unit.designator.period.cylc'},
-                3: {name: 'keyword.other.unit.designator.week.cylc'}
+                1: {name: 'punctuation.definition.period.cylc'},
+                2: {name: 'punctuation.definition.week.cylc'}
             }
         };
     }
@@ -612,14 +608,14 @@ class IntervalIsoWeek {
 class IntervalIsoTime {
     constructor() {
         this.pattern = {
-            name: 'meta.interval.isotime.cylc',
+            name: 'constant.numeric.interval.isotime.cylc',
             comment: `(?:(T)(etc))? matches e.g. T1H1M zero or more times.`,
             match: `${this.regex = `(T)(?:\\d+(H))?(?:\\d+(M))?(?:\\d+(S))?`}`,
             captures: {
-                1: {name: 'keyword.other.unit.designator.time.cylc'},
-                2: {name: 'keyword.other.unit.designator.hour.cylc'},
-                3: {name: 'keyword.other.unit.designator.min.cylc'},
-                4: {name: 'keyword.other.unit.designator.sec.cylc'},
+                1: {name: 'punctuation.definition.time.cylc'},
+                2: {name: 'punctuation.definition.hour.cylc'},
+                3: {name: 'punctuation.definition.min.cylc'},
+                4: {name: 'punctuation.definition.sec.cylc'},
             }
         };
     }
@@ -628,16 +624,15 @@ class IntervalIso {
     constructor() {
         const time = new IntervalIsoTime();
         this.pattern = {
-            name: 'meta.interval.iso.cylc',
+            name: 'constant.numeric.interval.iso.cylc',
             comment: `e.g. P1Y1M1DT1H1M1S, P1D, PT1M. (P(?=(?:\\d|T\\d))) captures P only if followed by a digit or T. (?:\\d+(Y))? matches e.g. 1Y zero or more times, etc.`,
-            match: `\\b${this.regex = `((P(?=(?:\\d|T\\d)))(?:\\d+(Y))?(?:\\d+(M))?(?:\\d+(D))?(?:${time.regex})?)`}\\b`,
+            match: `\\b${this.regex = `(P(?=(?:\\d|T\\d)))(?:\\d+(Y))?(?:\\d+(M))?(?:\\d+(D))?(?:${time.regex})?`}\\b`,
             captures: {
-                1: {name: 'constant.numeric.cylc'},
-                2: {name: 'keyword.other.unit.designator.period.cylc'},
-                3: {name: 'keyword.other.unit.designator.year.cylc'},
-                4: {name: 'keyword.other.unit.designator.month.cylc'},
-                5: {name: 'keyword.other.unit.designator.day.cylc'},
-                ...reEnumerateKeys(time.pattern.captures, 5),
+                1: {name: 'punctuation.definition.period.cylc'},
+                2: {name: 'punctuation.definition.year.cylc'},
+                3: {name: 'punctuation.definition.month.cylc'},
+                4: {name: 'punctuation.definition.day.cylc'},
+                ...reEnumerateKeys(time.pattern.captures, 4),
             }
         };
     }
