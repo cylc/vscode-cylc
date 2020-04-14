@@ -86,7 +86,7 @@ graph = """
     # polling:
     poller<{{ otherSuite }}::foo> => bar
     poller<other-{{ suite }}::foo> => bar
-    poller<other-{{ suite }}-but-{{ wait there's more }}::foo:fail> => bar
+    poller<other-{{ suite }}-but-{{ wait theres more }}::foo:fail> => bar
     poller<oops suite::foo> => bar
     # xtrigger:
     @thing_{{ foo }} => bar

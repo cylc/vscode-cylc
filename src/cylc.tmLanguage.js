@@ -701,49 +701,59 @@ class GraphSyntax {
 class Jinja2Statement {
     constructor() {
         this.pattern = {
-            name: 'meta.generic.statement.jinja2.cylc',
+            name: 'meta.embedded.block.jinja',
             comment: `e.g. {% ... %}`,
-            begin: `({%)`,
-            end: `(%})`,
-            beginCaptures: {
-                1: {name: 'punctuation.definition.template-expression.begin.jinja2.cylc'}
-            },
-            endCaptures: {
-                1: {name: 'punctuation.definition.template-expression.end.jinja2.cylc'}
-            },
-            contentName: 'constant.character.escape.jinja2.cylc'
+            begin: `(?={%)`,
+            end: `(?<=%})`,
+            contentName: 'source.jinja',
+            patterns: [
+                {include: 'source.jinja'},
+                {
+                    match: '\\G{%',
+                    name: 'punctuation.definition.template-expression.begin.jinja'
+                },
+                {
+                    match: '%}',
+                    name: 'punctuation.definition.template-expression.end.jinja'
+                }
+            ]
         };
     }
 }
 class Jinja2Expression {
     constructor() {
         this.pattern = {
-            name: 'meta.generic.expression.jinja2.cylc',
+            name: 'meta.embedded.block.jinja',
             comment: `e.g. {{ ... }}`,
-            begin: `({{)`,
-            end: `(}})`,
-            beginCaptures: {
-                1: {name: 'punctuation.definition.template-expression.begin.jinja2.cylc'}
-            },
-            endCaptures: {
-                1: {name: 'punctuation.definition.template-expression.end.jinja2.cylc'}
-            },
-            contentName: 'constant.character.escape.jinja2.cylc'
+            begin: `(?={{)`,
+            end: `(?<=}})`,
+            contentName: 'source.jinja',
+            patterns: [
+                {include: 'source.jinja'},
+                {
+                    match: '\\G{{',
+                    name: 'punctuation.definition.template-expression.begin.jinja'
+                },
+                {
+                    match: '}}',
+                    name: 'punctuation.definition.template-expression.end.jinja'
+                }
+            ]
         };
     }
 }
 class Jinja2Comment {
     constructor() {
         this.pattern = {
-            name: 'comment.block.jinja2.cylc',
+            name: 'comment.block.jinja',
             comment: `e.g. {# ... #}`,
-            begin: `({#)`,
-            end: `(#})`,
+            begin: `{#`,
+            end: `#}`,
             beginCaptures: {
-                1: {name: 'punctuation.definition.comment.begin.jinja2.cylc'}
+                0: {name: 'punctuation.definition.comment.begin.jinja'}
             },
             endCaptures: {
-                1: {name: 'punctuation.definition.comment.end.jinja2.cylc'}
+                0: {name: 'punctuation.definition.comment.end.jinja'}
             },
         };
     }
