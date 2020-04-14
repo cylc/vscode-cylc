@@ -13,7 +13,7 @@
         "languages": [{
             "id": "cylc",
             "aliases": ["Cylc", "cylc"],
-            "extensions": [".rc"],
+            "filenamePatterns": ["suite*.rc", "suite*.rc.*"],
             "configuration": "./cylc.language-configuration.json"
         }],
         "grammars": [{
