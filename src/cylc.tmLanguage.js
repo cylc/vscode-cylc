@@ -24,7 +24,8 @@ class Header {
                 2: {
                     name: 'entity.name.tag.cylc',
                     patterns: [
-                        {include: '#parameterizations'}
+                        {include: '#parameterizations'},
+                        {include: '#jinja2'}
                     ]
                 },
                 3: {name: 'punctuation.definition.tag.end.cylc'}
@@ -45,7 +46,8 @@ class IncludeFile {
                 2: {
                     name: 'string.cylc',
                     patterns: [
-                        {include: '#comments'}
+                        {include: '#comments'},
+                        {include: '#jinja2'}
                     ]
                 }
             }
@@ -86,6 +88,7 @@ class Setting {
             beginCaptures: {
                 1: {
                     patterns: [
+                        {include: '#jinja2'},
                         {
                             name: 'variable.other.key.cylc',
                             match: `\\b[\\w\\-\\t ]+\\b`,
@@ -98,9 +101,17 @@ class Setting {
             patterns: [
                 {include: '#strings'},
                 new IllegalSecondString().pattern,
+                {include: '#jinja2'},
                 {
-                    name: 'string.unquoted.value.cylc',
-                    match: `[^#\\n\\r"]+`
+                    match: `([^#\\n\\r]+)`,
+                    captures: {
+                        1: {
+                            name: 'string.unquoted.value.cylc',
+                            patterns: [
+                                {include: '#jinja2'}
+                            ]
+                        }
+                    }
                 }
             ]
         };
@@ -121,6 +132,7 @@ class StringQuotedTriple {
                 1: {name: 'punctuation.definition.string.end.cylc'}
             },
             patterns: [
+                {include: '#jinja2'},
                 {
                     name: 'constant.character.escape.cylc',
                     match: '\\\\.'
@@ -249,6 +261,7 @@ class GraphSyntax {
         this.patterns = [
             {include: '#comments'},
             {include: '#parameterizations'},
+            {include: '#jinja2'},
             new Task().pattern,
             {
                 name: 'keyword.control.trigger.cylc',
@@ -359,6 +372,7 @@ class Parameterization {
                 0: {name: 'punctuation.definition.annotation.end.cylc'}
             },
             patterns: [
+                {include: '#jinja2'},
                 {
                     name: 'meta.polling.cylc',
                     patterns: [
@@ -681,6 +695,67 @@ class ArithmeticOperator {
 
 
 
+class Jinja2Statement {
+    constructor() {
+        this.pattern = {
+            name: 'meta.embedded.block.jinja',
+            comment: `e.g. {% ... %}`,
+            begin: `(?={%)`,
+            end: `(?<=%})`,
+            contentName: 'source.jinja',
+            patterns: [
+                {include: 'source.jinja'},
+                {
+                    match: '\\G{%[\\+\\-]?',
+                    name: 'punctuation.definition.template-expression.begin.jinja'
+                },
+                {
+                    match: '\\-?%}',
+                    name: 'punctuation.definition.template-expression.end.jinja'
+                }
+            ]
+        };
+    }
+}
+class Jinja2Expression {
+    constructor() {
+        this.pattern = {
+            name: 'meta.embedded.block.jinja',
+            comment: `e.g. {{ ... }}`,
+            begin: `(?={{)`,
+            end: `(?<=}})`,
+            contentName: 'source.jinja',
+            patterns: [
+                {include: 'source.jinja'},
+                {
+                    match: '\\G{{',
+                    name: 'punctuation.definition.template-expression.begin.jinja'
+                },
+                {
+                    match: '}}',
+                    name: 'punctuation.definition.template-expression.end.jinja'
+                }
+            ]
+        };
+    }
+}
+class Jinja2Comment {
+    constructor() {
+        this.pattern = {
+            name: 'comment.block.jinja',
+            comment: `e.g. {# ... #}`,
+            begin: `{#`,
+            end: `#}`,
+            beginCaptures: {
+                0: {name: 'punctuation.definition.comment.begin.jinja'}
+            },
+            endCaptures: {
+                0: {name: 'punctuation.definition.comment.end.jinja'}
+            },
+        };
+    }
+}
+
 
 
 exports.tmLanguage = {
@@ -689,6 +764,7 @@ exports.tmLanguage = {
     name: 'cylc',
     patterns: [
         {include: '#comments'},
+        {include: '#jinja2'},
         {include: '#graphSections'},
         {include: '#headers'},
         {include: '#settings'},
@@ -766,5 +842,12 @@ exports.tmLanguage = {
                 new IntervalIso().pattern,
             ]
         },
+        jinja2: {
+            patterns: [
+                new Jinja2Statement().pattern,
+                new Jinja2Expression().pattern,
+                new Jinja2Comment().pattern,
+            ]
+        }
     }
 }

@@ -7,6 +7,9 @@
             "include": "#comments"
         },
         {
+            "include": "#jinja2"
+        },
+        {
             "include": "#graphSections"
         },
         {
@@ -40,6 +43,9 @@
                             "patterns": [
                                 {
                                     "include": "#parameterizations"
+                                },
+                                {
+                                    "include": "#jinja2"
                                 }
                             ]
                         },
@@ -198,6 +204,9 @@
                     "include": "#parameterizations"
                 },
                 {
+                    "include": "#jinja2"
+                },
+                {
                     "name": "meta.variable.task.cylc",
                     "match": "\\b\\w[\\w\\+\\-@%]*"
                 },
@@ -323,6 +332,9 @@
                         "1": {
                             "patterns": [
                                 {
+                                    "include": "#jinja2"
+                                },
+                                {
                                     "name": "variable.other.key.cylc",
                                     "match": "\\b[\\w\\-\\t ]+\\b"
                                 }
@@ -343,8 +355,20 @@
                             "match": "(^|(?<=\"))[\\t ]*[^#\\n\\r]+"
                         },
                         {
-                            "name": "string.unquoted.value.cylc",
-                            "match": "[^#\\n\\r\"]+"
+                            "include": "#jinja2"
+                        },
+                        {
+                            "match": "([^#\\n\\r]+)",
+                            "captures": {
+                                "1": {
+                                    "name": "string.unquoted.value.cylc",
+                                    "patterns": [
+                                        {
+                                            "include": "#jinja2"
+                                        }
+                                    ]
+                                }
+                            }
                         }
                     ]
                 }
@@ -364,6 +388,9 @@
                             "patterns": [
                                 {
                                     "include": "#comments"
+                                },
+                                {
+                                    "include": "#jinja2"
                                 }
                             ]
                         }
@@ -397,6 +424,9 @@
                     },
                     "patterns": [
                         {
+                            "include": "#jinja2"
+                        },
+                        {
                             "name": "constant.character.escape.cylc",
                             "match": "\\\\."
                         }
@@ -417,6 +447,9 @@
                         }
                     },
                     "patterns": [
+                        {
+                            "include": "#jinja2"
+                        },
                         {
                             "name": "constant.character.escape.cylc",
                             "match": "\\\\."
@@ -455,6 +488,9 @@
                         }
                     },
                     "patterns": [
+                        {
+                            "include": "#jinja2"
+                        },
                         {
                             "name": "meta.polling.cylc",
                             "patterns": [
@@ -717,6 +753,66 @@
                         },
                         "8": {
                             "name": "punctuation.definition.sec.cylc"
+                        }
+                    }
+                }
+            ]
+        },
+        "jinja2": {
+            "patterns": [
+                {
+                    "name": "meta.embedded.block.jinja",
+                    "comment": "e.g. {% ... %}",
+                    "begin": "(?={%)",
+                    "end": "(?<=%})",
+                    "contentName": "source.jinja",
+                    "patterns": [
+                        {
+                            "include": "source.jinja"
+                        },
+                        {
+                            "match": "\\G{%[\\+\\-]?",
+                            "name": "punctuation.definition.template-expression.begin.jinja"
+                        },
+                        {
+                            "match": "\\-?%}",
+                            "name": "punctuation.definition.template-expression.end.jinja"
+                        }
+                    ]
+                },
+                {
+                    "name": "meta.embedded.block.jinja",
+                    "comment": "e.g. {{ ... }}",
+                    "begin": "(?={{)",
+                    "end": "(?<=}})",
+                    "contentName": "source.jinja",
+                    "patterns": [
+                        {
+                            "include": "source.jinja"
+                        },
+                        {
+                            "match": "\\G{{",
+                            "name": "punctuation.definition.template-expression.begin.jinja"
+                        },
+                        {
+                            "match": "}}",
+                            "name": "punctuation.definition.template-expression.end.jinja"
+                        }
+                    ]
+                },
+                {
+                    "name": "comment.block.jinja",
+                    "comment": "e.g. {# ... #}",
+                    "begin": "{#",
+                    "end": "#}",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.begin.jinja"
+                        }
+                    },
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.end.jinja"
                         }
                     }
                 }
