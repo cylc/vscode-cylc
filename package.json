@@ -13,13 +13,16 @@
         "languages": [{
             "id": "cylc",
             "aliases": ["Cylc", "cylc"],
-            "extensions": [".rc"],
+            "filenamePatterns": ["suite*.rc", "suite*.rc.*"],
             "configuration": "./cylc.language-configuration.json"
         }],
         "grammars": [{
             "language": "cylc",
             "scopeName": "source.cylc",
-            "path": "./syntaxes/cylc.tmLanguage.json"
+            "path": "./syntaxes/cylc.tmLanguage.json",
+            "embeddedLanguages": {
+                "source.jinja": "jinja"
+            }
         }]
     }
 }
