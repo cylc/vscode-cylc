@@ -1,7 +1,9 @@
 .vscode/**
 .vscode-test/**
 .gitignore
+.gitmodules
 
 vsc-extension-quickstart.md
-src/cylc.tmLanguage.js
-lib/build.js
+
+syntaxes/**
+!syntaxes/cylc.tmLanguage.json
