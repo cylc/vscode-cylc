@@ -2,13 +2,19 @@
     "name": "vscode-cylc",
     "displayName": "Cylc",
     "version": "0.0.1",
+    "publisher": "cylc",
     "description": "VSCode language support for Cylc workflow configuration files",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cylc/vscode-cylc.git"
+    },
     "engines": {
         "vscode": "^1.42.0"
     },
     "categories": [
         "Programming Languages"
     ],
+    "icon": "img/cylc-logo.png",
     "contributes": {
         "languages": [{
             "id": "cylc",

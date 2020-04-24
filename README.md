@@ -13,6 +13,10 @@ Syntax highlighting:
 
 Check [here](https://github.com/cylc/cylc-flow/issues/2752) for info on supported syntax features.
 
+### Screenshot
+
+![Screenshot of syntax highlighting](img/screen1.png)
+
 ## Installation
 
 (To do)

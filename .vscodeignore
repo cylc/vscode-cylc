@@ -1,8 +1,10 @@
-.vscode/**
-.vscode-test/**
+.vscode/
+.vscode-test/
+.github/
 .gitignore
 .gitmodules
 
+img/
 vsc-extension-quickstart.md
 
 syntaxes/**
