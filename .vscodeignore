@@ -1,7 +1,11 @@
-.vscode/**
-.vscode-test/**
+.vscode/
+.vscode-test/
+.github/
 .gitignore
+.gitmodules
 
+img/
 vsc-extension-quickstart.md
-src/cylc.tmLanguage.js
-lib/build.js
+
+syntaxes/**
+!syntaxes/cylc.tmLanguage.json
