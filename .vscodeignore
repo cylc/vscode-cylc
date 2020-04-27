@@ -3,6 +3,7 @@
 .github/
 .gitignore
 .gitmodules
+node_modules/
 
 img/
 vsc-extension-quickstart.md
