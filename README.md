@@ -19,7 +19,7 @@ Check [here](https://github.com/cylc/cylc-flow/issues/2752) for info on supporte
 
 ## Installation
 
-(To do)
+Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=cylc.vscode-cylc).
 
 ## Contributing
 

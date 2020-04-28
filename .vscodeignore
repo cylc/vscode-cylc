@@ -7,6 +7,7 @@ node_modules/
 
 img/
 vsc-extension-quickstart.md
+owners.md
 
 syntaxes/**
 !syntaxes/cylc.tmLanguage.json
