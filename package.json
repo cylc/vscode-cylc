@@ -26,7 +26,8 @@
                 ],
                 "filenamePatterns": [
                     "suite*.rc",
-                    "suite*.rc.*"
+                    "suite*.rc.*",
+                    "*.cylc"
                 ],
                 "configuration": "./cylc.language-configuration.json"
             }
