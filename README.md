@@ -5,11 +5,10 @@ A Visual Studio Code extension that provides language support for Cylc workflow 
 ## Features
 
 Syntax highlighting:
-- Cylc 7 :heavy_check_mark:
-- Cylc 8 :heavy_check_mark:
-- ISO 8601 datetimes :heavy_check_mark:
-- Jinja2 :heavy_check_mark: (can be used with a Jinja extension e.g. [Better Jinja](https://marketplace.visualstudio.com/items?itemName=samuelcolvin.jinjahtml))
-- Empy :x:
+- Cylc 7
+- Cylc 8
+- ISO 8601 datetimes
+- Jinja2 (can be used with a Jinja extension e.g. [Better Jinja](https://marketplace.visualstudio.com/items?itemName=samuelcolvin.jinjahtml))
 
 Check [here](https://github.com/cylc/cylc-flow/issues/2752) for info on supported syntax features.
 
