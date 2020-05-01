@@ -5,7 +5,6 @@
 .gitmodules
 node_modules/
 
-img/
 vsc-extension-quickstart.md
 owners.md
 
