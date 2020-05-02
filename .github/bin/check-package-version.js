@@ -29,10 +29,12 @@ const fs = require('fs');
 try {
     const releaseVer = getReleaseVersion();
     const packageVer = JSON.parse(fs.readFileSync('package.json')).version;
-    if (releaseVer === packageVer) {
+    const packageLockVer = JSON.parse(fs.readFileSync('package-lock.json')).version;
+
+    if (releaseVer === packageVer && releaseVer === packageLockVer) {
         console.log(`Version: ${releaseVer}`);
     } else {
-        setFailed(`Release version (${releaseVer}) does not match package.json version (${packageVer})`);
+        setFailed(`Release version (${releaseVer}) does not match package.json version (${packageVer}) and/or package-lock.json version (${packageLockVer})`);
     }
 } catch (error) {
     setFailed(error);

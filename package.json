@@ -9,7 +9,7 @@
         "url": "https://github.com/cylc/vscode-cylc.git"
     },
     "engines": {
-        "vscode": "^1.42.0"
+        "vscode": "^1.41.0"
     },
     "categories": [
         "Programming Languages"
@@ -26,7 +26,8 @@
                 ],
                 "filenamePatterns": [
                     "suite*.rc",
-                    "suite*.rc.*"
+                    "suite*.rc.*",
+                    "*.cylc"
                 ],
                 "configuration": "./cylc.language-configuration.json"
             }
