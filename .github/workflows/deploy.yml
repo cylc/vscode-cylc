@@ -24,13 +24,13 @@ jobs:
     - name: Check release version matches package.json
       run: node ./.github/bin/check-package-version ${{ github.ref }}
 
-    - name: Install dependencies
-      run: npm install
+    - name: Install vsce
+      run: npm install -g vsce
 
     - name: Publish to VSCode Marketplace
       env:
         PAT: ${{ secrets.MARKETPLACE_PAT }}
-      run: npx vsce publish -p "$PAT"
+      run: vsce publish -p "$PAT"
 
     - name: Delete tag on failure
       if: failure()
