@@ -1,25 +1,46 @@
 {
-    "name": "cylc",
+    "name": "vscode-cylc",
     "displayName": "Cylc",
-    "description": "Language support for Cylc workflow configuration files",
-    "version": "0.0.1",
+    "version": "1.0.1",
+    "publisher": "cylc",
+    "description": "VSCode language support for Cylc workflow configuration files",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cylc/vscode-cylc.git"
+    },
     "engines": {
-        "vscode": "^1.42.0"
+        "vscode": "^1.41.0"
     },
     "categories": [
         "Programming Languages"
     ],
+    "license": "GPL-3.0",
+    "icon": "img/cylc-logo.png",
     "contributes": {
-        "languages": [{
-            "id": "cylc",
-            "aliases": ["Cylc", "cylc"],
-            "extensions": [".rc"],
-            "configuration": "./cylc.language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "cylc",
-            "scopeName": "source.cylc",
-            "path": "./syntaxes/cylc.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "cylc",
+                "aliases": [
+                    "Cylc",
+                    "cylc"
+                ],
+                "filenamePatterns": [
+                    "suite*.rc",
+                    "suite*.rc.*",
+                    "*.cylc"
+                ],
+                "configuration": "./cylc.language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "cylc",
+                "scopeName": "source.cylc",
+                "path": "./syntaxes/cylc.tmLanguage.json",
+                "embeddedLanguages": {
+                    "source.jinja": "jinja"
+                }
+            }
+        ]
     }
 }

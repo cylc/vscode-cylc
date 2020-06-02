@@ -1,0 +1,40 @@
+name: Deploy to VSCode marketplace
+
+on:
+  release:
+    types: [published]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2.1.0
+      with:
+        submodules: true
+    
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v1.4.2
+      with:
+        node-version: '12.x'
+    
+    - name: Check release version matches package.json
+      run: node ./.github/bin/check-package-version ${{ github.ref }}
+
+    - name: Install vsce
+      run: npm install -g vsce
+
+    - name: Publish to VSCode Marketplace
+      env:
+        PAT: ${{ secrets.MARKETPLACE_PAT }}
+      run: vsce publish -p "$PAT"
+
+    - name: Delete tag on failure
+      if: failure()
+      run: |
+        git push origin :${{ github.ref }}
+        echo "The GitHub release has been relegated to a draft and can be republished when the problems are fixed"
+
