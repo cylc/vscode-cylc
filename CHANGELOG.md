@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.0.2
+
+Enhancements:
+- Support for Cylc8-alpha global config files
+
 ## v1.0.1
 
 Bug fixes:
