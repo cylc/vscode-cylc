@@ -25,9 +25,10 @@
                     "cylc"
                 ],
                 "filenamePatterns": [
-                    "suite*.rc",
+                    "*suite*.rc",
                     "suite*.rc.*",
                     "*.cylc",
+                    "*.cylc.*",
                     "flow.rc",
                     "flow-tests.rc"
                 ],
