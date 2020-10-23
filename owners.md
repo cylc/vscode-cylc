@@ -14,11 +14,13 @@ If the Deploy workflow fails because you forgot to bump the `package.json` versi
 
 ### Information on publishing VSCode extensions
 
-Publishing is done by the tool `vsce` using a personal access token (PAT) for the Cylc "Azure DevOps organisation".
+Publishing (whether via GH Actions or manually) is done by the tool `vsce` using a personal access token (PAT) for the Cylc "Azure DevOps organisation".
 
 #### Updating the PAT
 
-This needs to be done when the existing one expires. See https://code.visualstudio.com/api/working-with-extensions/publishing-extension for details on publishing, and how to create a PAT in Azure DevOps. Create a PAT with permissions for publishing to the Visual Studio Marketplace **only**, and [store it as a repository secret](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
+This needs to be done when the existing one expires\*. See https://code.visualstudio.com/api/working-with-extensions/publishing-extension for details on publishing, and how to create a PAT in Azure DevOps. Create a PAT with permissions for publishing to the Visual Studio Marketplace **only**, and [store it as a repository secret](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
+
+\* The PAT time limit is usually up to one year. To check the expiration date or whether you have a PAT, see https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token
 
 #### Adding/removing an owner
 
