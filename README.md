@@ -18,7 +18,9 @@ Check [here](https://github.com/cylc/cylc-flow/issues/2752) for info on supporte
 
 ## Installation
 
-Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=cylc.vscode-cylc).
+Either:
+- In VSCode, go to `View > Extensions` and search for "Cylc"
+- Or install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=cylc.vscode-cylc)
 
 ## Issues
 
