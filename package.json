@@ -24,11 +24,13 @@
                     "Cylc",
                     "cylc"
                 ],
+                "extensions": [
+                    ".cylc",
+                    ".cylc.processed"
+                ],
                 "filenamePatterns": [
                     "*suite*.rc",
                     "suite*.rc.*",
-                    "*.cylc",
-                    "*.cylc.*",
                     "flow.rc",
                     "flow-tests.rc"
                 ],
