@@ -6,8 +6,8 @@
 ## Deploying
 
 Publishing updates to the Visual Studio Marketplace is done automatically by GitHub Actions when a release is published. The suggested workflow is:
-1. Merge the pull request(s) with changes
-1. (Locally) run `npm version [major|minor|patch]` as appropriate or manually bump the `package.json` version, and create a PR (1 reviewer is fine)
+1. (Locally) run `npm version [major|minor|patch]` as appropriate or manually bump the `package.json` version
+1. Create a PR for this change, called `Prepare <version>` (1 reviewer is fine)
 1. Publish a release on GitHub
 
 If the Deploy workflow fails because you forgot to bump the `package.json` version, the tag associated with the release will be automatically deleted and the release will become a draft. Simply bump the `package.json` version as appropriate and re-publish the release to trigger the workflow again.
