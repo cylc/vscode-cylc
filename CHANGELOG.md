@@ -1,9 +1,14 @@
 # Change Log
 
+## v1.0.3
+
+Bug fixes:
+- Fix bug where `flow.cylc.processed` was not being recognised as a Cylc file
+
 ## v1.0.2
 
 Enhancements:
-- Support for Cylc8-alpha global config files
+- Support for Cylc 8 global config files
 
 ## v1.0.1
 
