@@ -1,7 +1,7 @@
 {
     "name": "vscode-cylc",
     "displayName": "Cylc",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "publisher": "cylc",
     "description": "VSCode language support for Cylc workflow configuration files",
     "repository": {
