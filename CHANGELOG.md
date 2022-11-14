@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.0.4
+
+Enhancements:
+- Support for Cylc 8 optional outputs syntax
+- Allow theme to highlight Jinja2 in Cylc comments (as they still get executed at parse-time)
+
 ## v1.0.3
 
 Bug fixes:
