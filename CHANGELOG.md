@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.0.5
+
+Enhancements:
+- Support for snippets generated from the Cylc Config.
+
 ## v1.0.4
 
 Enhancements:

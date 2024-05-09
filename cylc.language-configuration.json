@@ -27,5 +27,92 @@
         ["\"", "\""],
         ["'", "'"],
         ["<", ">"]
-    ]
+    ],
+	"scheduling section": {
+		"prefix": ["scheduling", "schd"],
+		"body": [
+			"[scheduling]",
+			"    initial cycle point = ${1:1066}",
+			"    [[graph]]",
+			"        ${2:R1} = ${3:foo}"
+		]
+	},
+	"task": {
+		"prefix": ["task"],
+		"body": [
+			"    [[${1:root}]]",
+			"        script = \"\"\"",
+			"            ${2:true}",
+			"        \"\"\"",
+			"        platform = ${3:}",
+			"        execution time limit = ${4:PT1M}",
+			"        execution retry delays = ${5:PT1M}",
+		],
+		"description": ["Pre formed task section"]
+	},
+	"spice": {
+		"prefix": ["spice"],
+		"body": [
+			"    [[${1:root}]]",
+			"        script = \"\"\"",
+			"            ${2:true}",
+			"        \"\"\"",
+			"        platform = ${3:spice}",
+			"        execution time limit = ${4:PT1M}",
+			"        execution retry delays = ${5:PT1M}",
+			"        [[[directives]]]",
+			"            --mem=${6:256M}",
+			"            --ntasks=${7:2}",
+		],
+		"description": ["Pre formed task section for a spice task"]
+	},
+	"pbs": {
+		"prefix": ["pbs", "qsub"],
+		"body": [
+			"    [[${1:root}]]",
+			"        script = \"\"\"",
+			"            ${2:true}",
+			"        \"\"\"",
+			"        platform = ${3:pbs}",
+			"        execution time limit = ${4:PT1M}",
+			"        execution retry delays = ${5:PT1M}",
+			"        [[[directives]]]",
+			"            -l mem=${6:256mb}",
+		],
+		"description": ["Pre formed task section for a spice task"]
+	},
+	"workflow": {
+		"prefix": ["workflow", "wf"],
+		"body": [
+			"[meta]",
+			"    title = ${1:my_workflow}",
+			"    description = ",
+			"",
+			"[scheduler]",
+			"    cycle point format = ${2:%y}",
+			"",
+			"[scheduling]",
+			"    initial cycle point = ${3:1066}",
+			"    [[graph]]",
+			"        ${4:R1} = ${5:foo}",
+			"",
+			"[runtime]",
+			"    [[${6:root}]]",
+			"        script = \"\"\"",
+			"            ${7:true}",
+			"        \"\"\"",
+			"        platform = ${8:localhost}",
+			"        execution time limit = ${9:PT1M}",
+			"        execution retry delays = ${10:PT1M}",
+		],
+		"description": ["A template workflow"]
+	},
+	"contributes": {
+		"snippets": [
+			{
+				"language": "cylc",
+				"path": "./cylc-snippets.json"
+			}
+		]
+	}
 }

@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+try:
+    from cylc.flow.cfgspec.workflow import SPEC
+except (NameError, ImportError):
+    print(
+        'FAIL: This script requires an environment with cylc.flow installed'
+        '\n    ``pip install cylc-flow``'
+    )
+else:
+
+    import json
+
+    msg2 = {}
+    for num_of_brackets, item in SPEC.walk():
+
+        brackets = '[' * (num_of_brackets - 1)
+        brackets2 = ']' * (num_of_brackets - 1)
+        if item.is_leaf():
+            body = str(item) + " = "
+            body += '${1:' + str(item.default) + '}'
+        else:
+            body = brackets + str(item) + brackets2
+
+        msg2[str(item)] = {
+            'prefix': [body, str(item).strip(']').strip('[')],
+            'body': body,
+            'description': item.desc}
+
+    print(json.dumps(msg2, indent=4))
