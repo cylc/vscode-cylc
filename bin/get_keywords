@@ -22,7 +22,6 @@ else:
             body = brackets + str(item) + brackets2
 
         msg2[str(item)] = {
-            'prefix': [body, str(item).strip(']').strip('[')],
             'body': body,
             'description': item.desc}
 
