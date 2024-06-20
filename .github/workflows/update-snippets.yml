@@ -26,7 +26,6 @@ jobs:
       uses: cylc/release-actions/configure-git@v1
 
     - name: git diff and set output
-      # Check whether any changes have been made to config.
       id: set_output
       run: |
         if [[ -n $(git status cylc-snippets.json) ]]; then
@@ -35,32 +34,18 @@ jobs:
           echo "create_pr=false" >> $GITHUB_OUTPUT
         fi
 
-  commit:
-    runs-on: ubuntu-latest
-    needs: [snippets]
-    if: needs.snippets.outputs.create_pr == 'true'
-    steps:
-
-    - uses: actions/checkout@v4
-
-    - name: Install Cylc
-      run: pip install cylc-flow
-
-    - name: Update Snippets
-      run: ./bin/get_keywords > cylc-snippets.json
-
-    - name: Configure git
-      uses: cylc/release-actions/configure-git@v1
-
     - name: Checkout PR branch
+      if: steps.set_output.outputs.create_pr == 'true'
       run: git checkout -b "update_snippets"
 
     - name: Commit & push
+      if: steps.set_output.outputs.create_pr == 'true'
       run : |
         git commit -a -m "Update Cylc Config Snippets" -m "Workflow: ${{ github.workflow }}, run: ${{ github.run_number }}"
         git push
 
     - name: Create pull request
+      if: steps.set_output.outputs.create_pr == 'true'
       uses: cylc/release-actions/create-pr@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
