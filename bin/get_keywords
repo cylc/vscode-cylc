@@ -6,6 +6,7 @@ except (NameError, ImportError):
         'FAIL: This script requires an environment with cylc.flow installed'
         '\n    ``pip install cylc-flow``'
     )
+    sys.exit(1)
 else:
 
     import json

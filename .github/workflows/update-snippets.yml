@@ -30,8 +30,6 @@ jobs:
       run: |
         if [[ -n $(git status cylc-snippets.json) ]]; then
           echo "create_pr=true" >> $GITHUB_OUTPUT
-        else
-          echo "create_pr=false" >> $GITHUB_OUTPUT
         fi
 
     - name: Checkout PR branch
@@ -43,7 +41,7 @@ jobs:
       if: steps.set_output.outputs.create_pr == 'true'
       run : |
         git commit -a -m "Update Cylc Config Snippets" -m "Workflow: ${{ github.workflow }}, run: ${{ github.run_number }}"
-        git push origin update_snippets -f
+        git push
 
     - name: Create pull request
       if: steps.set_output.outputs.create_pr == 'true'
