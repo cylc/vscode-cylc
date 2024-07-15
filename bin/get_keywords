@@ -15,17 +15,18 @@ else:
 
     msg2 = {}
     for num_of_brackets, item in SPEC.walk():
-
+        if item.name.startswith('<') and item.name.endswith('>'):
+            continue
         brackets = '[' * (num_of_brackets - 1)
         brackets2 = ']' * (num_of_brackets - 1)
         if item.is_leaf():
-            body = str(item) + " = "
+            body = item.name + " = "
             body += '${1:' + str(item.default) + '}'
         else:
-            body = brackets + str(item) + brackets2
+            body = brackets + item.name + brackets2
 
-        msg2[str(item)] = {
-            'prefix': str(item),
+        msg2[item.name] = {
+            'prefix': item.name,
             'body': body,
             'description': item.desc}
 
