@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import sys
+
 try:
     from cylc.flow.cfgspec.workflow import SPEC
 except (NameError, ImportError):
@@ -23,6 +25,7 @@ else:
             body = brackets + str(item) + brackets2
 
         msg2[str(item)] = {
+            'prefix': str(item),
             'body': body,
             'description': item.desc}
 

@@ -27,13 +27,5 @@
         ["\"", "\""],
         ["'", "'"],
         ["<", ">"]
-    ],
-    "contributes": {
-        "snippets": [
-            {
-                "language": "cylc",
-                "path": "./cylc-snippets.json"
-            }
-        ]
-    }
+    ]
 }
