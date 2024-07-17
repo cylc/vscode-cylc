@@ -1,33 +1,52 @@
 #!/usr/bin/env python3
 import sys
 
-try:
-    from cylc.flow.cfgspec.workflow import SPEC
-except (NameError, ImportError):
-    print(
-        'FAIL: This script requires an environment with cylc.flow installed'
-        '\n    ``pip install cylc-flow``'
-    )
-    sys.exit(1)
-else:
 
-    import json
+def surrounded_by(str_: str, brackets: str):
+    """Shorthand for string starting and ending with brackets"""
+    return str_.startswith(brackets[0]) and str_.endswith(brackets[1])
 
-    msg2 = {}
-    for num_of_brackets, item in SPEC.walk():
-        if item.name.startswith('<') and item.name.endswith('>'):
-            continue
-        brackets = '[' * (num_of_brackets - 1)
-        brackets2 = ']' * (num_of_brackets - 1)
-        if item.is_leaf():
-            body = item.name + " = "
-            body += '${1:' + str(item.default) + '}'
-        else:
-            body = brackets + item.name + brackets2
 
-        msg2[item.name] = {
-            'prefix': item.name,
-            'body': body,
-            'description': item.desc}
+def main():
+    try:
+        from cylc.flow.cfgspec.workflow import SPEC
+    except (NameError, ImportError):
+        print(
+            'FAIL: This script requires an environment with cylc.flow'
+            ' installed \n    ``pip install cylc-flow``'
+        )
+        sys.exit(1)
+    else:
 
-    print(json.dumps(msg2, indent=4))
+        import json
+
+        msg2 = {}
+        for num_of_brackets, item in SPEC.walk():
+            if (
+                item.name == 'flow.cylc'
+                or surrounded_by(item.name, '<>')
+                or surrounded_by(item.name, '__')
+            ):
+                continue
+            brackets = '[' * (num_of_brackets - 1)
+            brackets2 = ']' * (num_of_brackets - 1)
+            if item.is_leaf():
+                body = item.name + " = "
+                body += '${1:' + str(item.default) + '}'
+            else:
+                body = brackets + item.name + brackets2
+
+            # Differentiate between task events and scheduler events.
+            id_ = item._parent.__repr__().replace('flow.cylc', '')
+            msg2[item.name + f'({id_})'] = {
+                'prefix': item.name,
+                'body': body,
+                'description': item.desc}
+
+
+
+        return json.dumps(msg2, indent=4)
+
+
+if __name__ == '__main__':
+    print(main())
