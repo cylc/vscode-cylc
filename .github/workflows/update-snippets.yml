@@ -11,44 +11,50 @@ on:
 jobs:
   update-snippets:
     runs-on: ubuntu-latest
-    outputs:
-      create_pr: ${{ steps.set_output.outputs.create_pr }}
+    env:
+      BRANCH: update-snippets
+      SNIPPETS_FILE: cylc-snippets.json
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
 
-    - name: Install Cylc
-      run: pip install cylc-flow
+      - name: Install Cylc
+        run: pip install cylc-flow
 
-    - name: Update Snippets
-      run: ./bin/get_keywords > cylc-snippets.json
+      - name: Configure git
+        uses: cylc/release-actions/configure-git@v1
 
-    - name: Configure git
-      uses: cylc/release-actions/configure-git@v1
+      - name: Checkout PR branch
+        # Automatically checks out remote branch if it exists
+        run: git switch -c "$BRANCH"
 
-    - name: git diff and set output
-      id: set_output
-      run: |
-        if [[ -n $(git status cylc-snippets.json) ]]; then
-          echo "create_pr=true" >> $GITHUB_OUTPUT
-        fi
+      - name: Update Snippets
+        run: ./bin/get_keywords
 
-    - name: Checkout PR branch
-      if: steps.set_output.outputs.create_pr == 'true'
-      run: |
-        git checkout -b "update_snippets"
+      - name: git diff
+        id: diff
+        continue-on-error: true
+        run: |
+          if git diff --stat --exit-code -- "$SNIPPETS_FILE"; then
+            echo "::notice::No changes to ${SNIPPETS_FILE} occurred"
+            exit 1
+          fi
 
-    - name: Commit & push
-      if: steps.set_output.outputs.create_pr == 'true'
-      run : |
-        git commit -a -m "Update Cylc Config Snippets" -m "Workflow: ${{ github.workflow }}, run: ${{ github.run_number }}"
-        git push
+      - name: Commit & push
+        if: steps.diff.outcome == 'success'
+        run : |
+          git add "$SNIPPETS_FILE"
+          git commit -m "Update snippets for Cylc $(cylc version)" -m "Workflow: ${{ github.workflow }}, run: ${{ github.run_number }}"
+          git push
 
-    - name: Create pull request
-      if: steps.set_output.outputs.create_pr == 'true'
-      uses: cylc/release-actions/create-pr@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        head: "update_snippets"
-        title: 'Auto PR: update Cylc Snippets'
-        body: 'This PR reflects changes to the Cylc Workflow configuration specification.'
+      - name: Create pull request
+        if: steps.diff.outcome == 'success'
+        uses: cylc/release-actions/create-pr@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          head: ${{ env.BRANCH }}
+          title: 'Auto PR: update Cylc Snippets'
+          body: 'This PR reflects changes to the Cylc Workflow configuration specification.'

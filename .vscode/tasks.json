@@ -14,6 +14,12 @@
             "presentation": {
                 "reveal": "silent"
             }
+        },
+        {
+            "label": "build snippets",
+            "type": "shell",
+            "command": "python ${workspaceFolder}/bin/get_keywords",
+            "problemMatcher": []
         }
     ]
 }

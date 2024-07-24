@@ -1,685 +1,685 @@
 {
-    "meta()": {
+    " [meta]": {
         "prefix": "meta",
         "body": "meta",
         "description": "Metadata for this workflow.\n\nCylc defines and uses\nthe terms \"title\", \"description\" and \"URL\".\nUsers can define more terms, and use these in event handlers.\n\nExample::\n\n   A user could define \"workflow-priority\". An event handler\n   would then respond to failure events in a way set by\n   \"workflow-priority\"."
     },
-    "description([meta])": {
+    " [meta]description": {
         "prefix": "description",
         "body": "description = ${1:}",
         "description": "A multi-line description of the workflow.\n\nIt can be retrieved at run time with the ``cylc show`` command."
     },
-    "title([meta])": {
+    " [meta]title": {
         "prefix": "title",
         "body": "title = ${1:}",
         "description": "A single line description of the workflow.\n\nIt can be retrieved at run time with the ``cylc show`` command."
     },
-    "URL([meta])": {
+    " [meta]URL": {
         "prefix": "URL",
         "body": "URL = ${1:}",
         "description": "A web URL to workflow documentation.\n\nThe URL can be retrieved at run time with the ``cylc show``\ncommand.\n\nThe template variable ``%(workflow)s`` will be replaced with the\nactual workflow ID.\n\n.. deprecated:: 8.0.0\n\n   The ``%(suite_name)s`` template variable is deprecated, please\n   use ``%(workflow)s``.\n\n.. seealso::\n\n   :cylc:conf:`flow.cylc[runtime][<namespace>][meta]URL`.\n\nExample:\n\n``http://my-site.com/workflows/%(workflow)s/index.html``"
     },
-    "scheduler()": {
+    " [scheduler]": {
         "prefix": "scheduler",
         "body": "scheduler",
         "description": "Settings for the scheduler.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler]`.\n\n.. note::\n\n   Not to be confused with :cylc:conf:`flow.cylc[scheduling]`.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc]``"
     },
-    "UTC mode([scheduler])": {
+    " [scheduler]UTC mode": {
         "prefix": "UTC mode",
         "body": "UTC mode = ${1:*value unset*}",
         "description": "If ``True``, UTC will be used as the time zone for timestamps in\nthe logs. If ``False``, the local/system time zone will be used.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler]UTC mode`.\n\n.. seealso::\n\n   To set a time zone for cycle points, see\n   :cylc:conf:`flow.cylc[scheduler]cycle point time zone`."
     },
-    "allow implicit tasks([scheduler])": {
+    " [scheduler]allow implicit tasks": {
         "prefix": "allow implicit tasks",
         "body": "allow implicit tasks = ${1:False}",
         "description": "Allow tasks in the graph that are not defined in\n:cylc:conf:`flow.cylc[runtime]`.\n\n:term:`Implicit tasks <implicit task>` are tasks without explicit\ndefinitions in :cylc:conf:`flow.cylc[runtime]`. By default,\nthese are not allowed, as they are often typos. However,\nthis setting can be set to ``True`` to allow implicit tasks.\nIt is recommended to only set this to ``True`` if required during\ndevelopment/prototyping of a workflow graph, but set it to\n``False`` after finishing the :cylc:conf:`flow.cylc[runtime]`\nsection.\n\n.. admonition:: Cylc 7 compatibility mode\n\n   In :ref:`Cylc_7_compat_mode`, implicit tasks are still\n   allowed unless you explicitly set this to ``False``, or\n   unless a ``rose-suite.conf`` file is present (to maintain\n   backward compatibility with Rose 2019).\n\n.. versionadded:: 8.0.0"
     },
-    "install([scheduler])": {
+    " [scheduler]install": {
         "prefix": "install",
         "body": "install = ${1:*value unset*}",
         "description": "Configure custom directories and files to be installed on remote\nhosts.\n\n.. note::\n\n   The following directories already get installed by default:\n\n   ``ana/``\n      Rose ana analysis modules\n   ``app/``\n      Rose applications\n   ``bin/``\n      Cylc bin directory (added to ``PATH``)\n   ``etc/``\n      Miscellaneous resources\n   ``lib/``\n      Cylc lib directory (``lib/python`` added to ``PYTHONPATH``\n      for workflow config)\n\n   These should be located in the top level of your Cylc workflow,\n   i.e. the directory that contains your ``flow.cylc`` file.\n\nDirectories must have a trailing slash.\nFor example, to add the following items to your file installation:\n\n.. code-block:: none\n\n    ~/cylc-run/workflow_x\n    |-- dir1/\n    |-- dir2/\n    |-- file1\n    `-- file2\n\n.. code-block:: cylc\n\n    [scheduler]\n        install = dir/, dir2/, file1, file2\n\n.. versionadded:: 8.0.0"
     },
-    "cycle point format([scheduler])": {
+    " [scheduler]cycle point format": {
         "prefix": "cycle point format",
         "body": "cycle point format = ${1:*value unset*}",
         "description": "Set the datetime format and precision that Cylc uses for\n:term:`cycle points<cycle point>` in :term:`datetime cycling`\nworkflows.\n\n.. seealso::\n\n   * To alter the time zone used in the datetime cycle point\n     format, see\n     :cylc:conf:`flow.cylc[scheduler]cycle point time zone`.\n   * To alter the number of expanded year digits (for years\n     below 0 or above 9999), see\n     :cylc:conf:`flow.cylc\n     [scheduler]cycle point num expanded year digits`.\n\nBy default, Cylc uses a ``CCYYMMDDThhmmZ`` (``Z`` in the special\ncase of UTC) or ``CCYYMMDDThhmm\u00b1hhmm`` format for writing\ndatetime cycle points, following the :term:`ISO 8601` standard.\n\nYou may use the `isodatetime library's syntax\n<https://github.com/metomi/isodatetime#dates-and-times>`_ to set\nthe cycle point format.\n\nYou can also use a subset of the strptime/strftime POSIX\nstandard - supported tokens are ``%F``, ``%H``, ``%M``, ``%S``,\n``%Y``, ``%d``, ``%j``, ``%m``, ``%s``, ``%z``.\n\nIf specifying a format here, we recommend including a time zone -\nthis will be used for displaying cycle points only. To avoid\nconfusion, we recommend using the same time zone as\n:cylc:conf:`flow.cylc[scheduler]cycle point time zone`.\n\nThe ISO 8601 *extended* datetime format (``CCYY-MM-DDThh:mm``)\ncannot be used, as cycle points are used in job-log and work\ndirectory paths where the \":\" character is invalid.\n\n.. warning::\n\n   The smallest unit included in the format sets the precision\n   of cycle points in the workflow.\n   If the precision is lower than the smallest unit\n   in a graph recurrence, the workflow will fail.\n   For example, if you set a format of ``CCYY``, and have a\n   recurrence ``R/2000/P8M``, then both the first and second\n   cycle points will be ``2000``, which is invalid."
     },
-    "cycle point num expanded year digits([scheduler])": {
+    " [scheduler]cycle point num expanded year digits": {
         "prefix": "cycle point num expanded year digits",
         "body": "cycle point num expanded year digits = ${1:0}",
         "description": "Enable negative years or years more than four digits long.\n\nFor years below 0 or above 9999, the ISO 8601 standard specifies\nthat an extra number of year digits and a sign should be used.\nThis extra number needs to be written down somewhere (here).\n\nFor example, if this extra number is set to 2, 00Z on the 1st of\nJanuary in the year 10040 will be represented as\n``+0100400101T0000Z`` (2 extra year digits used). With this number\nset to 3, 06Z on the 4th of May 1985 would be written as\n``+00019850504T0600Z``.\n\nThis number defaults to 0 (no sign or extra digits used)."
     },
-    "cycle point time zone([scheduler])": {
+    " [scheduler]cycle point time zone": {
         "prefix": "cycle point time zone",
         "body": "cycle point time zone = ${1:*value unset*}",
         "description": "Time zone to be used for datetime cycle points if not otherwise\nspecified.\n\nThis time zone will be used for\ndatetime cycle point dumping and inferring the time zone of cycle\npoints that are input without time zones.\n\nTime zones should be expressed as :term:`ISO8601` time zone offsets\nfrom UTC, such as ``+13``, ``+1300``, ``-0500`` or ``+0645``,\nwith ``Z`` representing the special case of ``+0000`` (UTC).\nCycle points will be converted to the time zone you give and will\nbe represented with this string at the end.\n\nIf not set, it will default to UTC (``Z``).\n\n.. admonition:: Cylc 7 compatibility mode\n\n   In :ref:`Cylc_7_compat_mode`, it will default to the\n   local/system time zone, rather than UTC.\n\nThe time zone will persist over reloads/restarts following any\nlocal time zone changes (e.g. if the\nworkflow is run during winter time, then stopped, then restarted\nafter summer time has begun, the cycle points will remain\nin winter time). Changing this setting after the workflow has\nfirst started will have no effect.\n\nIf you use a custom\n:cylc:conf:`flow.cylc[scheduler]cycle point format`, it is a good\nidea to set the same time zone here. If you specify a different\none here, it will only be used for inferring timezone-less cycle\npoints; cycle points will be displayed in the time zone from the\ncycle point format.\n\n.. caution::\n\n   It is not recommended to write the time zone with a \":\"\n   (e.g. ``+05:30``), given that the time zone is used as part of\n   task output filenames.\n\n.. seealso::\n\n   :cylc:conf:`flow.cylc[scheduler]UTC mode`\n\n.. versionchanged:: 7.8.9/7.9.4\n\n   The value set here now persists over reloads/restarts after a\n   system time zone change.\n\n.. versionchanged:: 8.0.0\n\n   The default time zone is now ``Z`` instead of the local time of\n   the first workflow start."
     },
-    "main loop([scheduler])": {
+    " [scheduler][main loop]": {
         "prefix": "main loop",
         "body": "[main loop]",
         "description": "Configuration of main loop plugins for the scheduler.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][main loop]`.\n\nFor a list of built in plugins see :ref:`Main Loop Plugins <BuiltInPlugins>`.\n\n.. versionadded:: 8.0.0"
     },
-    "interval([scheduler][main loop][<plugin name>])": {
+    " [scheduler][main loop][<plugin name>]interval": {
         "prefix": "interval",
         "body": "interval = ${1:*value unset*}",
         "description": "Interval at which the plugin is invoked.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][main loop][<plugin name>]interval`.\n\n.. versionadded:: 8.0.0"
     },
-    "events([scheduler])": {
+    " [scheduler][events]": {
         "prefix": "events",
         "body": "[events]",
         "description": "Configure the workflow event handling system.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]`."
     },
-    "handlers([scheduler][events])": {
+    " [scheduler][events]handlers": {
         "prefix": "handlers",
         "body": "handlers = ${1:None}",
         "description": "Configure :term:`event handlers` that run when certain workflow\nevents occur.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]handlers`.\n\nThis section configures *workflow* event handlers; see\n:cylc:conf:`flow.cylc[runtime][<namespace>][events]` for *task* event\nhandlers.\n\nEvent handlers can be held in the workflow ``bin/`` directory,\notherwise it is up to you to ensure their location is in ``$PATH``\n(in the shell in which the scheduler runs). They should require\nlittle resource to run and return quickly.\n\nTemplate variables can be used to configure handlers. For a full list\nof supported variables see :ref:`workflow_event_template_variables`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`"
     },
-    "handler events([scheduler][events])": {
+    " [scheduler][events]handler events": {
         "prefix": "handler events",
         "body": "handler events = ${1:None}",
         "description": "Specify the events for which workflow event handlers should be invoked.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]handler events`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`"
     },
-    "mail events([scheduler][events])": {
+    " [scheduler][events]mail events": {
         "prefix": "mail events",
         "body": "mail events = ${1:None}",
         "description": "Specify the workflow events for which notification emails should\nbe sent.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]mail events`."
     },
-    "startup handlers([scheduler][events])": {
+    " [scheduler][events]startup handlers": {
         "prefix": "startup handlers",
         "body": "startup handlers = ${1:*value unset*}",
         "description": "Handlers to run at scheduler startup.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]startup handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``startup handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   startup handlers = echo foo\n\n   # provide context to the handler\n   startup handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   startup handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
-    "shutdown handlers([scheduler][events])": {
+    " [scheduler][events]shutdown handlers": {
         "prefix": "shutdown handlers",
         "body": "shutdown handlers = ${1:*value unset*}",
         "description": "Handlers to run at scheduler shutdown.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]shutdown handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``shutdown handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   shutdown handlers = echo foo\n\n   # provide context to the handler\n   shutdown handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   shutdown handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
-    "abort handlers([scheduler][events])": {
+    " [scheduler][events]abort handlers": {
         "prefix": "abort handlers",
         "body": "abort handlers = ${1:*value unset*}",
         "description": "Handlers to run if the scheduler shuts down with error status due to\na configured timeout or a fatal error condition.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``aborted handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   abort handlers = echo foo\n\n   # provide context to the handler\n   abort handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   abort handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
-    "workflow timeout([scheduler][events])": {
+    " [scheduler][events]workflow timeout": {
         "prefix": "workflow timeout",
         "body": "workflow timeout = ${1:*value unset*}",
         "description": "Workflow timeout interval. The timer starts counting down at scheduler\nstartup. It resets on workflow restart.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]workflow timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0"
     },
-    "workflow timeout handlers([scheduler][events])": {
+    " [scheduler][events]workflow timeout handlers": {
         "prefix": "workflow timeout handlers",
         "body": "workflow timeout handlers = ${1:*value unset*}",
         "description": "Handlers to run if the workflow timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]workflow timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   workflow timeout handlers = echo foo\n\n   # provide context to the handler\n   workflow timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   workflow timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
-    "abort on workflow timeout([scheduler][events])": {
+    " [scheduler][events]abort on workflow timeout": {
         "prefix": "abort on workflow timeout",
         "body": "abort on workflow timeout = ${1:*value unset*}",
         "description": "Whether the scheduler should shut down immediately with error status if\nthe workflow timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on workflow timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0"
     },
-    "stall handlers([scheduler][events])": {
+    " [scheduler][events]stall handlers": {
         "prefix": "stall handlers",
         "body": "stall handlers = ${1:*value unset*}",
         "description": "Handlers to run if the scheduler stalls.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]stall handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``stalled handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   stall handlers = echo foo\n\n   # provide context to the handler\n   stall handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   stall handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
-    "stall timeout([scheduler][events])": {
+    " [scheduler][events]stall timeout": {
         "prefix": "stall timeout",
         "body": "stall timeout = ${1:*value unset*}",
         "description": "The length of a timer which starts if the scheduler stalls.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]stall timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``timeout``."
     },
-    "stall timeout handlers([scheduler][events])": {
+    " [scheduler][events]stall timeout handlers": {
         "prefix": "stall timeout handlers",
         "body": "stall timeout handlers = ${1:*value unset*}",
         "description": "Handlers to run if the stall timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]stall timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``timeout handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   stall timeout handlers = echo foo\n\n   # provide context to the handler\n   stall timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   stall timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
-    "abort on stall timeout([scheduler][events])": {
+    " [scheduler][events]abort on stall timeout": {
         "prefix": "abort on stall timeout",
         "body": "abort on stall timeout = ${1:*value unset*}",
         "description": "Whether the scheduler should shut down immediately with error status if\nthe stall timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on stall timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``abort on timeout``."
     },
-    "inactivity timeout([scheduler][events])": {
+    " [scheduler][events]inactivity timeout": {
         "prefix": "inactivity timeout",
         "body": "inactivity timeout = ${1:*value unset*}",
         "description": "Scheduler inactivity timeout interval. The timer resets when any\nworkflow activity occurs.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]inactivity timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called  ``inactivity``."
     },
-    "inactivity timeout handlers([scheduler][events])": {
+    " [scheduler][events]inactivity timeout handlers": {
         "prefix": "inactivity timeout handlers",
         "body": "inactivity timeout handlers = ${1:*value unset*}",
         "description": "Handlers to run if the inactivity timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]inactivity timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``inactivity handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   inactivity timeout handlers = echo foo\n\n   # provide context to the handler\n   inactivity timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   inactivity timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
-    "abort on inactivity timeout([scheduler][events])": {
+    " [scheduler][events]abort on inactivity timeout": {
         "prefix": "abort on inactivity timeout",
         "body": "abort on inactivity timeout = ${1:*value unset*}",
         "description": "Whether the scheduler should shut down immediately with error status if\nthe inactivity timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on inactivity timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``abort on inactivity``."
     },
-    "restart timeout([scheduler][events])": {
+    " [scheduler][events]restart timeout": {
         "prefix": "restart timeout",
         "body": "restart timeout = ${1:*value unset*}",
         "description": "How long to wait for intervention on restarting a completed workflow.\nThe timer stops if any task is triggered.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]restart timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.2.0"
     },
-    "expected task failures([scheduler][events])": {
+    " [scheduler][events]expected task failures": {
         "prefix": "expected task failures",
         "body": "expected task failures = ${1:*value unset*}",
         "description": "(For Cylc developers writing a functional tests only)\nList of tasks that are expected to fail in the test."
     },
-    "mail([scheduler])": {
+    " [scheduler][mail]": {
         "prefix": "mail",
         "body": "[mail]",
         "description": "Settings for the scheduler to send event emails.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][mail]`.\n\nThese settings are used for both workflow and task events.\n\n.. versionadded:: 8.0.0"
     },
-    "footer([scheduler][mail])": {
+    " [scheduler][mail]footer": {
         "prefix": "footer",
         "body": "footer = ${1:*value unset*}",
         "description": "Specify a string or string template for footers of emails sent for both\nworkflow and task events.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][mail]footer`.\n\nTemplate variables may be used in the mail footer. For a list of supported\nvariables see :ref:`workflow_event_template_variables`.\n\nExample::\n\n   footer = see http://ahost/%(owner)s/notes/%(workflow)s``\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][events]mail footer``."
     },
-    "to([scheduler][mail])": {
+    " [scheduler][mail]to": {
         "prefix": "to",
         "body": "to = ${1:*value unset*}",
         "description": "A list of email addresses that event notifications should be sent to.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][mail]to`.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][events]mail to``."
     },
-    "from([scheduler][mail])": {
+    " [scheduler][mail]from": {
         "prefix": "from",
         "body": "from = ${1:*value unset*}",
         "description": "Specify an alternative ``from`` email address for workflow event notifications.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][mail]from`.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][events]mail from``."
     },
-    "task event batch interval([scheduler][mail])": {
+    " [scheduler][mail]task event batch interval": {
         "prefix": "task event batch interval",
         "body": "task event batch interval = ${1:*value unset*}",
         "description": "Gather all task event notifications in the given interval into a single email.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][mail]task event batch interval`.\n\nUseful to prevent being overwhelmed by emails.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc]task event mail interval``."
     },
-    "task parameters()": {
+    " [task parameters]": {
         "prefix": "task parameters",
         "body": "task parameters",
         "description": "Set task parameters and parameter templates.\n\nDefine parameter values here for use in expanding\n:ref:`parameterized tasks <User Guide Param>`.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][parameters]``."
     },
-    "templates([task parameters])": {
+    " [task parameters][templates]": {
         "prefix": "templates",
         "body": "[templates]",
         "description": "Cylc will expand each parameterized task name using a string\ntemplate.\n\nYou can set templates for any parameter name here to override the\ndefault template.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][parameter templates]``."
     },
-    "scheduling()": {
+    " [scheduling]": {
         "prefix": "scheduling",
         "body": "scheduling",
         "description": "This section allows Cylc to determine when tasks are ready to run.\n\nAny cycle points defined here without a time zone will use the\ntime zone from\n:cylc:conf:`flow.cylc[scheduler]cycle point time zone`."
     },
-    "initial cycle point([scheduling])": {
+    " [scheduling]initial cycle point": {
         "prefix": "initial cycle point",
         "body": "initial cycle point = ${1:*value unset*}",
         "description": "The earliest cycle point at which any task can run.\n\nIn a cold start each cycling task (unless specifically excluded\nunder :cylc:conf:`[..][special tasks]`) will be loaded into the\nworkflow with this cycle point, or with the closest subsequent\nvalid cycle point for the task.\n\nIn integer cycling, the default is ``1``.\n\nThe string ``now`` converts to the current datetime on the workflow\nhost when first starting the workflow (with precision determined\nby :cylc:conf:`flow.cylc[scheduler]cycle point format`).\n\nFor more information on setting the initial cycle point relative\nto the current time see :ref:`setting-the-icp-relative-to-now`.\n\nThis item can be overridden on the command line using\n``cylc play --initial-cycle-point`` or ``--icp``."
     },
-    "final cycle point([scheduling])": {
+    " [scheduling]final cycle point": {
         "prefix": "final cycle point",
         "body": "final cycle point = ${1:*value unset*}",
         "description": "The (optional) last cycle point at which tasks are run.\n\nOnce all tasks have reached this cycle point, the\nworkflow will shut down.\n\nThis item can be overridden on the command line using\n``cylc play --final-cycle-point`` or ``--fcp``.\n\nExamples:\n\n- ``2000`` - Shorthand for ``2000-01-01T00:00``.\n- ``+P1D`` - The initial cycle point plus one day.\n- ``2000 +P1D +P1Y`` - The year ``2000`` plus one day and one year."
     },
-    "initial cycle point constraints([scheduling])": {
+    " [scheduling]initial cycle point constraints": {
         "prefix": "initial cycle point constraints",
         "body": "initial cycle point constraints = ${1:*value unset*}",
         "description": "Rules to allow only some initial datetime cycle points.\n\n.. admonition:: Use Case\n\n   Writing a workflow where users may change the initial\n   cycle point, but where only some initial cycle points are\n   reasonable.\n\nSet by defining a list of truncated time points, which\nthe initial cycle point must match.\n\nExamples:\n\n- ``T00, T06, T12, T18`` - only at 6 hourly intervals.\n-  ``T-30`` - only at half-past an hour.\n- ``01T00`` - only at midnight on the first day of a month.\n\n.. seealso::\n\n   :ref:`Recurrence tutorial <tutorial-inferred-recurrence>`.\n\n.. note::\n\n   This setting does not coerce :cylc:conf:`[..]\n   initial cycle point = now`."
     },
-    "final cycle point constraints([scheduling])": {
+    " [scheduling]final cycle point constraints": {
         "prefix": "final cycle point constraints",
         "body": "final cycle point constraints = ${1:*value unset*}",
         "description": "Rules restricting permitted final cycle points.\n\nIn a cycling workflow it is possible to restrict the final cycle\npoint by defining a list of truncated time points under the final\ncycle point constraints.\n\n.. seealso::\n\n   :ref:`Recurrence tutorial <tutorial-inferred-recurrence>`."
     },
-    "hold after cycle point([scheduling])": {
+    " [scheduling]hold after cycle point": {
         "prefix": "hold after cycle point",
         "body": "hold after cycle point = ${1:*value unset*}",
         "description": "Hold all tasks that pass this cycle point.\n\nUnlike the final\ncycle point, the workflow does not shut down once all tasks have\npassed this point. If this item is set you can override it on the\ncommand line using ``--hold-after``.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[scheduling]hold after point``."
     },
-    "stop after cycle point([scheduling])": {
+    " [scheduling]stop after cycle point": {
         "prefix": "stop after cycle point",
         "body": "stop after cycle point = ${1:*value unset*}",
         "description": "Shut down the workflow after all tasks pass this cycle point.\n\nThe stop cycle point can be overridden on the command line using\n``cylc play --stop-cycle-point=POINT``\n\n.. note::\n\n   Not to be confused with :cylc:conf:`[..]final cycle point`:\n   There can be more graph beyond this point, but you are\n   choosing not to run that part of the graph. You can play\n   the workflow and continue.\n\nExamples:\n\n- ``2000`` - Shorthand for ``2000-01-01T00:00``.\n- ``+P1D`` - The initial cycle point plus one day.\n- ``2000 +P1D +P1Y`` - The year ``2000`` plus one day and one year.\n\n.. versionadded:: 8.0.0\n\n.. versionchanged:: 8.3.0\n\n   This now supports offsets (e.g. ``+P1D``) in the same way the\n   :cylc:conf:`[..]final cycle point` does."
     },
-    "cycling mode([scheduling])": {
+    " [scheduling]cycling mode": {
         "prefix": "cycling mode",
         "body": "cycling mode = ${1:gregorian}",
         "description": "Choice of :term:`integer cycling` or one of several\n:term:`datetime cycling` calendars.\n\nCylc runs workflows using the proleptic Gregorian calendar\nby default. This setting allows you to instead choose\ninteger cycling, or one of the other supported non-Gregorian\ndatetime calendars: 360 day (12 months of 30 days in a year),\n365 day (never a leap year) and 366 day (always a leap year)."
     },
-    "runahead limit([scheduling])": {
+    " [scheduling]runahead limit": {
         "prefix": "runahead limit",
         "body": "runahead limit = ${1:P4}",
         "description": "The runahead limit prevents a workflow from getting too far ahead\nof the oldest cycle with :term:`active tasks <active task>`.\n\nA cycle is considered to be active if it contains any\n:term:`active` tasks.\n\nAn integer interval value of ``Pn`` allows up to ``n+1`` cycles\nto be active at once.\n\nThe default runahead limit is ``P4``, which means there may be up\nto 5 active cycles.\n\nDatetime cycling workflows can optionally use a datetime interval\nvalue instead, in which case the number of cycles\nwithin the interval depends on the cycling intervals present.\n\nExamples:\n\n``P0``\n    Only one cycle can be active at a time.\n``P2``\n    The scheduler will run up to two cycles ahead of the oldest\n    active cycle.\n``P3D``\n    The scheduler will run cycles up to three days of cycles ahead\n    of the oldest active cycle.\n\n.. seealso::\n\n   :ref:`RunaheadLimit`\n\n.. versionchanged:: 8.0.0\n\n   The integer format ``Pn`` was introduced to replace the\n   deprecated ``[scheduling]max active cycle points = m``\n   (with ``n = m-1``) and unify it with the existing datetime\n   interval ``runahead limit`` setting."
     },
-    "queues([scheduling])": {
+    " [scheduling][queues]": {
         "prefix": "queues",
         "body": "[queues]",
         "description": "Configuration of internal queues of tasks.\n\nThis section will allow you to limit the number of simultaneously\n:term:`active tasks <active task>` (submitted or running) by\nassigning tasks to queues.\n\nBy default, a single queue called ``default`` is defined,\nwith all tasks assigned to it and no limit to the number of those\ntasks which may be active.\n\nTo use a single queue for the whole workflow, but limit the number\nof active tasks, set :cylc:conf:`[default]limit`.\n\nTo add additional queues define additional sections:\n\n.. code-block:: cylc\n\n   [[queues]]\n       [[[user_defined_queue]]]\n           limit = 2\n           members = TASK_FAMILY_NAME\n\n.. seealso::\n\n   :ref:`InternalQueues`."
     },
-    "limit([scheduling][queues][<queue name>])": {
+    " [scheduling][queues][<queue name>]limit": {
         "prefix": "limit",
         "body": "limit = ${1:0}",
         "description": "The maximum number of :term:`active tasks <active task>`\nallowed at any one time, for this queue.\n\nIf set to 0 this queue is not limited."
     },
-    "members([scheduling][queues][<queue name>])": {
+    " [scheduling][queues][<queue name>]members": {
         "prefix": "members",
         "body": "members = ${1:*value unset*}",
         "description": "A list of member tasks, or task family names to assign to\nthis queue.\n\nAssigned tasks will automatically be removed\nfrom the default queue."
     },
-    "default([scheduling][queues])": {
+    " [scheduling][queues][default]": {
         "prefix": "default",
         "body": "[[default]]",
         "description": "The default queue for all tasks not assigned to other queues."
     },
-    "limit([scheduling][queues][default])": {
+    " [scheduling][queues][default]limit": {
         "prefix": "limit",
         "body": "limit = ${1:100}",
         "description": "Controls the total number of\n:term:`active tasks <active task>` in the default queue.\n\n.. seealso::\n\n   - :cylc:conf:`flow.cylc[scheduling]\n     [queues][<queue name>]limit`\n   - :ref:`InternalQueues`"
     },
-    "members(<queue name>)": {
+    " <queue name>|members": {
         "prefix": "members",
         "body": "members = ${1:*value unset*}",
         "description": "A list of member tasks, or task family names to assign to\nthis queue.\n\nAssigned tasks will automatically be removed\nfrom the default queue."
     },
-    "special tasks([scheduling])": {
+    " [scheduling][special tasks]": {
         "prefix": "special tasks",
         "body": "[special tasks]",
         "description": "This section is used to identify tasks with special behaviour.\n\nFamily names can be used in special task lists as shorthand for\nlisting all member tasks."
     },
-    "clock-trigger([scheduling][special tasks])": {
+    " [scheduling][special tasks]clock-trigger": {
         "prefix": "clock-trigger",
         "body": "clock-trigger = ${1:*value unset*}",
         "description": "Legacy clock trigger definitions.\n\n.. deprecated:: 8.0.0\n\n   These are now auto-upgraded to the newer wall_clock xtriggers\n   (see :ref:`Section External Triggers`). The old way defining\n   clock-triggers will be removed in an upcoming Cylc version.\n\nClock-triggered tasks (see :ref:`ClockTriggerTasks`) wait on a wall\nclock time specified as an offset from their own cycle point.\n\nExample:\n\n``foo(PT1H30M), bar(PT1.5H), baz``"
     },
-    "external-trigger([scheduling][special tasks])": {
+    " [scheduling][special tasks]external-trigger": {
         "prefix": "external-trigger",
         "body": "external-trigger = ${1:*value unset*}",
         "description": "Legacy external trigger definition section.\n\n.. deprecated:: 8.0.0\n\n   Please read :ref:`Section External Triggers` before\n   using the older mechanism described in this section.\n\nExternally triggered tasks (see :ref:`Old-Style External\nTriggers`) wait on external events reported via the\n``cylc ext-trigger`` command. To constrain triggers to a\nspecific cycle point, include ``$CYLC_TASK_CYCLE_POINT``\nin the trigger message string and pass the cycle point to the\n``cylc ext-trigger`` command."
     },
-    "clock-expire([scheduling][special tasks])": {
+    " [scheduling][special tasks]clock-expire": {
         "prefix": "clock-expire",
         "body": "clock-expire = ${1:*value unset*}",
         "description": "Don't submit jobs if they are too late in wall clock time.\n\nClock-expire tasks enter the ``expired`` state and skip job\nsubmission if too far behind the wall clock when they become\nready to run.\n\nThe expiry time is specified as an offset from the task's\ncycle point. The offset:\n\n   * May be positive or negative\n   * May be omitted if it is zero\n\n.. seealso::\n\n   :ref:`ClockExpireTasks`.\n\nExamples:\n\n``foo(PT1H)`` - expire task ``foo`` if the current wall clock\ntime has reached 1 hour after the task's cycle point.\n\n``bar(-PT5M)`` - expire task ``bar`` if the current wall clock\ntime has reached 5 minutes *before* the task's cycle point."
     },
-    "sequential([scheduling][special tasks])": {
+    " [scheduling][special tasks]sequential": {
         "prefix": "sequential",
         "body": "sequential = ${1:*value unset*}",
         "description": "A list of tasks which automatically depend on their own\nprevious-cycle instance.\n\n.. tip::\n\n   Recommend best practice is now to use explicit inter-cycle\n   triggers rather than sequential tasks.\n\n.. seealso::\n\n    :ref:`SequentialTasks`."
     },
-    "sequential xtriggers([scheduling])": {
+    " [scheduling]sequential xtriggers": {
         "prefix": "sequential xtriggers",
         "body": "sequential xtriggers = ${1:False}",
         "description": "If ``True``, tasks that only depend on xtriggers will not spawn\nuntil the xtrigger of previous (cycle point) instance is satisfied.\nOtherwise, they will all spawn at once out to the runahead limit.\n\nThis setting can be overridden by the reserved keyword argument\n``sequential`` in individual xtrigger declarations.\n\nOne sequential xtrigger on a parentless task with multiple\nxtriggers will cause sequential spawning.\n\n.. versionadded:: 8.3.0"
     },
-    "xtriggers([scheduling])": {
+    " [scheduling][xtriggers]": {
         "prefix": "xtriggers",
         "body": "[xtriggers]",
         "description": "This section is for *External Trigger* function declarations -\nsee :ref:`Section External Triggers`."
     },
-    "graph([scheduling])": {
+    " [scheduling][graph]": {
         "prefix": "graph",
         "body": "[graph]",
         "description": "The workflow graph is defined under this section.\n\nYou can plot the dependency graph as you work on it, with\n``cylc graph``.\n\n.. seealso::\n\n   :ref:`User Guide Scheduling`.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][dependencies][graph]``."
     },
-    "runtime()": {
+    " [runtime]": {
         "prefix": "runtime",
         "body": "runtime",
         "description": "This section is used to specify settings for tasks to be run.\n\nYou can specify:\n\n- What scripts or commands you want to execute.\n- Which compute resource (platform) you wish to use.\n- How to run your task.\n\nIf multiple tasks need the same settings, they can share settings by\ninheriting them from one or more other tasks.\n\nPrecedence is determined by the same C3\nlinearization algorithm used to find the *method resolution order*\nin Python language class hierarchies.\n\n.. seealso::\n\n   For details and examples see :ref:`User Guide Runtime`."
     },
-    "completion([runtime][<namespace>])": {
+    " [runtime][<namespace>]completion": {
         "prefix": "completion",
         "body": "completion = ${1:*value unset*}",
         "description": "Define the condition for task output completion.\n\nThe completion condition is evaluated when a task reaches\na final state - i.e. once it finished executing (``succeeded``\nor ``failed``) or it ``submit-failed``, or ``expired``.\nIt is a validation check which confirms that the\ntask has generated the outputs it was expected to.\n\nIf the task fails this check its outputs are considered\n:term:`incomplete <output completion>` and a warning will be\nraised alerting you that something has gone wrong which\nrequires investigation.\n\n.. note::\n\n   An event hook for this warning will follow in a future\n   release of Cylc.\n\nBy default, the completion condition ensures that all required\noutputs, i.e. outputs which appear in the graph but are not\nmarked as optional with the ``?`` character, are completed.\n\nE.g., in this example, the task ``foo`` must generate the\nrequired outputs ``succeeded`` and ``x`` and it may or may not\ngenerate the optional output ``y``:\n\n.. code-block:: cylc-graph\n\n   foo => bar\n   foo:x => x\n   foo:y? => y\n\nThe default completion condition would be this:\n\n.. code-block:: python\n\n   # the task must succeed and generate the custom output \"x\"\n   succeeded and x\n\nYou can override this default to suit your needs. E.g., in this\nexample, the task ``foo`` has three optional outputs, ``x``,\n``y`` and ``z``:\n\n.. code-block:: cylc-graph\n\n   foo:x? => x\n   foo:y? => y\n   foo:z? => z\n   x | y | z => bar\n\nBecause all three of these outputs are optional, if none of\nthem are generated, the task's outputs will still be\nconsidered complete.\n\nIf you wanted to require that at least one of these outputs is\ngenerated you can configure the completion condition like so:\n\n.. code-block:: python\n\n   # the task must succeed and generate at least one of the\n   # outputs \"x\" or \"y\" or \"z\":\n   succeeded and (x or y or z)\n\n.. note::\n\n   For the completion expression, hyphens in task outputs\n   must be replaced with underscores to allow evaluation by\n   Python, e.g.:\n\n   .. code-block:: cylc\n\n      [runtime]\n          [[foo]]\n              completion = succeeded and my_output # underscore\n              [[[outputs]]]\n                  my-output = 'my custom task output' # hyphen\n\n.. note::\n\n   In some cases the ``succeeded`` output might not explicitly\n   appear in the graph, e.g:\n\n   .. code-block:: cylc-graph\n\n      foo:x? => x\n\n   In these cases success is presumed to be required unless\n   explicitly stated otherwise, either in the graph e.g:\n\n   .. code-block:: cylc-graph\n\n      foo?\n      foo:x? => x\n\n   Or in the completion expression e.g:\n\n   .. code-block:: cylc\n\n      completion = x  # no reference to succeeded\n      # or\n      completion = succeeded or failed  # success is optional\n\n\n.. hint::\n\n   If task outputs are optional in the graph they must also\n   be optional in the completion condition and vice versa.\n\n   For example this graph conflicts with the completion\n   statement:\n\n   .. code-block:: cylc-graph\n\n      # \"a\" must succeed\n      a => b\n\n   .. code-block:: cylc\n\n      # \"a\" may either succeed or fail\n      completion = succeeded or failed\n\n   Which could be fixed by amending the graph like so:\n\n   .. code-block:: cylc-graph\n\n      # \"a\" may either succeed or fail\n      a? => b\n\n.. rubric:: Examples\n\n``succeeded``\n   The task must succeed.\n``succeeded or (failed and my_error)``\n   The task can fail, but only if it also yields the custom\n   output ``my_error``.\n``succeeded and (x or y or z)``\n   The task must succeed and yield at least one of the\n   custom outputs, x, y or z.\n``(a and b) or (c and d)``\n   One pair of these outputs must be yielded for the task\n   to be complete.\n\n.. versionadded:: 8.3.0"
     },
-    "platform([runtime][<namespace>])": {
+    " [runtime][<namespace>]platform": {
         "prefix": "platform",
         "body": "platform = ${1:*value unset*}",
         "description": "The name of a compute resource defined in\n:cylc:conf:`global.cylc[platforms]` or\n:cylc:conf:`global.cylc[platform groups]`.\n\nThe platform specifies the host(s) that the tasks' jobs\nwill run on and where (if necessary) files need to be\ninstalled, and what job runner will be used.\n\n.. versionadded:: 8.0.0"
     },
-    "inherit([runtime][<namespace>])": {
+    " [runtime][<namespace>]inherit": {
         "prefix": "inherit",
         "body": "inherit = ${1:*value unset*}",
         "description": "A list of the immediate parent(s) of this task or task family.\n\nIf no parents are listed default is ``root``."
     },
-    "script([runtime][<namespace>])": {
+    " [runtime][<namespace>]script": {
         "prefix": "script",
         "body": "script = ${1:*value unset*}",
         "description": "The main custom script run from the job script.\n\nIt can be an external command or script, or inlined scripting.\n\nSee :ref:`Task Job Script Variables` for the list of variables\navailable in the task execution environment.\n\n\nSee also :ref:`JobScripts`.\n\nOther user-defined script items:\n\n* :cylc:conf:`[..]init-script`\n* :cylc:conf:`[..]env-script`\n* :cylc:conf:`[..]pre-script`\n* :cylc:conf:`[..]post-script`\n* :cylc:conf:`[..]err-script`\n* :cylc:conf:`[..]exit-script`\n\n\nExample::\n\n   my_script.sh"
     },
-    "init-script([runtime][<namespace>])": {
+    " [runtime][<namespace>]init-script": {
         "prefix": "init-script",
         "body": "init-script = ${1:*value unset*}",
         "description": "Custom script run by the job script before the task\nexecution environment is configured.\n\nBy running before the task execution environment is configured,\nthis script does not have\naccess to any workflow or task environment variables. It can be\nan external command or script, or inlined scripting. The\noriginal intention for this item was to allow remote tasks to\nsource login scripts to configure their access to cylc, but\nthis should no longer be necessary.\n\n\nSee also :ref:`JobScripts`.\n\nOther user-defined script items:\n\n* :cylc:conf:`[..]env-script`\n* :cylc:conf:`[..]pre-script`\n* :cylc:conf:`[..]script`\n* :cylc:conf:`[..]post-script`\n* :cylc:conf:`[..]err-script`\n* :cylc:conf:`[..]exit-script`\n\n\nExample::\n\n   echo \"Hello World\""
     },
-    "env-script([runtime][<namespace>])": {
+    " [runtime][<namespace>]env-script": {
         "prefix": "env-script",
         "body": "env-script = ${1:*value unset*}",
         "description": "Custom script run by the job script between the\ncylc-defined environment (workflow and task identity, etc.) and\nthe user-defined task runtime environment.\n\nThe env-script has access to the Cylc environment (and the task\nenvironment has access to variables defined by this scripting).\nIt can be an external command or script, or inlined scripting.\n\n\nSee also :ref:`JobScripts`.\n\nOther user-defined script items:\n\n* :cylc:conf:`[..]init-script`\n* :cylc:conf:`[..]pre-script`\n* :cylc:conf:`[..]script`\n* :cylc:conf:`[..]post-script`\n* :cylc:conf:`[..]err-script`\n* :cylc:conf:`[..]exit-script`\n\n\nExample::\n\n   echo \"Hello World\""
     },
-    "err-script([runtime][<namespace>])": {
+    " [runtime][<namespace>]err-script": {
         "prefix": "err-script",
         "body": "err-script = ${1:*value unset*}",
         "description": "Script run when a job error is detected.\n\n                Custom script to be run at the end of the error trap,\n                which is triggered due to failure of a command in the job\n                script or trappable job kill.\n\n                The output of this script will always\n                be sent to STDERR and ``$1`` is set to the name of the signal\n                caught by the error trap. The script should be fast and use\n                very little system resource to ensure that the error trap can\n                return quickly.  Companion of :cylc:conf:`[..]exit-script`,\n                which is executed on job success.  It can be an external\n                command or script, or inlined scripting.\n\n\nSee also :ref:`JobScripts`.\n\nOther user-defined script items:\n\n* :cylc:conf:`[..]init-script`\n* :cylc:conf:`[..]env-script`\n* :cylc:conf:`[..]pre-script`\n* :cylc:conf:`[..]script`\n* :cylc:conf:`[..]post-script`\n* :cylc:conf:`[..]exit-script`\n\n\nExample::\n\n   echo \"Uh oh, received ${1}\""
     },
-    "exit-script([runtime][<namespace>])": {
+    " [runtime][<namespace>]exit-script": {
         "prefix": "exit-script",
         "body": "exit-script = ${1:*value unset*}",
         "description": "Custom script run at the very end of *successful* job\nexecution, just before the job script exits.\n\nThe exit-script should execute very quickly.\nCompanion of :cylc:conf:`[..]err-script`,\nwhich is executed on job failure. It can be an external\ncommand or script, or inlined scripting.\n\n\nSee also :ref:`JobScripts`.\n\nOther user-defined script items:\n\n* :cylc:conf:`[..]init-script`\n* :cylc:conf:`[..]env-script`\n* :cylc:conf:`[..]pre-script`\n* :cylc:conf:`[..]script`\n* :cylc:conf:`[..]post-script`\n* :cylc:conf:`[..]err-script`\n\n\nExample::\n\n   rm -f \"$TMP_FILES\""
     },
-    "pre-script([runtime][<namespace>])": {
+    " [runtime][<namespace>]pre-script": {
         "prefix": "pre-script",
         "body": "pre-script = ${1:*value unset*}",
         "description": "Custom script run by the job script immediately\nbefore :cylc:conf:`[..]script`.\n\nThe pre-script can be an external command or script, or\ninlined scripting.\n\n\nSee also :ref:`JobScripts`.\n\nOther user-defined script items:\n\n* :cylc:conf:`[..]init-script`\n* :cylc:conf:`[..]env-script`\n* :cylc:conf:`[..]script`\n* :cylc:conf:`[..]post-script`\n* :cylc:conf:`[..]err-script`\n* :cylc:conf:`[..]exit-script`\n\n\nExample::\n\n   echo \"Hello from workflow ${CYLC_WORKFLOW_ID}!\""
     },
-    "post-script([runtime][<namespace>])": {
+    " [runtime][<namespace>]post-script": {
         "prefix": "post-script",
         "body": "post-script = ${1:*value unset*}",
         "description": "Custom script run by the job script immediately\nafter :cylc:conf:`[..]script`.\n\nThe post-script can be an external\ncommand or script, or inlined scripting.\n\n\nSee also :ref:`JobScripts`.\n\nOther user-defined script items:\n\n* :cylc:conf:`[..]init-script`\n* :cylc:conf:`[..]env-script`\n* :cylc:conf:`[..]pre-script`\n* :cylc:conf:`[..]script`\n* :cylc:conf:`[..]err-script`\n* :cylc:conf:`[..]exit-script`\n\n\nExample::\n\n   echo \"Hello World\""
     },
-    "work sub-directory([runtime][<namespace>])": {
+    " [runtime][<namespace>]work sub-directory": {
         "prefix": "work sub-directory",
         "body": "work sub-directory = ${1:*value unset*}",
         "description": "The directory from which tasks are executed.\n\nJob scripts are executed from within *work directories*\ncreated automatically under the workflow run directory. A task\ncan get its own work directory from ``$CYLC_TASK_WORK_DIR``\n(or ``$PWD`` if it does not ``cd`` elsewhere at\nruntime). The default directory path contains task name and\ncycle point, to provide a unique workspace for every instance\nof every task. If several tasks need to exchange files and\nsimply read and write from their from current working\ndirectory, setting ``work sub-directory`` can be used to\noverride the default to make them all use the same workspace.\n\nThe top level share and work directory location can be changed\n(e.g. to a large data area) by a global config setting (see\n:cylc:conf:`global.cylc[install][symlink dirs]`).\n\n.. caution::\n\n   If you omit cycle point from the work sub-directory path\n   successive instances of the task will share the same\n   workspace. Consider the effect on cycle point offset\n   housekeeping of work directories before doing this.\n\nExample:\n\n   ``$CYLC_TASK_CYCLE_POINT/shared/``"
     },
-    "execution polling intervals([runtime][<namespace>])": {
+    " [runtime][<namespace>]execution polling intervals": {
         "prefix": "execution polling intervals",
         "body": "execution polling intervals = ${1:None}",
         "description": "List of intervals at which to poll status of job execution.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[platforms][<platform name>]execution polling intervals`.\n\nCylc can poll running jobs to catch problems that prevent task messages from\nbeing sent back to the workflow, such as hard job kills, network outages, or\nunplanned job host shutdown.\n\nThe last interval in the list is used repeatedly until the job completes.\n\nMultipliers can be used as shorthand as in the example below.\n\nExample::\n\n   5*PT2M, PT5M\n\nNote that if the polling\n:cylc:conf:`global.cylc[platforms][<platform name>]communication method` is\nused then Cylc relies on polling to detect all task state changes, so you may\nwant to configure more frequent polling.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>][job]execution polling intervals``."
     },
-    "execution retry delays([runtime][<namespace>])": {
+    " [runtime][<namespace>]execution retry delays": {
         "prefix": "execution retry delays",
         "body": "execution retry delays = ${1:None}",
         "description": "Cylc can automate resubmission of failed jobs.\n\nExecution retry delays is a list of ISO 8601 durations which\ntell Cylc how long to wait before the next try.\n\nThe job environment variable ``$CYLC_TASK_TRY_NUMBER``\nincrements with each automatic retry, allowing you to vary task\nbehaviour between retries.\n\nTasks only go to the ``failed`` state if job execution fails\nwith no retries left.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>][job]execution\n   retry delays``."
     },
-    "execution time limit([runtime][<namespace>])": {
+    " [runtime][<namespace>]execution time limit": {
         "prefix": "execution time limit",
         "body": "execution time limit = ${1:*value unset*}",
         "description": "Set the execution (:term:`wallclock <wallclock time>`) time\nlimit of a job.\n\nFor ``background`` and ``at`` job runners Cylc runs the\njob's script using the timeout command. For other job runners\nCylc will convert execution time limit to a :term:`directive`.\n\nIf a job exceeds its execution time limit Cylc can\npoll the job multiple times. You can set polling\nintervals using :cylc:conf:`global.cylc[platforms]\n[<platform name>]execution time limit polling intervals`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>][job]execution\n   time limit``."
     },
-    "submission polling intervals([runtime][<namespace>])": {
+    " [runtime][<namespace>]submission polling intervals": {
         "prefix": "submission polling intervals",
         "body": "submission polling intervals = ${1:None}",
         "description": "List of intervals at which to poll status of job submission.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[platforms][<platform name>]submission polling intervals`.\n\nCylc can poll submitted jobs to catch problems that prevent the submitted job\nfrom executing at all, such as deletion from an external job runner queue.\n\nThe last value is used repeatedly until the task starts running.\n\nMultipliers can be used as shorthand as in the example below.\n\nExample::\n\n   5*PT2M, PT5M\n\nNote that if the polling\n:cylc:conf:`global.cylc[platforms][<platform name>]communication method`\nis used then Cylc relies on polling to detect all task state changes,\nso you may want to configure more frequent polling.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>][job]submission polling intervals``."
     },
-    "submission retry delays([runtime][<namespace>])": {
+    " [runtime][<namespace>]submission retry delays": {
         "prefix": "submission retry delays",
         "body": "submission retry delays = ${1:None}",
         "description": "Cylc can automatically resubmit jobs after submission failures.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[platforms][<platform name>]submission retry delays`.\n\nSubmission retry delays is a list of ISO 8601 durations which tell Cylc\nhow long to wait before the next try.\n\nThe job environment variable ``$CYLC_TASK_SUBMIT_NUMBER`` increments with each\njob submission attempt.\n\nTasks only go to the ``submit-failed`` state if job submission fails with no\nretries left.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>][job]submission retry delays``."
     },
-    "meta([runtime][<namespace>])": {
+    " [runtime][<namespace>][meta]": {
         "prefix": "meta",
         "body": "[[meta]]",
         "description": "Metadata for the task or task family.\n\nThe ``meta`` section contains metadata items for this task or\nfamily namespace. The items ``title``, ``description`` and\n``URL`` are pre-defined and are used by Cylc. Others can be\nuser-defined and passed to task event handlers to be\ninterpreted according to your needs. For example, the value of\nan \"importance\" item could determine how an event handler\nresponds to task failure events.\n\nAny workflow meta item can now be passed to task event handlers\nby prefixing the string template item name with ``workflow_``,\nfor example:\n\n.. code-block:: cylc\n\n   [runtime]\n       [[root]]\n           [[[events]]]\n               failed handlers = \"\"\"\n                   send-help.sh \\\n                       %(workflow_title)s \\\n                       %(workflow_importance)s \\\n                       %(title)s\n                \"\"\""
     },
-    "title([runtime][<namespace>][meta])": {
+    " [runtime][<namespace>][meta]title": {
         "prefix": "title",
         "body": "title = ${1:}",
         "description": "A single line description of this task or task family.\n\nIt is displayed by the ``cylc list`` command and can be\nretrieved from running tasks with the ``cylc show``\ncommand."
     },
-    "description([runtime][<namespace>][meta])": {
+    " [runtime][<namespace>][meta]description": {
         "prefix": "description",
         "body": "description = ${1:}",
         "description": "A multi-line description of this task or task family.\n\nIt is retrievable from running tasks with the\n``cylc show`` command."
     },
-    "URL([runtime][<namespace>][meta])": {
+    " [runtime][<namespace>][meta]URL": {
         "prefix": "URL",
         "body": "URL = ${1:}",
         "description": "A URL link to task documentation for this task or task\nfamily.\n\nThe templates ``%(workflow)s`` and\n``%(task)s`` will be replaced with the actual\nworkflow ID and task name.\n\n.. deprecated:: 8.0.0\n\n   The ``%(suite_name)s`` template variable is\n   deprecated, please use ``%(workflow)s``.\n\n   The ``%(task_name)s`` template variable is\n   deprecated, please use ``%(task)s``.\n\nSee also :cylc:conf:`[meta]URL <flow.cylc[meta]URL>`.\n\nExample:\n\n``http://my-site.com/workflows/%(workflow)s/%(task)s.html``"
     },
-    "simulation([runtime][<namespace>])": {
+    " [runtime][<namespace>][simulation]": {
         "prefix": "simulation",
         "body": "[[simulation]]",
         "description": "Task configuration for workflow *simulation* and *dummy* run\nmodes.\n\nFor a full description of simulation and dummy run modes see\n:ref:`SimulationMode`."
     },
-    "default run length([runtime][<namespace>][simulation])": {
+    " [runtime][<namespace>][simulation]default run length": {
         "prefix": "default run length",
         "body": "default run length = ${1:PT10S}",
         "description": "The default simulated job run length.\n\nUsed if :cylc:conf:`flow.cylc[runtime][<namespace>]\nexecution time limit` **and**\n:cylc:conf:`flow.cylc[runtime][<namespace>][simulation]\nspeedup factor` are not set."
     },
-    "speedup factor([runtime][<namespace>][simulation])": {
+    " [runtime][<namespace>][simulation]speedup factor": {
         "prefix": "speedup factor",
         "body": "speedup factor = ${1:*value unset*}",
         "description": "Simulated run length = speedup factor * execution time\nlimit.\n\nIf :cylc:conf:`flow.cylc[runtime][<namespace>]\nexecution time limit` is set, the task\nsimulated run length is computed by dividing it by this\nfactor."
     },
-    "time limit buffer([runtime][<namespace>][simulation])": {
+    " [runtime][<namespace>][simulation]time limit buffer": {
         "prefix": "time limit buffer",
         "body": "time limit buffer = ${1:PT30S}",
         "description": "For dummy jobs :cylc:conf:`flow.cylc[runtime][<namespace>]\nexecution time limit` is extended\nby ``time limit buffer``.\n\nThe time limit buffer is added to prevent dummy jobs\nbeing killed after exceeding the ``execution time limit``."
     },
-    "fail cycle points([runtime][<namespace>][simulation])": {
+    " [runtime][<namespace>][simulation]fail cycle points": {
         "prefix": "fail cycle points",
         "body": "fail cycle points = ${1:*value unset*}",
         "description": "Configure simulated or dummy jobs to fail at certain cycle\npoints.\n\nExample:\n\n- ``all`` - all instance of the task will fail\n- ``2017-08-12T06, 2017-08-12T18`` - these instances of\n  the task will fail\n\nIf you set :cylc:conf:`[..][..]execution retry delays`\nthe second attempt will succeed unless you set\n:cylc:conf:`[..]fail try 1 only = False`."
     },
-    "fail try 1 only([runtime][<namespace>][simulation])": {
+    " [runtime][<namespace>][simulation]fail try 1 only": {
         "prefix": "fail try 1 only",
         "body": "fail try 1 only = ${1:True}",
         "description": "If ``True`` only the first run of the task\ninstance will fail, otherwise retries will fail too.\n\nTask instances must be set to fail by\n:cylc:conf:`[..]fail cycle points`.\n\n.. note::\n\n   This setting is designed for use with automatic\n   retries. Subsequent manual submissions will not\n   change the outcome of the task."
     },
-    "disable task event handlers([runtime][<namespace>][simulation])": {
+    " [runtime][<namespace>][simulation]disable task event handlers": {
         "prefix": "disable task event handlers",
         "body": "disable task event handlers = ${1:True}",
         "description": "If ``True`` configured task event handlers\nwill not be called in simulation or dummy modes."
     },
-    "environment filter([runtime][<namespace>])": {
+    " [runtime][<namespace>][environment filter]": {
         "prefix": "environment filter",
         "body": "[[environment filter]]",
         "description": "This section contains environment variable inclusion and\nexclusion lists that can be used to filter the inherited\nenvironment.\n\n*This is not intended as an alternative to a\nwell-designed inheritance hierarchy that provides each task\nwith just the variables it needs.*\n\nFilters can improve workflows with tasks which inherit a lot\nof environment variables: Filters can make it clear which\nvariables each task uses.\n\nYou can use filters as explicit \"task environment interfaces\".\nThey make sure that variables filtered out of the inherited\nenvironment are not used. However, using filters in this way\nwill make your workflow definition longer.\n\n.. note::\n   Environment filtering is done after inheritance is\n   completely worked out, not at each level on the way, so\n   filter lists in higher-level namespaces only have an effect\n   if they are not overridden by descendants."
     },
-    "include([runtime][<namespace>][environment filter])": {
+    " [runtime][<namespace>][environment filter]include": {
         "prefix": "include",
         "body": "include = ${1:*value unset*}",
         "description": "If given, **only** variables named in this list will be\nincluded from the inherited environment.\n\nOther variables will be filtered out. Variables may also\nbe explicitly excluded by an ``exclude`` list."
     },
-    "exclude([runtime][<namespace>][environment filter])": {
+    " [runtime][<namespace>][environment filter]exclude": {
         "prefix": "exclude",
         "body": "exclude = ${1:*value unset*}",
         "description": "Variables named in this list will be filtered out of the\ninherited environment.\n\nVariables may also be implicitly\nexcluded by omission from an ``include`` list."
     },
-    "job([runtime][<namespace>])": {
+    " [runtime][<namespace>][job]": {
         "prefix": "job",
         "body": "[[job]]",
         "description": ".. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`.\n\nThis section configures the means by which cylc submits task\njob scripts to run."
     },
-    "batch system([runtime][<namespace>][job])": {
+    " [runtime][<namespace>][job]batch system": {
         "prefix": "batch system",
         "body": "batch system = ${1:*value unset*}",
         "description": ".. deprecated:: 8.0.0\n\n   Kept for back compatibility but replaced by\n   :cylc:conf:`global.cylc[platforms][<platform name>]\n   job runner`.\n\nBatch/queuing system (aka job runner) to submit task\njobs to."
     },
-    "batch submit command template([runtime][<namespace>][job])": {
+    " [runtime][<namespace>][job]batch submit command template": {
         "prefix": "batch submit command template",
         "body": "batch submit command template = ${1:*value unset*}",
         "description": ".. deprecated:: 8.0.0\n\n   Kept for back compatibility but replaced by\n   :cylc:conf:`global.cylc[platforms][<platform name>]\n   job runner command template`.\n\nOverride the default job submission command for the chosen\nbatch system."
     },
-    "remote([runtime][<namespace>])": {
+    " [runtime][<namespace>][remote]": {
         "prefix": "remote",
         "body": "[[remote]]",
         "description": "Job host settings.\n\n.. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`."
     },
-    "host([runtime][<namespace>][remote])": {
+    " [runtime][<namespace>][remote]host": {
         "prefix": "host",
         "body": "host = ${1:*value unset*}",
         "description": "Hostname or IP address of the job host.\n\n.. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`."
     },
-    "owner([runtime][<namespace>][remote])": {
+    " [runtime][<namespace>][remote]owner": {
         "prefix": "owner",
         "body": "owner = ${1:*value unset*}",
         "description": "Your username on the job host, if different from that on\nthe scheduler host.\n\n.. warning::\n\n   This setting is obsolete at Cylc 8.\n\n   See :ref:`documentation on changes to remote owner\n   <728.remote_owner>`"
     },
-    "retrieve job logs([runtime][<namespace>][remote])": {
+    " [runtime][<namespace>][remote]retrieve job logs": {
         "prefix": "retrieve job logs",
         "body": "retrieve job logs = ${1:*value unset*}",
         "description": "Whether to retrieve job logs from the job platform.\n\n\n.. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`."
     },
-    "retrieve job logs max size([runtime][<namespace>][remote])": {
+    " [runtime][<namespace>][remote]retrieve job logs max size": {
         "prefix": "retrieve job logs max size",
         "body": "retrieve job logs max size = ${1:*value unset*}",
         "description": "The maximum size of job logs to retrieve.\n\nCan be anything\naccepted by the ``--max-size=SIZE`` option of ``rsync``.\n\n\n.. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`."
     },
-    "retrieve job logs retry delays([runtime][<namespace>][remote])": {
+    " [runtime][<namespace>][remote]retrieve job logs retry delays": {
         "prefix": "retrieve job logs retry delays",
         "body": "retrieve job logs retry delays = ${1:None}",
         "description": "Configure retries for unsuccessful job log retrieval.\n\nIf there is a significant delay between job completion and\nlogs appearing in their final location (due to the job runner)\nyou can configure time intervals here to delay the first and\nsubsequent retrieval attempts.\n\n\n.. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`."
     },
-    "events([runtime][<namespace>])": {
+    " [runtime][<namespace>][events]": {
         "prefix": "events",
         "body": "[[events]]",
         "description": "Configure the task event handling system.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]`.\n\nSee also :cylc:conf:`flow.cylc[scheduler][events]` for *workflow* events.\n\nTask :term:`event handlers` are scripts to run when task events occur.\n\nEvent handlers can be stored in the workflow ``bin/`` directory, or\nanywhere the scheduler environment ``$PATH``. They should return quickly.\n\nMultiple event handlers can be specified as a list of command line templates.\nFor supported template variables see :ref:`user_guide.runtime.event_handlers.task_event_handling.template_variables`.\nPython template substitution syntax is used:\n`String Formatting Operations in the Python documentation\n<https://docs.python.org/3/library/stdtypes.html\n#printf-style-string-formatting>`_."
     },
-    "execution timeout([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]execution timeout": {
         "prefix": "execution timeout",
         "body": "execution timeout = ${1:*value unset*}",
         "description": "If a task has not finished after the specified interval, the execution\ntimeout event handler(s) will be called.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]execution timeout`."
     },
-    "handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]handlers": {
         "prefix": "handlers",
         "body": "handlers = ${1:None}",
         "description": "Commands to run on task :cylc:conf:`[..]handler events`.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]handlers`.\n\nA command or list of commands to run for each task event handler\nset in\n:cylc:conf:`flow.cylc[runtime][<namespace>][events]handler events`.\n\nInformation about the event can be provided to the command\nusing :ref:`user_guide.runtime.event_handlers.task_event_handling.template_variables`.\nFor more information, see\n:ref:`user_guide.runtime.task_event_handling`.\n\nFor workflow events, see\n:ref:`user_guide.scheduler.workflow_event_handling`.\n\nExample::\n\n   echo %(event)s occurred in %(workflow)s >> my-log-file"
     },
-    "handler events([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]handler events": {
         "prefix": "handler events",
         "body": "handler events = ${1:None}",
         "description": "A list of events for which :cylc:conf:`[..]handlers` are run.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]handler events`.\n\nSpecify the events for which the general task event handlers\n:cylc:conf:`flow.cylc[runtime][<namespace>][events]handlers`\nshould be invoked.\n\nSee :ref:`user_guide.runtime.task_event_handling` for more information.\n\nExample::\n\n   submission failed, failed"
     },
-    "handler retry delays([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]handler retry delays": {
         "prefix": "handler retry delays",
         "body": "handler retry delays = ${1:None}",
         "description": "Specify an initial delay before running an event handler command and\nany retry delays in case the command returns a non-zero code.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]handler retry delays`.\n\nThe default behaviour is to run an event handler command once without\nany delay.\n\nExample::\n\n   PT10S, PT1M, PT5M"
     },
-    "mail events([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]mail events": {
         "prefix": "mail events",
         "body": "mail events = ${1:None}",
         "description": "Specify the events for which notification emails should be sent.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]mail events`.\n\nExample::\n\n   submission failed, failed"
     },
-    "submission timeout([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]submission timeout": {
         "prefix": "submission timeout",
         "body": "submission timeout = ${1:*value unset*}",
         "description": "If a task has not started after the specified interval, the submission\ntimeout event handler(s) will be called.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]submission timeout`."
     },
-    "expired handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]expired handlers": {
         "prefix": "expired handlers",
         "body": "expired handlers = ${1:None}",
         "description": "Handlers to run if this task has expired.\n\n.. seealso::\n\n   :ref:`task-job-states`\n\n.. caution::\n\n   Changes to the scheduling algorithm in Cylc 8 mean\n   this event will not be triggered until the expired task\n   is ready to run.  Earlier expired-task detection will be\n   implemented in a future Cylc release."
     },
-    "late offset([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]late offset": {
         "prefix": "late offset",
         "body": "late offset = ${1:None}",
         "description": "Offset from cycle point, in real time, at which this task\nis considered to be \"running late\" (i.e. the time by which\nit would normally have started running).\n\n.. caution::\n\n   Changes to the scheduling algorithm in Cylc 8 mean\n   this event will not be triggered until the late task\n   is ready to run.  Earlier late-task detection will be\n   implemented in a future Cylc release.\n\n.. seealso::\n\n   :cylc:conf:`flow.cylc[runtime][<namespace>][events]\n   late handlers`."
     },
-    "late handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]late handlers": {
         "prefix": "late handlers",
         "body": "late handlers = ${1:None}",
         "description": "Handlers to run if this task is late.\n\n.. caution::\n\n   Due to changes to the Cylc 8 scheduling algorithm\n   this event is unlikely to occur until the task is about\n   to submit anyway."
     },
-    "submitted handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]submitted handlers": {
         "prefix": "submitted handlers",
         "body": "submitted handlers = ${1:None}",
         "description": "Handlers to run when this task is submitted."
     },
-    "started handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]started handlers": {
         "prefix": "started handlers",
         "body": "started handlers = ${1:None}",
         "description": "Handlers to run when this task starts executing."
     },
-    "succeeded handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]succeeded handlers": {
         "prefix": "succeeded handlers",
         "body": "succeeded handlers = ${1:None}",
         "description": "Handlers to run if this task succeeds."
     },
-    "failed handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]failed handlers": {
         "prefix": "failed handlers",
         "body": "failed handlers = ${1:None}",
         "description": "Handlers to run if this task fails."
     },
-    "submission failed handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]submission failed handlers": {
         "prefix": "submission failed handlers",
         "body": "submission failed handlers = ${1:None}",
         "description": "Handlers to run if submission of this task fails."
     },
-    "warning handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]warning handlers": {
         "prefix": "warning handlers",
         "body": "warning handlers = ${1:None}",
         "description": "Handlers to run if this task runs ``cylc message``\nwith severity level \"WARNING\"."
     },
-    "critical handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]critical handlers": {
         "prefix": "critical handlers",
         "body": "critical handlers = ${1:None}",
         "description": "Handlers to run if this task runs ``cylc message``\nwith severity level \"CRITICAL\"."
     },
-    "retry handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]retry handlers": {
         "prefix": "retry handlers",
         "body": "retry handlers = ${1:None}",
         "description": "Handlers to run if this task failed but is retrying."
     },
-    "submission retry handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]submission retry handlers": {
         "prefix": "submission retry handlers",
         "body": "submission retry handlers = ${1:None}",
         "description": "Handlers to run if a job failed to submit but is\nretrying.\n\n.. seealso::\n\n   :ref:`task-job-states`"
     },
-    "execution timeout handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]execution timeout handlers": {
         "prefix": "execution timeout handlers",
         "body": "execution timeout handlers = ${1:None}",
         "description": "Handlers to run if this task execution exceeds\n:cylc:conf:`flow.cylc[runtime][<namespace>]\nexecution time limit`."
     },
-    "submission timeout handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]submission timeout handlers": {
         "prefix": "submission timeout handlers",
         "body": "submission timeout handlers = ${1:None}",
         "description": "Handlers to run if this task exceeds\n:cylc:conf:`flow.cylc[runtime][<namespace>][events]\nsubmission timeout` in the submitted state."
     },
-    "custom handlers([runtime][<namespace>][events])": {
+    " [runtime][<namespace>][events]custom handlers": {
         "prefix": "custom handlers",
         "body": "custom handlers = ${1:None}",
         "description": "Handlers to run if this task runs ``cylc message``\nwith severity level \"CUSTOM\"."
     },
-    "mail([runtime][<namespace>])": {
+    " [runtime][<namespace>][mail]": {
         "prefix": "mail",
         "body": "[[mail]]",
         "description": "Email notification settings for task events.\n\n.. versionadded:: 8.0.0"
     },
-    "from([runtime][<namespace>][mail])": {
+    " [runtime][<namespace>][mail]from": {
         "prefix": "from",
         "body": "from = ${1:*value unset*}",
         "description": "Specify an alternate ``from:`` email address for event\nnotifications.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][task][events]mail from``"
     },
-    "to([runtime][<namespace>][mail])": {
+    " [runtime][<namespace>][mail]to": {
         "prefix": "to",
         "body": "to = ${1:*value unset*}",
         "description": "A list of email addresses to send task event\nnotifications.\n\nThe list can be any address accepted by the\n``mail`` command.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][task][events]mail to``"
     },
-    "workflow state polling([runtime][<namespace>])": {
+    " [runtime][<namespace>][workflow state polling]": {
         "prefix": "workflow state polling",
         "body": "[[workflow state polling]]",
         "description": "Deprecated support for automatic workflow state polling tasks\nas described in :ref:`WorkflowStatePolling`. Note the Cylc 7\n\"user\" and \"host\" config items are not supported.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>]suite state polling``.\n\n.. deprecated:: 8.3.0\n\nPlease use the :ref:`workflow_state xtrigger\n<Built-in Workflow State Triggers>` instead."
     },
-    "interval([runtime][<namespace>][workflow state polling])": {
+    " [runtime][<namespace>][workflow state polling]interval": {
         "prefix": "interval",
         "body": "interval = ${1:*value unset*}",
         "description": "Polling interval."
     },
-    "max-polls([runtime][<namespace>][workflow state polling])": {
+    " [runtime][<namespace>][workflow state polling]max-polls": {
         "prefix": "max-polls",
         "body": "max-polls = ${1:*value unset*}",
         "description": "Maximum number of polls to attempt before the task fails."
     },
-    "message([runtime][<namespace>][workflow state polling])": {
+    " [runtime][<namespace>][workflow state polling]message": {
         "prefix": "message",
         "body": "message = ${1:*value unset*}",
         "description": "Target task output (task message, not trigger name)."
     },
-    "alt-cylc-run-dir([runtime][<namespace>][workflow state polling])": {
+    " [runtime][<namespace>][workflow state polling]alt-cylc-run-dir": {
         "prefix": "alt-cylc-run-dir",
         "body": "alt-cylc-run-dir = ${1:*value unset*}",
         "description": "The cylc-run directory location of the target workflow.\nUse to poll workflows owned by other users."
     },
-    "verbose mode([runtime][<namespace>][workflow state polling])": {
+    " [runtime][<namespace>][workflow state polling]verbose mode": {
         "prefix": "verbose mode",
         "body": "verbose mode = ${1:*value unset*}",
         "description": "Run the ``cylc workflow-state`` command in verbose mode."
     },
-    "environment([runtime][<namespace>])": {
+    " [runtime][<namespace>][environment]": {
         "prefix": "environment",
         "body": "[[environment]]",
         "description": "The user defined task execution environment.\n\nVariables defined here can refer to cylc workflow and task\nidentity variables, which are exported earlier in the job\nscript. Variable assignment expressions can use cylc\nutility commands because access to cylc is also configured\nearlier in the script.\n\n.. seealso::\n\n   :ref:`TaskExecutionEnvironment`.\n\nYou can also specify job environment templates here for\n:ref:`parameterized tasks <User Guide Param>`."
     },
-    "directives([runtime][<namespace>])": {
+    " [runtime][<namespace>][directives]": {
         "prefix": "directives",
         "body": "[[directives]]",
         "description": "Job runner (batch scheduler) directives.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[platforms][<platform name>][directives]`.\n\nSupported for use with job runners:\n\n- pbs\n- slurm\n- loadleveler\n- lsf\n- sge\n- slurm_packjob\n- moab\n\nDirectives are written to the top of the job script in the correct format\nfor the job runner.\n\nSpecifying directives individually like this allows use of default directives\nfor task families which can be individually overridden at lower levels of the\nruntime namespace hierarchy."
     },
-    "outputs([runtime][<namespace>])": {
+    " [runtime][<namespace>][outputs]": {
         "prefix": "outputs",
         "body": "[[outputs]]",
         "description": "Register custom task outputs for use in message triggering in\nthis section (:ref:`MessageTriggers`)"
     },
-    "parameter environment templates([runtime][<namespace>])": {
+    " [runtime][<namespace>][parameter environment templates]": {
         "prefix": "parameter environment templates",
         "body": "[[parameter environment templates]]",
         "description": ".. deprecated:: 7.8.7/7.9.2\n\n   Parameter environment templates have moved to\n   :cylc:conf:`flow.cylc[runtime][<namespace>][environment]`.\n\nThis was done to allow users to control the order of\ndefinition of the variables. This section will be removed\nin a future version of Cylc 8.\n\nFor the time being, the contents of this section will be\nprepended to the ``[environment]`` section when running\na workflow."
