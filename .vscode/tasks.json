@@ -4,12 +4,11 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build json",
+            "label": "build syntax highlighting",
             "type": "shell",
             "command": "npm run --prefix ./syntaxes build",
             "group": {
                 "kind": "build",
-                "isDefault": true
             },
             "presentation": {
                 "reveal": "silent"
@@ -19,7 +18,27 @@
             "label": "build snippets",
             "type": "shell",
             "command": "python ${workspaceFolder}/bin/build_snippets.py",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+            },
+            "presentation": {
+                "reveal": "silent"
+            },
+        },
+        {
+            "label": "build",
+            "dependsOn": [
+                "build json",
+                "build snippets"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent"
+            }
         }
     ]
 }
