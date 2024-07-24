@@ -18,7 +18,7 @@
         {
             "label": "build snippets",
             "type": "shell",
-            "command": "python ${workspaceFolder}/bin/get_keywords",
+            "command": "python ${workspaceFolder}/bin/build_snippets.py",
             "problemMatcher": []
         }
     ]

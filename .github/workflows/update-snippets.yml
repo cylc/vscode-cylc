@@ -1,5 +1,4 @@
 name: Update Snippets
-# Update cylc-snippets.json using bin/cylc-snippets.
 
 on:
   # Ideally people making changes should re-run this task, but probably
@@ -31,7 +30,7 @@ jobs:
         run: git switch -c "$BRANCH"
 
       - name: Update Snippets
-        run: ./bin/get_keywords
+        run: ./bin/build_snippets.py
 
       - name: git diff
         id: diff
