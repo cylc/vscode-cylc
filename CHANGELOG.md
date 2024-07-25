@@ -1,9 +1,9 @@
 # Change Log
 
-## v1.0.5
+## v1.1.0
 
 Enhancements:
-- Support for snippets generated from the Cylc Config.
+- Add Cylc 8 snippets generated from the `flow.cylc` config spec.
 
 ## v1.0.4
 
