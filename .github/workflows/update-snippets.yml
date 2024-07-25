@@ -1,0 +1,59 @@
+name: Update Snippets
+
+on:
+  # Ideally people making changes should re-run this task, but probably
+  # won't remember - I think once a month is probably often enough.
+  schedule:
+    - cron: "51 03 15 * *" # 03:51 on the 15th of the month
+  workflow_dispatch:
+
+jobs:
+  update-snippets:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: update-snippets
+      SNIPPETS_FILE: cylc-snippets.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Install Cylc
+        run: pip install cylc-flow
+
+      - name: Configure git
+        uses: cylc/release-actions/configure-git@v1
+
+      - name: Checkout PR branch
+        # Automatically checks out remote branch if it exists
+        run: git switch -c "$BRANCH"
+
+      - name: Update Snippets
+        run: ./bin/build_snippets.py
+
+      - name: git diff
+        id: diff
+        continue-on-error: true
+        run: |
+          if git diff --stat --exit-code -- "$SNIPPETS_FILE"; then
+            echo "::notice::No changes to ${SNIPPETS_FILE} occurred"
+            exit 1
+          fi
+
+      - name: Commit & push
+        if: steps.diff.outcome == 'success'
+        run : |
+          git add "$SNIPPETS_FILE"
+          git commit -m "Update snippets for Cylc $(cylc version)" -m "Workflow: ${{ github.workflow }}, run: ${{ github.run_number }}"
+          git push
+
+      - name: Create pull request
+        if: steps.diff.outcome == 'success'
+        uses: cylc/release-actions/create-pr@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          head: ${{ env.BRANCH }}
+          title: 'Auto PR: update Cylc Snippets'
+          body: 'This PR reflects changes to the Cylc Workflow configuration specification.'

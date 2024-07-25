@@ -46,6 +46,12 @@
                     "source.jinja": "jinja"
                 }
             }
+        ],
+        "snippets": [
+            {
+                "language": "cylc",
+                "path": "./cylc-snippets.json"
+            }
         ]
     }
 }
