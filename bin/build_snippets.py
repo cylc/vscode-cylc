@@ -29,13 +29,11 @@ def main() -> None:
             or surrounded_by(item.name, '__')
         ):
             continue
-        brackets = '[' * (level - 1)
-        brackets2 = ']' * (level - 1)
         if item.is_leaf():
             body = item.name + " = "
             body += '${1:' + str(item.default) + '}'
         else:
-            body = brackets + item.name + brackets2
+            body = ('[' * level) + item.name + (']' * level)
 
         # Snippet name is full path to item, e.g. '[scheduler]UTC mode'.
         # Must have space at start of snippet name because it doesn't work
