@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.1
+
+Bug fixes:
+- Fix number of section header brackets in snippet suggestions.
+
 ## v1.1.0
 
 Enhancements:
