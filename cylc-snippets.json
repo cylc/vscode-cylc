@@ -1,7 +1,7 @@
 {
     " [meta]": {
         "prefix": "meta",
-        "body": "meta",
+        "body": "[meta]",
         "description": "Metadata for this workflow.\n\nCylc defines and uses\nthe terms \"title\", \"description\" and \"URL\".\nUsers can define more terms, and use these in event handlers.\n\nExample::\n\n   A user could define \"workflow-priority\". An event handler\n   would then respond to failure events in a way set by\n   \"workflow-priority\"."
     },
     " [meta]description": {
@@ -21,7 +21,7 @@
     },
     " [scheduler]": {
         "prefix": "scheduler",
-        "body": "scheduler",
+        "body": "[scheduler]",
         "description": "Settings for the scheduler.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler]`.\n\n.. note::\n\n   Not to be confused with :cylc:conf:`flow.cylc[scheduling]`.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc]``"
     },
     " [scheduler]UTC mode": {
@@ -56,7 +56,7 @@
     },
     " [scheduler][main loop]": {
         "prefix": "main loop",
-        "body": "[main loop]",
+        "body": "[[main loop]]",
         "description": "Configuration of main loop plugins for the scheduler.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][main loop]`.\n\nFor a list of built in plugins see :ref:`Main Loop Plugins <BuiltInPlugins>`.\n\n.. versionadded:: 8.0.0"
     },
     " [scheduler][main loop][<plugin name>]interval": {
@@ -66,7 +66,7 @@
     },
     " [scheduler][events]": {
         "prefix": "events",
-        "body": "[events]",
+        "body": "[[events]]",
         "description": "Configure the workflow event handling system.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]`."
     },
     " [scheduler][events]handlers": {
@@ -161,7 +161,7 @@
     },
     " [scheduler][mail]": {
         "prefix": "mail",
-        "body": "[mail]",
+        "body": "[[mail]]",
         "description": "Settings for the scheduler to send event emails.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][mail]`.\n\nThese settings are used for both workflow and task events.\n\n.. versionadded:: 8.0.0"
     },
     " [scheduler][mail]footer": {
@@ -186,17 +186,17 @@
     },
     " [task parameters]": {
         "prefix": "task parameters",
-        "body": "task parameters",
+        "body": "[task parameters]",
         "description": "Set task parameters and parameter templates.\n\nDefine parameter values here for use in expanding\n:ref:`parameterized tasks <User Guide Param>`.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][parameters]``."
     },
     " [task parameters][templates]": {
         "prefix": "templates",
-        "body": "[templates]",
+        "body": "[[templates]]",
         "description": "Cylc will expand each parameterized task name using a string\ntemplate.\n\nYou can set templates for any parameter name here to override the\ndefault template.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][parameter templates]``."
     },
     " [scheduling]": {
         "prefix": "scheduling",
-        "body": "scheduling",
+        "body": "[scheduling]",
         "description": "This section allows Cylc to determine when tasks are ready to run.\n\nAny cycle points defined here without a time zone will use the\ntime zone from\n:cylc:conf:`flow.cylc[scheduler]cycle point time zone`."
     },
     " [scheduling]initial cycle point": {
@@ -241,7 +241,7 @@
     },
     " [scheduling][queues]": {
         "prefix": "queues",
-        "body": "[queues]",
+        "body": "[[queues]]",
         "description": "Configuration of internal queues of tasks.\n\nThis section will allow you to limit the number of simultaneously\n:term:`active tasks <active task>` (submitted or running) by\nassigning tasks to queues.\n\nBy default, a single queue called ``default`` is defined,\nwith all tasks assigned to it and no limit to the number of those\ntasks which may be active.\n\nTo use a single queue for the whole workflow, but limit the number\nof active tasks, set :cylc:conf:`[default]limit`.\n\nTo add additional queues define additional sections:\n\n.. code-block:: cylc\n\n   [[queues]]\n       [[[user_defined_queue]]]\n           limit = 2\n           members = TASK_FAMILY_NAME\n\n.. seealso::\n\n   :ref:`InternalQueues`."
     },
     " [scheduling][queues][<queue name>]limit": {
@@ -256,7 +256,7 @@
     },
     " [scheduling][queues][default]": {
         "prefix": "default",
-        "body": "[[default]]",
+        "body": "[[[default]]]",
         "description": "The default queue for all tasks not assigned to other queues."
     },
     " [scheduling][queues][default]limit": {
@@ -271,7 +271,7 @@
     },
     " [scheduling][special tasks]": {
         "prefix": "special tasks",
-        "body": "[special tasks]",
+        "body": "[[special tasks]]",
         "description": "This section is used to identify tasks with special behaviour.\n\nFamily names can be used in special task lists as shorthand for\nlisting all member tasks."
     },
     " [scheduling][special tasks]clock-trigger": {
@@ -301,17 +301,17 @@
     },
     " [scheduling][xtriggers]": {
         "prefix": "xtriggers",
-        "body": "[xtriggers]",
+        "body": "[[xtriggers]]",
         "description": "This section is for *External Trigger* function declarations -\nsee :ref:`Section External Triggers`."
     },
     " [scheduling][graph]": {
         "prefix": "graph",
-        "body": "[graph]",
+        "body": "[[graph]]",
         "description": "The workflow graph is defined under this section.\n\nYou can plot the dependency graph as you work on it, with\n``cylc graph``.\n\n.. seealso::\n\n   :ref:`User Guide Scheduling`.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][dependencies][graph]``."
     },
     " [runtime]": {
         "prefix": "runtime",
-        "body": "runtime",
+        "body": "[runtime]",
         "description": "This section is used to specify settings for tasks to be run.\n\nYou can specify:\n\n- What scripts or commands you want to execute.\n- Which compute resource (platform) you wish to use.\n- How to run your task.\n\nIf multiple tasks need the same settings, they can share settings by\ninheriting them from one or more other tasks.\n\nPrecedence is determined by the same C3\nlinearization algorithm used to find the *method resolution order*\nin Python language class hierarchies.\n\n.. seealso::\n\n   For details and examples see :ref:`User Guide Runtime`."
     },
     " [runtime][<namespace>]completion": {
@@ -396,7 +396,7 @@
     },
     " [runtime][<namespace>][meta]": {
         "prefix": "meta",
-        "body": "[[meta]]",
+        "body": "[[[meta]]]",
         "description": "Metadata for the task or task family.\n\nThe ``meta`` section contains metadata items for this task or\nfamily namespace. The items ``title``, ``description`` and\n``URL`` are pre-defined and are used by Cylc. Others can be\nuser-defined and passed to task event handlers to be\ninterpreted according to your needs. For example, the value of\nan \"importance\" item could determine how an event handler\nresponds to task failure events.\n\nAny workflow meta item can now be passed to task event handlers\nby prefixing the string template item name with ``workflow_``,\nfor example:\n\n.. code-block:: cylc\n\n   [runtime]\n       [[root]]\n           [[[events]]]\n               failed handlers = \"\"\"\n                   send-help.sh \\\n                       %(workflow_title)s \\\n                       %(workflow_importance)s \\\n                       %(title)s\n                \"\"\""
     },
     " [runtime][<namespace>][meta]title": {
@@ -416,7 +416,7 @@
     },
     " [runtime][<namespace>][simulation]": {
         "prefix": "simulation",
-        "body": "[[simulation]]",
+        "body": "[[[simulation]]]",
         "description": "Task configuration for workflow *simulation* and *dummy* run\nmodes.\n\nFor a full description of simulation and dummy run modes see\n:ref:`SimulationMode`."
     },
     " [runtime][<namespace>][simulation]default run length": {
@@ -451,7 +451,7 @@
     },
     " [runtime][<namespace>][environment filter]": {
         "prefix": "environment filter",
-        "body": "[[environment filter]]",
+        "body": "[[[environment filter]]]",
         "description": "This section contains environment variable inclusion and\nexclusion lists that can be used to filter the inherited\nenvironment.\n\n*This is not intended as an alternative to a\nwell-designed inheritance hierarchy that provides each task\nwith just the variables it needs.*\n\nFilters can improve workflows with tasks which inherit a lot\nof environment variables: Filters can make it clear which\nvariables each task uses.\n\nYou can use filters as explicit \"task environment interfaces\".\nThey make sure that variables filtered out of the inherited\nenvironment are not used. However, using filters in this way\nwill make your workflow definition longer.\n\n.. note::\n   Environment filtering is done after inheritance is\n   completely worked out, not at each level on the way, so\n   filter lists in higher-level namespaces only have an effect\n   if they are not overridden by descendants."
     },
     " [runtime][<namespace>][environment filter]include": {
@@ -466,7 +466,7 @@
     },
     " [runtime][<namespace>][job]": {
         "prefix": "job",
-        "body": "[[job]]",
+        "body": "[[[job]]]",
         "description": ".. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`.\n\nThis section configures the means by which cylc submits task\njob scripts to run."
     },
     " [runtime][<namespace>][job]batch system": {
@@ -481,7 +481,7 @@
     },
     " [runtime][<namespace>][remote]": {
         "prefix": "remote",
-        "body": "[[remote]]",
+        "body": "[[[remote]]]",
         "description": "Job host settings.\n\n.. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`."
     },
     " [runtime][<namespace>][remote]host": {
@@ -511,7 +511,7 @@
     },
     " [runtime][<namespace>][events]": {
         "prefix": "events",
-        "body": "[[events]]",
+        "body": "[[[events]]]",
         "description": "Configure the task event handling system.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]`.\n\nSee also :cylc:conf:`flow.cylc[scheduler][events]` for *workflow* events.\n\nTask :term:`event handlers` are scripts to run when task events occur.\n\nEvent handlers can be stored in the workflow ``bin/`` directory, or\nanywhere the scheduler environment ``$PATH``. They should return quickly.\n\nMultiple event handlers can be specified as a list of command line templates.\nFor supported template variables see :ref:`user_guide.runtime.event_handlers.task_event_handling.template_variables`.\nPython template substitution syntax is used:\n`String Formatting Operations in the Python documentation\n<https://docs.python.org/3/library/stdtypes.html\n#printf-style-string-formatting>`_."
     },
     " [runtime][<namespace>][events]execution timeout": {
@@ -621,7 +621,7 @@
     },
     " [runtime][<namespace>][mail]": {
         "prefix": "mail",
-        "body": "[[mail]]",
+        "body": "[[[mail]]]",
         "description": "Email notification settings for task events.\n\n.. versionadded:: 8.0.0"
     },
     " [runtime][<namespace>][mail]from": {
@@ -636,7 +636,7 @@
     },
     " [runtime][<namespace>][workflow state polling]": {
         "prefix": "workflow state polling",
-        "body": "[[workflow state polling]]",
+        "body": "[[[workflow state polling]]]",
         "description": "Deprecated support for automatic workflow state polling tasks\nas described in :ref:`WorkflowStatePolling`. Note the Cylc 7\n\"user\" and \"host\" config items are not supported.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>]suite state polling``.\n\n.. deprecated:: 8.3.0\n\nPlease use the :ref:`workflow_state xtrigger\n<Built-in Workflow State Triggers>` instead."
     },
     " [runtime][<namespace>][workflow state polling]interval": {
@@ -666,22 +666,22 @@
     },
     " [runtime][<namespace>][environment]": {
         "prefix": "environment",
-        "body": "[[environment]]",
+        "body": "[[[environment]]]",
         "description": "The user defined task execution environment.\n\nVariables defined here can refer to cylc workflow and task\nidentity variables, which are exported earlier in the job\nscript. Variable assignment expressions can use cylc\nutility commands because access to cylc is also configured\nearlier in the script.\n\n.. seealso::\n\n   :ref:`TaskExecutionEnvironment`.\n\nYou can also specify job environment templates here for\n:ref:`parameterized tasks <User Guide Param>`."
     },
     " [runtime][<namespace>][directives]": {
         "prefix": "directives",
-        "body": "[[directives]]",
+        "body": "[[[directives]]]",
         "description": "Job runner (batch scheduler) directives.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[platforms][<platform name>][directives]`.\n\nSupported for use with job runners:\n\n- pbs\n- slurm\n- loadleveler\n- lsf\n- sge\n- slurm_packjob\n- moab\n\nDirectives are written to the top of the job script in the correct format\nfor the job runner.\n\nSpecifying directives individually like this allows use of default directives\nfor task families which can be individually overridden at lower levels of the\nruntime namespace hierarchy."
     },
     " [runtime][<namespace>][outputs]": {
         "prefix": "outputs",
-        "body": "[[outputs]]",
+        "body": "[[[outputs]]]",
         "description": "Register custom task outputs for use in message triggering in\nthis section (:ref:`MessageTriggers`)"
     },
     " [runtime][<namespace>][parameter environment templates]": {
         "prefix": "parameter environment templates",
-        "body": "[[parameter environment templates]]",
+        "body": "[[[parameter environment templates]]]",
         "description": ".. deprecated:: 7.8.7/7.9.2\n\n   Parameter environment templates have moved to\n   :cylc:conf:`flow.cylc[runtime][<namespace>][environment]`.\n\nThis was done to allow users to control the order of\ndefinition of the variables. This section will be removed\nin a future version of Cylc 8.\n\nFor the time being, the contents of this section will be\nprepended to the ``[environment]`` section when running\na workflow."
     }
 }
