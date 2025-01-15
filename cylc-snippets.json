@@ -394,6 +394,11 @@
         "body": "submission retry delays = ${1:None}",
         "description": "Cylc can automatically resubmit jobs after submission failures.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[platforms][<platform name>]submission retry delays`.\n\nSubmission retry delays is a list of ISO 8601 durations which tell Cylc\nhow long to wait before the next try.\n\nThe job environment variable ``$CYLC_TASK_SUBMIT_NUMBER`` increments with each\njob submission attempt.\n\nTasks only go to the ``submit-failed`` state if job submission fails with no\nretries left.\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>][job]submission retry delays``."
     },
+    " [runtime][<namespace>]run mode": {
+        "prefix": "run mode",
+        "body": "run mode = ${1:live}",
+        "description": "When the workflow is running in live mode, run this *task*\nin one of the following modes:\n\n``live`` (default):\n    Task will submit their configured jobs.\n``skip``:\n    Skips job submission; sets required outputs (by default) or configured outputs.\n\n    .. note::\n\n       This is primarily intended to be set at runtime via\n       a broadcast; Cylc will warn you about any tasks\n       set to run in skip mode in the workflow\n       configuration at validation time.\n       If you are using skip mode to create a dummy task,\n       you can ignore this warning.\n\n.. seealso::\n\n   - :ref:`task-run-modes.skip`\n   - :cylc:conf:`flow.cylc[runtime][<namespace>][skip]`\n\n.. versionadded:: 8.4.0"
+    },
     " [runtime][<namespace>][meta]": {
         "prefix": "meta",
         "body": "[[[meta]]]",
@@ -414,10 +419,25 @@
         "body": "URL = ${1:}",
         "description": "A URL link to task documentation for this task or task\nfamily.\n\nThe templates ``%(workflow)s`` and\n``%(task)s`` will be replaced with the actual\nworkflow ID and task name.\n\n.. deprecated:: 8.0.0\n\n   The ``%(suite_name)s`` template variable is\n   deprecated, please use ``%(workflow)s``.\n\n   The ``%(task_name)s`` template variable is\n   deprecated, please use ``%(task)s``.\n\nSee also :cylc:conf:`[meta]URL <flow.cylc[meta]URL>`.\n\nExample:\n\n``http://my-site.com/workflows/%(workflow)s/%(task)s.html``"
     },
+    " [runtime][<namespace>][skip]": {
+        "prefix": "skip",
+        "body": "[[[skip]]]",
+        "description": "Task configuration for :ref:`task-run-modes.skip`.\n\n.. seealso::\n\n   - :ref:`task-run-modes.skip`\n   - :cylc:conf:`flow.cylc[runtime][<namespace>]run mode`\n\n.. versionadded:: 8.4.0"
+    },
+    " [runtime][<namespace>][skip]outputs": {
+        "prefix": "outputs",
+        "body": "outputs = ${1:*value unset*}",
+        "description": "Outputs to be emitted by a task in skip mode.\n\n* By default, all required outputs will be generated\n  plus succeeded if success is optional.\n* If skip-mode outputs is specified and does not\n  include either succeeded or failed then succeeded\n  will be produced.\n* The outputs submitted and started are always\n  produced and do not need to be defined in here.\n\n.. versionadded:: 8.4.0"
+    },
+    " [runtime][<namespace>][skip]disable task event handlers": {
+        "prefix": "disable task event handlers",
+        "body": "disable task event handlers = ${1:True}",
+        "description": "Task event handlers are turned off by default for\nskip mode tasks. Changing this setting to ``False``\nwill re-enable task event handlers.\n\n.. versionadded:: 8.4.0"
+    },
     " [runtime][<namespace>][simulation]": {
         "prefix": "simulation",
         "body": "[[[simulation]]]",
-        "description": "Task configuration for workflow *simulation* and *dummy* run\nmodes.\n\nFor a full description of simulation and dummy run modes see\n:ref:`SimulationMode`."
+        "description": "Task configuration for workflow *simulation* and *dummy* run\nmodes.\n\nFor a full description of simulation and dummy run modes see\n:ref:`workflow-run-modes.simulation`."
     },
     " [runtime][<namespace>][simulation]default run length": {
         "prefix": "default run length",
