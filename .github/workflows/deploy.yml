@@ -11,29 +11,25 @@ jobs:
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Setup Node.js environment
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
-        node-version: 14
+        node-version: 'lts/*'
 
     - name: Check release version matches package.json
       run: node ./.github/bin/check-package-version ${{ github.ref }}
 
-    - name: Install vsce
-      run: npm install -g vsce
-
     - name: Publish to VSCode Marketplace
       env:
         PAT: ${{ secrets.MARKETPLACE_PAT }}
-      run: vsce publish -p "$PAT"
+      run: npx @vscode/vsce publish -p "$PAT"
 
     - name: Delete tag on failure
       if: failure()
       run: |
         git push origin :${{ github.ref }}
-        echo "The GitHub release has been relegated to a draft and can be republished when the problems are fixed"
-
+        echo "::error::The GitHub release has been relegated to a draft and can be republished when the problems are fixed"

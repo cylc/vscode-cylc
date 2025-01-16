@@ -56,6 +56,6 @@ function getReleaseVersion() {
 
 function setFailed(err) {
     err = err instanceof Error ? err.toString() : err;
-    console.log(err);
+    console.log(`::error::${err}`);
     process.exitCode = 1;
 }
