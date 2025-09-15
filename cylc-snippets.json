@@ -72,17 +72,17 @@
     " [scheduler][events]handlers": {
         "prefix": "handlers",
         "body": "handlers = ${1:None}",
-        "description": "Configure :term:`event handlers` that run when certain workflow\nevents occur.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]handlers`.\n\nThis section configures *workflow* event handlers; see\n:cylc:conf:`flow.cylc[runtime][<namespace>][events]` for *task* event\nhandlers.\n\nEvent handlers can be held in the workflow ``bin/`` directory,\notherwise it is up to you to ensure their location is in ``$PATH``\n(in the shell in which the scheduler runs). They should require\nlittle resource to run and return quickly.\n\nTemplate variables can be used to configure handlers. For a full list\nof supported variables see :ref:`workflow_event_template_variables`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`"
+        "description": "Configure :term:`event handlers` that run when certain workflow\nevents occur.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]handlers`.\n\n.. admonition:: Not to be confused with\n   :class: tip\n\n   For *task* events, see\n   :cylc:conf:`flow.cylc[runtime][<namespace>][events]`.\n\nEvent handlers can be held in the workflow ``bin/`` directory,\notherwise it is up to you to ensure their location is in ``$PATH``\n(in the shell in which the scheduler runs). They should require\nlittle resource to run and return quickly.\n\nTemplate variables can be used to configure handlers. For a full list\nof supported variables see :ref:`workflow_event_template_variables`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`"
     },
     " [scheduler][events]handler events": {
         "prefix": "handler events",
         "body": "handler events = ${1:None}",
-        "description": "Specify the events for which workflow event handlers should be invoked.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]handler events`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`"
+        "description": "Specify the events for which workflow event handlers should be\ninvoked.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]handler events`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events.list`"
     },
     " [scheduler][events]mail events": {
         "prefix": "mail events",
         "body": "mail events = ${1:None}",
-        "description": "Specify the workflow events for which notification emails should\nbe sent.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]mail events`."
+        "description": "Specify the workflow events for which notification emails should\nbe sent.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]mail events`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events.list`"
     },
     " [scheduler][events]startup handlers": {
         "prefix": "startup handlers",
@@ -102,17 +102,17 @@
     " [scheduler][events]workflow timeout": {
         "prefix": "workflow timeout",
         "body": "workflow timeout = ${1:*value unset*}",
-        "description": "Workflow timeout interval. The timer starts counting down at scheduler\nstartup. It resets on workflow restart.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]workflow timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0"
+        "description": "Workflow timeout interval. The timer starts counting down at scheduler\nstartup. It resets on workflow restart.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]workflow timeout`.\n\nWhen the workflow timeout is reached, any configured\n`[..]workflow timeout handlers` will be called. Additionally, the\nworkflow will shut down if `[..]abort on workflow timeout` is set.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0"
     },
     " [scheduler][events]workflow timeout handlers": {
         "prefix": "workflow timeout handlers",
         "body": "workflow timeout handlers = ${1:*value unset*}",
-        "description": "Handlers to run if the workflow timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]workflow timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   workflow timeout handlers = echo foo\n\n   # provide context to the handler\n   workflow timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   workflow timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
+        "description": "Handlers to run if the `[..]workflow timeout` is reached.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]workflow timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   workflow timeout handlers = echo foo\n\n   # provide context to the handler\n   workflow timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   workflow timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
     " [scheduler][events]abort on workflow timeout": {
         "prefix": "abort on workflow timeout",
         "body": "abort on workflow timeout = ${1:*value unset*}",
-        "description": "Whether the scheduler should shut down immediately with error status if\nthe workflow timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on workflow timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0"
+        "description": "Whether the scheduler should shut down immediately with error status if\nthe :cylc:conf:`[..]workflow timeout` is reached.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on workflow timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.0.0"
     },
     " [scheduler][events]stall handlers": {
         "prefix": "stall handlers",
@@ -122,37 +122,37 @@
     " [scheduler][events]stall timeout": {
         "prefix": "stall timeout",
         "body": "stall timeout = ${1:*value unset*}",
-        "description": "The length of a timer which starts if the scheduler stalls.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]stall timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``timeout``."
+        "description": "The length of a timer which starts if the scheduler stalls.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]stall timeout`.\n\nWhen the stall timeout is reached, any `[..]stall timeout handlers`\nwill be called. Additionally, the workflow will shut down if\n`[..]abort on stall timeout` is set.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``timeout``."
     },
     " [scheduler][events]stall timeout handlers": {
         "prefix": "stall timeout handlers",
         "body": "stall timeout handlers = ${1:*value unset*}",
-        "description": "Handlers to run if the stall timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]stall timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``timeout handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   stall timeout handlers = echo foo\n\n   # provide context to the handler\n   stall timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   stall timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
+        "description": "Handlers to run if the `[..]stall timeout` is reached.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]stall timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``timeout handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   stall timeout handlers = echo foo\n\n   # provide context to the handler\n   stall timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   stall timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
     " [scheduler][events]abort on stall timeout": {
         "prefix": "abort on stall timeout",
         "body": "abort on stall timeout = ${1:*value unset*}",
-        "description": "Whether the scheduler should shut down immediately with error status if\nthe stall timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on stall timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``abort on timeout``."
+        "description": "Whether the scheduler should shut down immediately with error status if\nthe `[..]stall timeout` is reached.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on stall timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``abort on timeout``."
     },
     " [scheduler][events]inactivity timeout": {
         "prefix": "inactivity timeout",
         "body": "inactivity timeout = ${1:*value unset*}",
-        "description": "Scheduler inactivity timeout interval. The timer resets when any\nworkflow activity occurs.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]inactivity timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called  ``inactivity``."
+        "description": "Scheduler inactivity timeout interval. The timer resets when any\nworkflow activity occurs.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]inactivity timeout`.\n\nWhen the inactivity timeout is reached, any\n`[..]inactivity timeout handlers` will be called. Additionally, the\nworkflow will shut down if `[..]abort on inactivity timeout` is set.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called  ``inactivity``."
     },
     " [scheduler][events]inactivity timeout handlers": {
         "prefix": "inactivity timeout handlers",
         "body": "inactivity timeout handlers = ${1:*value unset*}",
-        "description": "Handlers to run if the inactivity timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]inactivity timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``inactivity handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   inactivity timeout handlers = echo foo\n\n   # provide context to the handler\n   inactivity timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   inactivity timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
+        "description": "Handlers to run if the `[..]inactivity timeout` is reached.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]inactivity timeout handlers`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``inactivity handler``.\n\n\n\nExamples:\n\n.. code-block:: cylc\n\n   # configure a single event handler\n   inactivity timeout handlers = echo foo\n\n   # provide context to the handler\n   inactivity timeout handlers = echo %(workflow)s\n\n   # configure multiple event handlers\n   # (which will run in parallel)\n   inactivity timeout handlers = \\\n       'echo %(workflow)s %(event)s', \\\n       'my_exe %(event)s %(message)s', \\\n       'curl -X PUT -d event=%(event)s host:port'"
     },
     " [scheduler][events]abort on inactivity timeout": {
         "prefix": "abort on inactivity timeout",
         "body": "abort on inactivity timeout = ${1:*value unset*}",
-        "description": "Whether the scheduler should shut down immediately with error status if\nthe inactivity timer times out.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on inactivity timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``abort on inactivity``."
+        "description": "Whether the scheduler should shut down immediately with error status if\nthe `[..]inactivity timeout` is reached.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]abort on inactivity timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``abort on inactivity``."
     },
     " [scheduler][events]restart timeout": {
         "prefix": "restart timeout",
         "body": "restart timeout = ${1:*value unset*}",
-        "description": "How long to wait for intervention on restarting a completed workflow.\nThe timer stops if any task is triggered.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]restart timeout`.\n\n.. seealso::\n\n   :ref:`user_guide.scheduler.workflow_events`\n\n.. versionadded:: 8.2.0"
+        "description": "How long to wait for intervention on restarting a completed workflow.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][events]restart timeout`.\n\nWhen a workflow reaches the end of the :term:`graph`, it will\n:term:`shut down <shutdown>` automatically. We call such workflows\n:ref:`completed <workflow completion>` as there are no more tasks for\nCylc to run.\n\nCompleted workflows can be caused by:\n\n* Cylc reaching the end of the :term:`graph`.\n* The workflow reaching the\n  :cylc:conf:`flow.cylc[scheduling]final cycle point`.\n* The workflow reaching the\n  :cylc:conf:`flow.cylc[scheduling]stop after cycle point`.\n* Tasks being manually removed :ref:`interventions.remove_tasks`.\n\nWhen you restart a completed workflow, it will detect that there are no\nmore tasks to run, and shut itself down again. The ``restart timeout``\ndelays this shutdown for a configured period allowing you to trigger\nmore task(s) to run.\n\n.. seealso::\n\n   * :ref:`user_guide.scheduler.workflow_events`\n   * :ref:`workflow completion`\n   * :ref:`examples.extending-workflow`\n\n.. versionadded:: 8.2.0\n\n.. versionchanged:: 8.5.2\n\n   The ``restart timeout`` is now also activated for workflows that\n   have hit the\n   :cylc:conf:`flow.cylc[scheduling]stop after cycle point`."
     },
     " [scheduler][events]expected task failures": {
         "prefix": "expected task failures",
@@ -212,12 +212,12 @@
     " [scheduling]initial cycle point constraints": {
         "prefix": "initial cycle point constraints",
         "body": "initial cycle point constraints = ${1:*value unset*}",
-        "description": "Rules to allow only some initial datetime cycle points.\n\n.. admonition:: Use Case\n\n   Writing a workflow where users may change the initial\n   cycle point, but where only some initial cycle points are\n   reasonable.\n\nSet by defining a list of truncated time points, which\nthe initial cycle point must match.\n\nExamples:\n\n- ``T00, T06, T12, T18`` - only at 6 hourly intervals.\n-  ``T-30`` - only at half-past an hour.\n- ``01T00`` - only at midnight on the first day of a month.\n\n.. seealso::\n\n   :ref:`Recurrence tutorial <tutorial-inferred-recurrence>`.\n\n.. note::\n\n   This setting does not coerce :cylc:conf:`[..]\n   initial cycle point = now`."
+        "description": "Rules to allow only certain initial datetime cycle points.\n\n.. admonition:: Use Case\n\n   Writing a workflow where users may change the initial\n   cycle point, but where only some initial cycle points are\n   reasonable.\n\nSet by defining a list of truncated time points, which\nthe initial cycle point must match.\n\nExamples:\n\n- ``T00, T06, T12, T18`` - only at 6 hourly intervals.\n- ``T-30`` - only at half-past an hour.\n- ``01T00`` - only at midnight on the first day of a month.\n\n.. seealso::\n\n   :ref:`Recurrence tutorial <tutorial-inferred-recurrence>`.\n\n\n.. note::\n\n   This setting does not coerce :cylc:conf:`[..]\n   initial cycle point = now`."
     },
     " [scheduling]final cycle point constraints": {
         "prefix": "final cycle point constraints",
         "body": "final cycle point constraints = ${1:*value unset*}",
-        "description": "Rules restricting permitted final cycle points.\n\nIn a cycling workflow it is possible to restrict the final cycle\npoint by defining a list of truncated time points under the final\ncycle point constraints.\n\n.. seealso::\n\n   :ref:`Recurrence tutorial <tutorial-inferred-recurrence>`."
+        "description": "Rules to allow only certain final datetime cycle points.\n\n.. admonition:: Use Case\n\n   Writing a workflow where users may change the final\n   cycle point, but where only some final cycle points are\n   reasonable.\n\nSet by defining a list of truncated time points, which\nthe final cycle point must match.\n\nExamples:\n\n- ``T00, T06, T12, T18`` - only at 6 hourly intervals.\n- ``T-30`` - only at half-past an hour.\n- ``01T00`` - only at midnight on the first day of a month.\n\n.. seealso::\n\n   :ref:`Recurrence tutorial <tutorial-inferred-recurrence>`."
     },
     " [scheduling]hold after cycle point": {
         "prefix": "hold after cycle point",
@@ -237,37 +237,37 @@
     " [scheduling]runahead limit": {
         "prefix": "runahead limit",
         "body": "runahead limit = ${1:P4}",
-        "description": "The runahead limit prevents a workflow from getting too far ahead\nof the oldest cycle with :term:`active tasks <active task>`.\n\nA cycle is considered to be active if it contains any\n:term:`active` tasks.\n\nAn integer interval value of ``Pn`` allows up to ``n+1`` cycles\nto be active at once.\n\nThe default runahead limit is ``P4``, which means there may be up\nto 5 active cycles.\n\nDatetime cycling workflows can optionally use a datetime interval\nvalue instead, in which case the number of cycles\nwithin the interval depends on the cycling intervals present.\n\nExamples:\n\n``P0``\n    Only one cycle can be active at a time.\n``P2``\n    The scheduler will run up to two cycles ahead of the oldest\n    active cycle.\n``P3D``\n    The scheduler will run cycles up to three days of cycles ahead\n    of the oldest active cycle.\n\n.. seealso::\n\n   :ref:`RunaheadLimit`\n\n.. versionchanged:: 8.0.0\n\n   The integer format ``Pn`` was introduced to replace the\n   deprecated ``[scheduling]max active cycle points = m``\n   (with ``n = m-1``) and unify it with the existing datetime\n   interval ``runahead limit`` setting."
+        "description": "The runahead limit prevents a workflow from getting too far ahead\nof the oldest :term:`active cycle`.\n\nA cycle is considered to be active if it contains any\n:term:`active tasks <active task>`.\n\nAn integer interval value of ``Pn`` allows up to ``n+1`` cycles\nto be active at once.\n\nThe default runahead limit is ``P4``, which means there may be up\nto 5 active cycles.\n\nDatetime cycling workflows can optionally use a datetime interval\nvalue instead, in which case the number of cycles\nwithin the interval depends on the cycling intervals present.\n\nExamples:\n\n``P0``\n    Only one cycle can be active at a time.\n``P2``\n    Allow up to two cycles ahead of the oldest active cycle.\n``P3D``\n    Allow cycles up to three days ahead of the oldest active cycle.\n\n.. seealso::\n\n   :ref:`RunaheadLimit`\n\n.. versionchanged:: 8.0.0\n\n   The integer format ``Pn`` was introduced to replace the\n   deprecated ``[scheduling]max active cycle points = m``\n   (with ``n = m-1``) and unify it with the existing datetime\n   interval ``runahead limit`` setting."
     },
     " [scheduling][queues]": {
         "prefix": "queues",
         "body": "[[queues]]",
-        "description": "Configuration of internal queues of tasks.\n\nThis section will allow you to limit the number of simultaneously\n:term:`active tasks <active task>` (submitted or running) by\nassigning tasks to queues.\n\nBy default, a single queue called ``default`` is defined,\nwith all tasks assigned to it and no limit to the number of those\ntasks which may be active.\n\nTo use a single queue for the whole workflow, but limit the number\nof active tasks, set :cylc:conf:`[default]limit`.\n\nTo add additional queues define additional sections:\n\n.. code-block:: cylc\n\n   [[queues]]\n       [[[user_defined_queue]]]\n           limit = 2\n           members = TASK_FAMILY_NAME\n\n.. seealso::\n\n   :ref:`InternalQueues`."
+        "description": "Internal task queues to limit job activity.\n\nQueues delay job submission in member tasks, until the active\njob count (for members) drops below the queue limit.\n\nThere is a ``default`` queue with a configurable limit of 100, for\nall tasks that are not assigned to other queues.\n\nYou can define custom queues to limit job activity across other\ngroups of tasks.\n\n.. code-block:: cylc\n\n   [[queues]]\n       [[[my_queue]]]\n           limit = 2\n           members = task1, task2, FAMILY1\n\n.. seealso::\n\n   :ref:`InternalQueues`."
     },
     " [scheduling][queues][<queue name>]limit": {
         "prefix": "limit",
         "body": "limit = ${1:0}",
-        "description": "The maximum number of :term:`active tasks <active task>`\nallowed at any one time, for this queue.\n\nIf set to 0 this queue is not limited."
+        "description": "The active job limit for this queue. 0 means no limit."
     },
     " [scheduling][queues][<queue name>]members": {
         "prefix": "members",
         "body": "members = ${1:*value unset*}",
-        "description": "A list of member tasks, or task family names to assign to\nthis queue.\n\nAssigned tasks will automatically be removed\nfrom the default queue."
+        "description": "A list of task or family names to assign to this queue."
     },
     " [scheduling][queues][default]": {
         "prefix": "default",
         "body": "[[[default]]]",
-        "description": "The default queue for all tasks not assigned to other queues."
+        "description": "The default queue, for all tasks not assigned to other queues."
     },
     " [scheduling][queues][default]limit": {
         "prefix": "limit",
         "body": "limit = ${1:100}",
-        "description": "Controls the total number of\n:term:`active tasks <active task>` in the default queue.\n\n.. seealso::\n\n   - :cylc:conf:`flow.cylc[scheduling]\n     [queues][<queue name>]limit`\n   - :ref:`InternalQueues`"
+        "description": "The job limit for the ``default`` queue. 0 means no limit."
     },
     " <queue name>|members": {
         "prefix": "members",
         "body": "members = ${1:*value unset*}",
-        "description": "A list of member tasks, or task family names to assign to\nthis queue.\n\nAssigned tasks will automatically be removed\nfrom the default queue."
+        "description": "A list of task or family names to assign to this queue."
     },
     " [scheduling][special tasks]": {
         "prefix": "special tasks",
@@ -322,7 +322,7 @@
     " [runtime][<namespace>]platform": {
         "prefix": "platform",
         "body": "platform = ${1:*value unset*}",
-        "description": "The name of a compute resource defined in\n:cylc:conf:`global.cylc[platforms]` or\n:cylc:conf:`global.cylc[platform groups]`.\n\nThe platform specifies the host(s) that the tasks' jobs\nwill run on and where (if necessary) files need to be\ninstalled, and what job runner will be used.\n\n.. versionadded:: 8.0.0"
+        "description": "The platform to submit jobs to.\n\nThe\n:cylc:conf:`platform <global.cylc[platforms][<platform name>]>`\nspecifies the host(s) that the tasks' jobs\nwill run on and where (if necessary) files need to be\ninstalled, and what job runner will be used.\n\nThis can be:\n\n* A :cylc:conf:`platform <global.cylc[platforms]>`,\n* a :cylc:conf:`platform group <global.cylc[platform groups]>`,\n* or a command which returns a platform or platform group.\n\nTo see what platforms have been configured at your site, run\n``cylc config --platform-names``.\n\n.. rubric:: Commands:\n\nThe ``platform`` can be set to a command which returns the name\nof the platform to submit jobs to using the ``$()`` syntax,\ni.e:\n\n.. code-block:: cylc\n\n   platform = $(command)\n\nThe configured command will be evaluated for each job\nsubmission (i.e, different submissions of the same task may\nsubmit on different platforms).\n\nCylc batches job submissions, so when multiple jobs are\nsubmitted at the same time, using a platform defined by the\nsame command, the command will be run once, and all jobs in the\nbatch will submit to the same platform.\n\nNote: do not use a command to configure a list of login nodes.\nInstead, define a platform and configure the login nodes it\ncan use; see\n:ref:`config.platforms.cluster_with_multiple_login_nodes`.\n\n.. rubric:: Examples:\n\n.. code-block:: cylc\n\n   # run the job on the same host the Cylc scheduler runs on\n   platform = localhost\n\n   # run the job on a platform (or platform group) called hpc\n   platform = hpc\n\n   # run a command to select the platform (or platform group):\n   platform = $(select-platform)\n   platform = prefix-$(select-platform)-suffix\n\n.. versionadded:: 8.0.0"
     },
     " [runtime][<namespace>]inherit": {
         "prefix": "inherit",
@@ -532,22 +532,17 @@
     " [runtime][<namespace>][events]": {
         "prefix": "events",
         "body": "[[[events]]]",
-        "description": "Configure the task event handling system.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]`.\n\nSee also :cylc:conf:`flow.cylc[scheduler][events]` for *workflow* events.\n\nTask :term:`event handlers` are scripts to run when task events occur.\n\nEvent handlers can be stored in the workflow ``bin/`` directory, or\nanywhere the scheduler environment ``$PATH``. They should return quickly.\n\nMultiple event handlers can be specified as a list of command line templates.\nFor supported template variables see :ref:`user_guide.runtime.event_handlers.task_event_handling.template_variables`.\nPython template substitution syntax is used:\n`String Formatting Operations in the Python documentation\n<https://docs.python.org/3/library/stdtypes.html\n#printf-style-string-formatting>`_."
-    },
-    " [runtime][<namespace>][events]execution timeout": {
-        "prefix": "execution timeout",
-        "body": "execution timeout = ${1:*value unset*}",
-        "description": "If a task has not finished after the specified interval, the execution\ntimeout event handler(s) will be called.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]execution timeout`."
+        "description": "Configure the task event handling system.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]`.\n\n.. admonition:: Not to be confused with\n   :class: tip\n\n   For *workflow* events, see :cylc:conf:`flow.cylc[scheduler][events]`.\n\nTask :term:`event handlers` are scripts to run when task events occur.\n\nEvent handlers can be stored in the workflow ``bin/`` directory, or\nanywhere the scheduler environment ``$PATH``. They should return quickly.\n\nMultiple event handlers can be specified as a list of command line templates.\nFor supported template variables see :ref:`user_guide.runtime.event_handlers.task_event_handling.template_variables`.\nPython template substitution syntax is used:\n`String Formatting Operations in the Python documentation\n<https://docs.python.org/3/library/stdtypes.html\n#printf-style-string-formatting>`_."
     },
     " [runtime][<namespace>][events]handlers": {
         "prefix": "handlers",
         "body": "handlers = ${1:None}",
-        "description": "Commands to run on task :cylc:conf:`[..]handler events`.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]handlers`.\n\nA command or list of commands to run for each task event handler\nset in\n:cylc:conf:`flow.cylc[runtime][<namespace>][events]handler events`.\n\nInformation about the event can be provided to the command\nusing :ref:`user_guide.runtime.event_handlers.task_event_handling.template_variables`.\nFor more information, see\n:ref:`user_guide.runtime.task_event_handling`.\n\nFor workflow events, see\n:ref:`user_guide.scheduler.workflow_event_handling`.\n\nExample::\n\n   echo %(event)s occurred in %(workflow)s >> my-log-file"
+        "description": "Commands to run on task :cylc:conf:`[..]handler events`.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]handlers`.\n\nA command or list of commands to run for each task event handler\nset in\n:cylc:conf:`flow.cylc[runtime][<namespace>][events]handler events`.\n\nInformation about the event can be provided to the command\nusing :ref:`user_guide.runtime.event_handlers.task_event_handling.template_variables`.\nFor more information, see\n:ref:`user_guide.runtime.task_event_handling`.\n\nExample::\n\n   echo %(event)s occurred in %(workflow)s >> my-log-file"
     },
     " [runtime][<namespace>][events]handler events": {
         "prefix": "handler events",
         "body": "handler events = ${1:None}",
-        "description": "A list of events for which :cylc:conf:`[..]handlers` are run.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]handler events`.\n\nSpecify the events for which the general task event handlers\n:cylc:conf:`flow.cylc[runtime][<namespace>][events]handlers`\nshould be invoked.\n\nSee :ref:`user_guide.runtime.task_event_handling` for more information.\n\nExample::\n\n   submission failed, failed"
+        "description": ":Options: ``submitted``, ``submission timeout``, ``submission retry``, ``submission failed``, ``started``, ``execution timeout``, ``retry``, ``succeeded``, ``failed``, ``late``, ``expired``, ``warning``, ``critical``, ``custom`` & any custom event\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]handler events`.\n\nA list of events for which :cylc:conf:`[..]handlers` are run.\n\nSee :ref:`user_guide.runtime.task_event_handling.list` for more\ninformation on task events.\n\nExample::\n\n   submission failed, failed"
     },
     " [runtime][<namespace>][events]handler retry delays": {
         "prefix": "handler retry delays",
@@ -557,12 +552,17 @@
     " [runtime][<namespace>][events]mail events": {
         "prefix": "mail events",
         "body": "mail events = ${1:None}",
-        "description": "Specify the events for which notification emails should be sent.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]mail events`.\n\nExample::\n\n   submission failed, failed"
+        "description": ":Options: ``submitted``, ``submission timeout``, ``submission retry``, ``submission failed``, ``started``, ``execution timeout``, ``retry``, ``succeeded``, ``failed``, ``late``, ``expired``, ``warning``, ``critical``, ``custom`` & any custom event\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]mail events`.\n\nA list of events for which notification emails should be sent.\n\nSee :ref:`user_guide.runtime.task_event_handling.list` for more\ninformation on task events.\n\nExample::\n\n   submission failed, failed"
+    },
+    " [runtime][<namespace>][events]execution timeout": {
+        "prefix": "execution timeout",
+        "body": "execution timeout = ${1:*value unset*}",
+        "description": "If a task has not finished after the specified interval, any configured\nexecution timeout event handler(s) will be called.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]execution timeout`."
     },
     " [runtime][<namespace>][events]submission timeout": {
         "prefix": "submission timeout",
         "body": "submission timeout = ${1:*value unset*}",
-        "description": "If a task has not started after the specified interval, the submission\ntimeout event handler(s) will be called.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]submission timeout`."
+        "description": "If a task has not started after the specified interval, any configured\nsubmission timeout event handler(s) will be called.\n\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[task events]submission timeout`."
     },
     " [runtime][<namespace>][events]expired handlers": {
         "prefix": "expired handlers",
