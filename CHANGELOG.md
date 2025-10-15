@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.3.0
+
+Enhancements:
+- Update snippets for Cylc 8.6.0.
+
 ## v1.2.0
 
 Enhancements:
