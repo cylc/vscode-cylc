@@ -6,7 +6,7 @@
 ## Deploying
 
 Publishing updates to the Visual Studio Marketplace is done automatically by GitHub Actions when a release is published. The suggested workflow is:
-1. (Locally) run `npm version [major|minor|patch]` as appropriate or manually bump the `package.json` version
+1. (Locally) run `npm version --no-git-tag-version [major|minor|patch]` as appropriate or manually bump the `package.json` version
 1. Create a PR for this change, called `Prepare <version>` (1 reviewer is fine)
 1. Publish a release on GitHub
 
