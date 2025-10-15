@@ -54,6 +54,21 @@
         "body": "cycle point time zone = ${1:*value unset*}",
         "description": "Time zone to be used for datetime cycle points if not otherwise\nspecified.\n\nThis time zone will be used for\ndatetime cycle point dumping and inferring the time zone of cycle\npoints that are input without time zones.\n\nTime zones should be expressed as :term:`ISO8601` time zone offsets\nfrom UTC, such as ``+13``, ``+1300``, ``-0500`` or ``+0645``,\nwith ``Z`` representing the special case of ``+0000`` (UTC).\nCycle points will be converted to the time zone you give and will\nbe represented with this string at the end.\n\nIf not set, it will default to UTC (``Z``).\n\n.. admonition:: Cylc 7 compatibility mode\n\n   In :ref:`Cylc_7_compat_mode`, it will default to the\n   local/system time zone, rather than UTC.\n\nThe time zone will persist over reloads/restarts following any\nlocal time zone changes (e.g. if the\nworkflow is run during winter time, then stopped, then restarted\nafter summer time has begun, the cycle points will remain\nin winter time). Changing this setting after the workflow has\nfirst started will have no effect.\n\nIf you use a custom\n:cylc:conf:`flow.cylc[scheduler]cycle point format`, it is a good\nidea to set the same time zone here. If you specify a different\none here, it will only be used for inferring timezone-less cycle\npoints; cycle points will be displayed in the time zone from the\ncycle point format.\n\n.. caution::\n\n   It is not recommended to write the time zone with a \":\"\n   (e.g. ``+05:30``), given that the time zone is used as part of\n   task output filenames.\n\n.. seealso::\n\n   :cylc:conf:`flow.cylc[scheduler]UTC mode`\n\n.. versionchanged:: 7.8.9/7.9.4\n\n   The value set here now persists over reloads/restarts after a\n   system time zone change.\n\n.. versionchanged:: 8.0.0\n\n   The default time zone is now ``Z`` instead of the local time of\n   the first workflow start."
     },
+    " [scheduler][experimental]": {
+        "prefix": "experimental",
+        "body": "[[experimental]]",
+        "description": "Activate experimental features.\n\nThese are preview features which will become the default in future\nreleases.\n\n.. versionadded:: 8.6.0"
+    },
+    " [scheduler][experimental]all": {
+        "prefix": "all",
+        "body": "all = ${1:False}",
+        "description": "Activate all experimental features.\n\nEncouraged for canary testing.\n\n.. versionadded:: 8.6.0"
+    },
+    " [scheduler][experimental]expire triggers": {
+        "prefix": "expire triggers",
+        "body": "expire triggers = ${1:False}",
+        "description": "This reimplements \"suicide triggers\" as \"expire triggers\".\n\n* When the condition is met, the task will generate the\n  ``expired`` output rather than just being removed.\n* The ``expired`` output will be marked as\n  :term:`optional <optional output>` for the triggered task,\n  but a custom\n  `flow.cylc[runtime][<namespace>]completion` condition\n  will need to be modified accordingly.\n* This should be functionally equivalent to \"suicide triggers\"\n  in that the triggered task will not run.\n* However, the triggered task will now be left in the\n  ``expired`` state making it clearer in the GUI/logs that\n  the task has been triggered in this way.\n* It is possible to trigger other tasks off of this ``expired``\n  output for more advanced failure recovery.\n\n.. versionadded:: 8.6.0"
+    },
     " [scheduler][main loop]": {
         "prefix": "main loop",
         "body": "[[main loop]]",
