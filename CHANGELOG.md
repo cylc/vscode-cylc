@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.3.1
+
+Bug fixes:
+- Fix Jinja2 not being highlighted in some parts of graph sections.
+
 ## v1.3.0
 
 Enhancements:
