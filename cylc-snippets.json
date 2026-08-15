@@ -397,7 +397,7 @@
     " [runtime][<namespace>]execution time limit": {
         "prefix": "execution time limit",
         "body": "execution time limit = ${1:*value unset*}",
-        "description": "Set the execution (:term:`wallclock <wallclock time>`) time\nlimit of a job.\n\nFor ``background`` and ``at`` job runners Cylc runs the\njob's script using the timeout command. For other job runners\nCylc will convert execution time limit to a :term:`directive`.\n\nIf a job exceeds its execution time limit Cylc can\npoll the job multiple times. You can set polling\nintervals using :cylc:conf:`global.cylc[platforms]\n[<platform name>]execution time limit polling intervals`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>][job]execution\n   time limit``."
+        "description": "Set the execution (:term:`wallclock <wallclock time>`) time\nlimit of a job.\n\nFor the ``background`` and ``at`` job runners, Cylc runs the\njob's script using the timeout command. For other job runners,\nCylc will convert execution time limit to a :term:`directive`.\n\nIf a job exceeds its execution time limit, Cylc will\npoll the job multiple times at the\nintervals configured in :cylc:conf:`global.cylc[platforms]\n[<platform name>]execution time limit polling intervals`\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[runtime][<namespace>][job]execution\n   time limit``."
     },
     " [runtime][<namespace>]submission polling intervals": {
         "prefix": "submission polling intervals",
