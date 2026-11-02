@@ -1,5 +1,18 @@
 version: 2
 updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "quarterly"
+    versioning-strategy: increase-if-necessary
+    labels:
+      - 'dependencies'
+    groups:
+      eslint:
+        patterns:
+          - "*eslint*"
+          - "globals"
+          - "neostandard"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

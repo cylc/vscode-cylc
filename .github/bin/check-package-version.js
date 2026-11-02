@@ -24,38 +24,38 @@ Args:
         E.g. 'refs/tags/v1.2.3'
 */
 
-const fs = require('fs');
+const fs = require('fs')
 
 try {
-    const releaseVer = getReleaseVersion();
-    const packageVer = JSON.parse(fs.readFileSync('package.json')).version;
-    const packageLockVer = JSON.parse(fs.readFileSync('package-lock.json')).version;
+  const releaseVer = getReleaseVersion()
+  const packageVer = JSON.parse(fs.readFileSync('package.json')).version
+  const packageLockVer = JSON.parse(fs.readFileSync('package-lock.json')).version
 
-    if (releaseVer === packageVer && releaseVer === packageLockVer) {
-        console.log(`Version: ${releaseVer}`);
-    } else {
-        setFailed(`Release version (${releaseVer}) does not match package.json version (${packageVer}) and/or package-lock.json version (${packageLockVer})`);
-    }
+  if (releaseVer === packageVer && releaseVer === packageLockVer) {
+    console.log(`Version: ${releaseVer}`)
+  } else {
+    setFailed(`Release version (${releaseVer}) does not match package.json version (${packageVer}) and/or package-lock.json version (${packageLockVer})`)
+  }
 } catch (error) {
-    setFailed(error);
+  setFailed(error)
 }
 
-function getReleaseVersion() {
-    const ref = process.argv[2];
-    if (ref) {
-        const matches = ref.match(/refs\/tags\/v(.+)/);
-        if (matches) {
-            return matches[1];
-        } else {
-            throw new Error(`No tag detected in ref '${ref}'`);
-        }
+function getReleaseVersion () {
+  const ref = process.argv[2]
+  if (ref) {
+    const matches = ref.match(/refs\/tags\/v(.+)/)
+    if (matches) {
+      return matches[1]
     } else {
-        throw new Error('No ref argument supplied');
+      throw new Error(`No tag detected in ref '${ref}'`)
     }
+  } else {
+    throw new Error('No ref argument supplied')
+  }
 }
 
-function setFailed(err) {
-    err = err instanceof Error ? err.toString() : err;
-    console.log(`::error::${err}`);
-    process.exitCode = 1;
+function setFailed (err) {
+  err = err instanceof Error ? err.toString() : err
+  console.log(`::error::${err}`)
+  process.exitCode = 1
 }
