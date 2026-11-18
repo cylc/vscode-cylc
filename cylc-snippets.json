@@ -182,7 +182,7 @@
     " [scheduler][mail]footer": {
         "prefix": "footer",
         "body": "footer = ${1:*value unset*}",
-        "description": "Specify a string or string template for footers of emails sent for both\nworkflow and task events.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][mail]footer`.\n\nTemplate variables may be used in the mail footer. For a list of supported\nvariables see :ref:`workflow_event_template_variables`.\n\nExample::\n\n   footer = see http://ahost/%(owner)s/notes/%(workflow)s``\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][events]mail footer``."
+        "description": "Specify a string or string template for footers of emails sent for both\nworkflow and task events.\n\nThe default value is set in the global config: :cylc:conf:`global.cylc[scheduler][mail]footer`.\n\nTemplate variables may be used in the mail footer. For a list of supported\nvariables see :ref:`workflow_event_template_variables`.\n\nExample::\n\n   footer = see http://ahost/%(owner)s/notes/%(workflow)s\n\n.. versionchanged:: 8.0.0\n\n   This item was previously called ``[cylc][events]mail footer``."
     },
     " [scheduler][mail]to": {
         "prefix": "to",
@@ -257,7 +257,7 @@
     " [scheduling][queues]": {
         "prefix": "queues",
         "body": "[[queues]]",
-        "description": "Internal task queues to limit job activity.\n\nQueues delay job submission in member tasks, until the active\njob count (for members) drops below the queue limit.\n\nThere is a ``default`` queue with a configurable limit of 100, for\nall tasks that are not assigned to other queues.\n\nYou can define custom queues to limit job activity across other\ngroups of tasks.\n\n.. code-block:: cylc\n\n   [[queues]]\n       [[[my_queue]]]\n           limit = 2\n           members = task1, task2, FAMILY1\n\n.. seealso::\n\n   :ref:`InternalQueues`."
+        "description": "Internal queues limit how many tasks can have active jobs at once.\n\nTasks become queued when they are ready to run, and are released\non a first in, first out basis when the number of\n:term:`active jobs <active job>` within that queue drops below\nthe queue limit.\n\nAll tasks that are not assigned to other queues belong to the\n:cylc:conf:`[default]` queue with a default limit of 100.\n\nYou can define custom queues to limit job activity across groups\nof tasks. The default limit for custom queues is 0 (no limit).\n\nTasks can be assigned en masse to queues by family name.\n\nA given task can only be in one queue. If a task is assigned to\nmultiple queues, only the last assignment will take effect.\n\n.. rubric:: Example:\n\n.. code-block:: cylc\n\n   [[queues]]\n       [[[my_queue]]]\n           limit = 2\n           members = task1, task2, FAMILY1\n\n.. seealso::\n\n   :ref:`InternalQueues`."
     },
     " [scheduling][queues][<queue name>]limit": {
         "prefix": "limit",
@@ -292,7 +292,7 @@
     " [scheduling][special tasks]clock-trigger": {
         "prefix": "clock-trigger",
         "body": "clock-trigger = ${1:*value unset*}",
-        "description": "Legacy clock trigger definitions.\n\n.. deprecated:: 8.0.0\n\n   These are now auto-upgraded to the newer wall_clock xtriggers\n   (see :ref:`Section External Triggers`). The old way defining\n   clock-triggers will be removed in an upcoming Cylc version.\n\nClock-triggered tasks (see :ref:`ClockTriggerTasks`) wait on a wall\nclock time specified as an offset from their own cycle point.\n\nExample:\n\n``foo(PT1H30M), bar(PT1.5H), baz``"
+        "description": "Legacy clock trigger definitions.\n\n.. deprecated:: 8.0.0\n\n   This old way of defining clock-triggers will be removed\n   in Cylc 8.9. See :ref:`ClockTriggerTasks`.\n\nClock-triggered tasks wait on a wall\nclock time specified as an offset from their own cycle point.\n\nExample:\n\n``foo(PT1H30M), bar(PT1.5H), baz``\n\n.. versionchanged:: 8.2.0\n\n   These are now auto-upgraded to the newer\n   :ref:`wall_clock xtriggers <Section External Triggers>`."
     },
     " [scheduling][special tasks]external-trigger": {
         "prefix": "external-trigger",
@@ -432,7 +432,7 @@
     " [runtime][<namespace>][meta]URL": {
         "prefix": "URL",
         "body": "URL = ${1:}",
-        "description": "A URL link to task documentation for this task or task\nfamily.\n\nThe templates ``%(workflow)s`` and\n``%(task)s`` will be replaced with the actual\nworkflow ID and task name.\n\n.. deprecated:: 8.0.0\n\n   The ``%(suite_name)s`` template variable is\n   deprecated, please use ``%(workflow)s``.\n\n   The ``%(task_name)s`` template variable is\n   deprecated, please use ``%(task)s``.\n\nSee also :cylc:conf:`[meta]URL <flow.cylc[meta]URL>`.\n\nExample:\n\n``http://my-site.com/workflows/%(workflow)s/%(task)s.html``"
+        "description": "A URL link to task documentation for this task or task\nfamily.\n\nThe templates ``%(workflow)s`` and\n``%(task)s`` will be replaced with the actual\nworkflow ID and task name.\n\n.. deprecated:: 8.0.0\n\n   The ``%(suite_name)s`` template variable is\n   deprecated, please use ``%(workflow)s``.\n\n   The ``%(task_name)s`` template variable is\n   deprecated, please use ``%(task)s``.\n\nSee also :cylc:conf:`[meta]URL <flow.cylc[meta]URL>`.\n\nExample::\n\n   http://my-site.com/workflows/%(workflow)s/%(task)s.html"
     },
     " [runtime][<namespace>][skip]": {
         "prefix": "skip",
@@ -462,7 +462,7 @@
     " [runtime][<namespace>][simulation]speedup factor": {
         "prefix": "speedup factor",
         "body": "speedup factor = ${1:*value unset*}",
-        "description": "Simulated run length = speedup factor * execution time\nlimit.\n\nIf :cylc:conf:`flow.cylc[runtime][<namespace>]\nexecution time limit` is set, the task\nsimulated run length is computed by dividing it by this\nfactor."
+        "description": "If :cylc:conf:`flow.cylc[runtime][<namespace>]\nexecution time limit` is set, the task\nsimulated run length is computed by dividing the limit\nby this factor."
     },
     " [runtime][<namespace>][simulation]time limit buffer": {
         "prefix": "time limit buffer",
@@ -542,7 +542,7 @@
     " [runtime][<namespace>][remote]retrieve job logs retry delays": {
         "prefix": "retrieve job logs retry delays",
         "body": "retrieve job logs retry delays = ${1:None}",
-        "description": "Configure retries for unsuccessful job log retrieval.\n\nIf there is a significant delay between job completion and\nlogs appearing in their final location (due to the job runner)\nyou can configure time intervals here to delay the first and\nsubsequent retrieval attempts.\n\nJob log retrieval will be retried until the expected job files have\nbeen retrieved, see\n:cylc:conf:`\nglobal.cylc[platforms][<platform name>]retrieve job log expected files`\nfor details\n\n\n.. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`."
+        "description": "Configure retries for unsuccessful job log retrieval.\n\nIf there is a significant delay between job completion and\nlogs appearing in their final location (due to the job runner)\nyou can configure time intervals here to delay the first and\nsubsequent retrieval attempts.\n\nJob log retrieval will be retried until the expected job files have\nbeen retried, see\n:cylc:conf:`global.cylc[platforms][<platform name>]\nretrieve job log expected files` for details.\n\n\n.. deprecated:: 8.0.0\n\n   This is used to select a matching platform.\n   It will be removed in a future version of Cylc 8.\n   Please set a suitable platform in\n   :cylc:conf:`flow.cylc[runtime][<namespace>]platform` instead.\n   :ref:`See the migration guide <MajorChangesPlatforms>`."
     },
     " [runtime][<namespace>][events]": {
         "prefix": "events",
