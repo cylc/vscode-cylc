@@ -1,0 +1,31 @@
+# It works on any *.cylc file - this is not a flow.cylc:
+[runtime]
+# It creates a link from an app title if there is
+# a suitable rose app:
+    [[foo]]
+        script = rose task-run
+
+# It creates links for the apps and the opts
+# using long and short for cli:
+    [[bar]]
+        script = rose task-run \
+            --app-key=foo \
+            -O bar 
+            --opt-conf-keys=baz
+
+# It creates links if there is one 
+    [[foobar]]
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=bar
+
+# It handles ROSE_APP_OPT_CONF_KEYS having >1 value:
+    [[barbaz]]
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=bar baz
+
+# It doesn't link to non-existent stuff:
+    [[qux]]
+        # This isn't going to work at all
+        script = rose task-run \
+            --app-key=qux \
+            -O qux

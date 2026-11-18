@@ -9,6 +9,9 @@ A Visual Studio Code extension that provides language support for Cylc workflow 
   - Cylc 8
   - Jinja2 (can be used with a Jinja extension e.g. [Better Jinja](https://marketplace.visualstudio.com/items?itemName=samuelcolvin.jinjahtml))
 - Snippets for Cylc 8 sections/settings
+- Clickable `--app-key=...` links in `flow.cylc` that open `app/<key>/rose-app.conf`
+- Clickable `-O ...` and `--opt-conf-keys=...` links inside `[[...]]` sections that open `app/<app-key>/opt/rose-app-<key>.conf`
+- Clickable `ROSE_APP_OPT_CONF_KEYS=...` links inside `[[...]]` sections that open `app/<app-key>/opt/rose-app-<key>.conf`
 
 ### Screenshot
 

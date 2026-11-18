@@ -16,6 +16,10 @@
     ],
     "license": "GPL-3.0",
     "icon": "img/cylc-logo.png",
+    "main": "./links_to_rose_apps.js",
+    "activationEvents": [
+        "onLanguage:cylc"
+    ],
     "contributes": {
         "languages": [
             {
