@@ -53,5 +53,15 @@
                 "path": "./cylc-snippets.json"
             }
         ]
+    },
+    "scripts": {
+        "lint": "eslint"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@eslint/json": "^2.1.1",
+        "eslint": "^10.14.0",
+        "globals": "^17.14.0",
+        "neostandard": "^0.14.1"
     }
 }
